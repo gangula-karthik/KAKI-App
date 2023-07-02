@@ -17,7 +17,24 @@
 .logo {
   font-size: 25px;
   padding: 0 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
+.welcome-text {
+  text-align: center;
+  font-size: 15px;
+}
+
+.name-text {
+  text-align: center;
+  font-size: 25px;
+  font-family: 'Roboto Flex', sans-serif;
+  font-weight: 600;
+}
+
 .sidebar a {
   color: #fff;
   text-decoration: none;
@@ -27,7 +44,7 @@
   height: 100%;
   width: 100%;
   margin-top: 40px;
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 .menu-content::-webkit-scrollbar {
   display: none;
