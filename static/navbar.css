@@ -6,12 +6,13 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
 .sidebar {
   position: fixed;
   height: 100%;
   width: 260px;
   background: #1E1F23;
-  padding: 15px;
+  padding: 25px;
   z-index: 99;
   border: 1.5px solid #3F3F48;
 }
@@ -31,7 +32,7 @@
 
 .name-text {
   text-align: center;
-  font-size: 25px;
+  font-size: 23px;
   font-family: 'Roboto Flex', sans-serif;
   font-weight: 600;
 }
@@ -77,7 +78,7 @@
 .item a:hover,
 .submenu-item:hover,
 .submenu .menu-title:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4);
 }
 .submenu-item {
   display: flex;
@@ -106,46 +107,7 @@
 .submenu .menu-title i {
   margin-right: 10px;
 }
-.navbar,
-.main {
-  left: 260px;
-  width: calc(100% - 260px);
-  transition: all 0.5s ease;
-  z-index: 1000;
-}
-.sidebar.close ~ .navbar,
-.sidebar.close ~ .main {
-  left: 0;
-  width: 100%;
-}
-.navbar {
-  position: fixed;
-  color: #fff;
-  padding: 15px 20px;
-  font-size: 25px;
-  background: #1E1F23;
-  cursor: pointer;
-  border-right: 1.5px solid #3F3F48;
-  border-top: 1.5px solid #3F3F48;
-  border-bottom: 1.5px solid #3F3F48;
-}
-.navbar #sidebar-close {
-  cursor: pointer;
-}
-.main {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  z-index: 100;
-  background: #17181C;
-}
-.main h1 {
-  color: #ffffff;
-  font-size: 40px;
-  text-align: center;
-}
+
 
 .logo-bottom {
   position: absolute;
@@ -160,4 +122,9 @@
   font-weight: 900;
   line-height: normal;
   padding-bottom: 30px;
+}
+
+.main{
+  padding-left: 280px;
+  padding-top: 10px;
 }
