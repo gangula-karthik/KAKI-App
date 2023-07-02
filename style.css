@@ -10,9 +10,10 @@
   position: fixed;
   height: 100%;
   width: 260px;
-  background: #11101d;
+  background: #1E1F23;
   padding: 15px;
   z-index: 99;
+  border: 1.5px solid #3F3F48;
 }
 .logo {
   font-size: 25px;
@@ -92,7 +93,7 @@
   top: 0;
   right: calc(-100% - 26px);
   height: calc(100% + 100vh);
-  background: #11101d;
+  background: #1E1F23;
   display: none;
 }
 .show-submenu ~ .submenu {
@@ -122,8 +123,11 @@
   color: #fff;
   padding: 15px 20px;
   font-size: 25px;
-  background: #4070f4;
+  background: #1E1F23;
   cursor: pointer;
+  border-right: 1.5px solid #3F3F48;
+  border-top: 1.5px solid #3F3F48;
+  border-bottom: 1.5px solid #3F3F48;
 }
 .navbar #sidebar-close {
   cursor: pointer;
@@ -135,10 +139,10 @@
   justify-content: center;
   height: 100vh;
   z-index: 100;
-  background: #e7f2fd;
+  background: #17181C;
 }
 .main h1 {
-  color: #11101d;
+  color: #ffffff;
   font-size: 40px;
   text-align: center;
 }
