@@ -5,6 +5,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+
 }
 
 .sidebar {
@@ -71,6 +72,7 @@
   display: inline-block;
   width: 100%;
   border-radius: 12px;
+
 }
 .item i {
   font-size: 12px;
@@ -86,6 +88,7 @@
   align-items: center;
   color: #fff;
   cursor: pointer;
+  background-color: #1E1F23 !important;
 }
 .submenu {
   position: absolute;
@@ -94,7 +97,7 @@
   top: 0;
   right: calc(-100% - 26px);
   height: calc(100% + 100vh);
-  background: #1E1F23;
+  background-color: #1E1F23;
   display: none;
 }
 .show-submenu ~ .submenu {
@@ -122,6 +125,7 @@
   font-weight: 900;
   line-height: normal;
   padding-bottom: 30px;
+  background-color: #1E1F23;
 }
 
 .main{
