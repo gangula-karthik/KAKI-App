@@ -15,6 +15,12 @@ firebase_admin.initialize_app(cred, {'databaseURL' : "https://kaki-db097-default
 #     "Birthdate": "20/07/2005",
 #     "Email": "mrngjunming@gmail.com"
 # }
+# data = {
+#     "First Name": "Jay Krish",
+#     "Last Name": "Vijendra", 
+#     "Birthdate": "20/07/2005",
+#     "Email": "nightsinker.2005@gmail.com"
+# }
 
 data = {
     "First Name": "Pin Shien",
@@ -23,5 +29,5 @@ data = {
     "Email": "seahpinshien@gmail.com"
 }
 
-ref = db.reference("Users/Staff/Account Details")
-ref.set(data)
+ref = db.reference("Users/customer/account_details")
+ref.push(data)
