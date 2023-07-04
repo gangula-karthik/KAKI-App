@@ -17,6 +17,4 @@ firebase = firebase_admin.initialize_app(config)
 database = firebase.database()
 
 data = {"First Name": "Jun Ming", "Last Name": "Ng" , "Birthdate": "20/07/2005" , "Email": "mrngjunming@gmail.com"}
-
-
 database.child("users").child("staff").child("account_details").set(data)
