@@ -18,3 +18,9 @@ database = firebase.database()
 
 data = {"First Name": "Jun Ming", "Last Name": "Ng" , "Birthdate": "20/07/2005" , "Email": "mrngjunming@gmail.com"}
 database.child("users").child("staff").child("account_details").set(data)
+
+
+def getData(): 
+    return database.child("users").get().val()
+
+print(getData())
