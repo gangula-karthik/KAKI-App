@@ -1,4 +1,8 @@
 import json
+import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
+
+nltk.download('vader_lexicon')
 
 class Ticket:
     status = ['open', 'in progress', 'resolved']
@@ -9,7 +13,7 @@ class Ticket:
         self.subject = subject
         self.status = self.__class__.status[0]
         self.closed_at = closed_at
-        self.subject_sentiment = None
+        self.calculate_subject_sentiment()
         self.ml_priority = None
         self.comments = []
     
@@ -38,6 +42,17 @@ class Ticket:
             self.comments[commentIndex] = newComment
         else:
             raise ValueError("Invalid input")
+        
+    def calculate_subject_sentiment(self):
+        sia = SentimentIntensityAnalyzer()
+        polarity_scores = sia.polarity_scores(self.subject)
+
+        if polarity_scores['compound'] > 0.05:
+            self.subject_sentiment = "positive"
+        elif polarity_scores['compound'] < -0.05:
+            self.subject_sentiment = "negative"
+        else:
+            self.subject_sentiment = "neutral"
     
     def __str__(self):
         return json.dumps({
@@ -54,18 +69,19 @@ class Ticket:
     
 
 
-# ticket = Ticket(1, 1, 1, "I need help", "2021-01-01")
-# ticket.addComment("Hello")
-# ticket.addComment("World")
-# print(ticket.readComments())
+if __name__ == "__main__":
+    ticket = Ticket(1, 1, 1, "I demand a refund", "2021-01-01")
+    ticket.addComment("Hello")
+    ticket.addComment("World")
+    print(ticket.readComments())
 
-# ticket.updateComments(1, "World!")
-# print(ticket.readComments())
+    ticket.updateComments(1, "World!")
+    print(ticket.readComments())
 
-# ticket.removeComment(1)
-# print(ticket.readComments())
+    ticket.removeComment(1)
+    print(ticket.readComments())
 
-# ticket.updateStatus("resolved")
-# print(ticket.status)
+    ticket.updateStatus("resolved")
+    print(ticket.status)
 
-# print(ticket)
+    print(ticket)
