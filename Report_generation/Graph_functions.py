@@ -3,11 +3,12 @@ import io
 import base64
 
 
-def plot_line_graph():
+def plot_line_graph(month, quantity):
+
+
     # Define the x and y values for the data points
-    months = ['January', 'February', 'March', 'April', 'May', 'June',
-              'July', 'August', 'September', 'October', 'November', 'December']
-    quantities = [10, 15, 12, 18, 20, 25, 22, 28, 30, 35, 32, 38]
+    months = month
+    quantities = quantity
 
     # Create the line graph
     plt.plot(months, quantities, marker='o', linestyle='-', color='blue')
