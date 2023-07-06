@@ -22,6 +22,7 @@ class Ticket:
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
         self.addMLPriority(self.subject)
+        self.replies = []
     
     def addMLPriority(self, subject):
         model = fasttext.load_model("customer_support/model.bin")
@@ -84,6 +85,9 @@ class Ticket:
             self.subject_sentiment = "negative"
         else:
             self.subject_sentiment = "neutral"
+
+    def addReply(self, reply):
+        self.replies.append(reply)
     
     def __str__(self):
         return json.dumps({
