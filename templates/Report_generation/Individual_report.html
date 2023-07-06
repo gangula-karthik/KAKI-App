@@ -3,4 +3,19 @@
 {% block content %}
     <h1>Hey it me!</h1>
     <!-- more content -->
+
+
+
+
+
+<!--Leaderboard-->
+<!-- A for loop that loops through all the instances to return a leaderboard in the form of a table-->
+<!-- To add the limit on the app.py by treating it as a list-->
+    {% for player in players %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ player.name }}</td>
+        <td>{{ player.score }}</td>
+    </tr>
+    {% endfor %}
 {% endblock %}
