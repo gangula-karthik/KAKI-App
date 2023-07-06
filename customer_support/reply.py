@@ -9,6 +9,7 @@ class Reply:
         self.created_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.updated_at = None
         self.deleted_at = None
+        self.childReplies = []
 
     def editReply(self, newContent):
         if self.content == None:
@@ -27,6 +28,12 @@ class Reply:
             return self.content
         else:
             return "This reply does not exist..."
+    
+    def addChildReply(self, reply):
+        self.childReplies.append(reply)
+    
+    def deleteChildReply(self, reply):
+        self.childReplies.remove(reply)
         
 
 
@@ -36,7 +43,6 @@ if __name__ == "__main__":
     print(reply1.readReply())
     reply1.editReply("I am having trouble with my account, please help me")
     print(reply1.readReply())
-    reply1.deleteReply()
-    print(reply1.readReply())
-    reply1.editReply("I am having trouble with my account, please help me")
-    print(reply1.readReply())
+    reply2 = Reply(2, 2, 1, "I think you should contact the customer service")
+    reply1.addChildReply(reply2)
+    print(reply1.childReplies[0].readReply())
