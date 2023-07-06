@@ -2,6 +2,7 @@ import json
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import time
+import fasttext
 
 nltk.download('vader_lexicon')
 
@@ -22,6 +23,11 @@ class Ticket:
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
     
+    def addMLPriority(self, ml_priority):
+        model = fasttext.load_model("model.bin")
+        priority = model.predict(self.subject)
+        self.ml_priority = priority[0][0].replace("__label__", "").replace("\"", "")
+
     def addTopic(self, topic):
         topic = topic.lower()
         if topic in self.__class__.topic:
