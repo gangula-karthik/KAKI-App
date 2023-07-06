@@ -1,24 +1,30 @@
+from flask import Flask, render_template, request
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
-import flask as flask
 
-cred = credentials.Certificate("Login\credentials.json")
-firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+app = Flask(__name__)
 
-def create_user(email, password):
-    user = auth.create_user(
-        email=email,
-        password=password
-    )
-    print("User created successfully:"), user.uid
+cred = credentials.Certificate("Login/credentials.json")
+firebase_admin.initialize_app(cred)
 
-# email = "jaykrish.vijendra.20@gmail.com"
-# password = "nightsinker2010"
+@app.route('/')
+def index():
+    return render_template('Login/login.html')
 
-# user = auth.create_user(
-#     email=email,
-#     password=password
-# )
+@app.route('/signup', methods=['POST'])
+def signup():
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-# print("User created successfully:", user.uid)
+    try:
+        user = auth.create_user(
+            email=email,
+            password=password
+        )
+        return "User created successfully: " + user.uid
+    except Exception as e:
+        return "Error creating user: " + str(e)
+
+if __name__ == '__main__':
+    app.run()
