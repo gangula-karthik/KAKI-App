@@ -9,23 +9,23 @@ nltk.download('vader_lexicon')
 class Ticket:
     status = ['open', 'in progress', 'resolved']
     topic = ['technical support', 'payment', 'others']
-    def __init__(self, ticket_id, user_id, staff_id, subject, closed_at):
+    def __init__(self, ticket_id, user_id, staff_id, subject):
         self.ticket_id = ticket_id
         self.user_id = user_id
         self.staff_id = staff_id
         self.subject = subject
         self.status = self.__class__.status[0]
-        self.closed_at = closed_at
-        self.calculate_subject_sentiment()
+        self.closed_at = None
+        self.calculate_subject_sentiment(self.subject)
         self.topic = None
-        self.ml_priority = None
         self.comments = []
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
+        self.addMLPriority(self.subject)
     
-    def addMLPriority(self, ml_priority):
-        model = fasttext.load_model("model.bin")
-        priority = model.predict(self.subject)
+    def addMLPriority(self, subject):
+        model = fasttext.load_model("customer_support/model.bin")
+        priority = model.predict(subject)
         self.ml_priority = priority[0][0].replace("__label__", "").replace("\"", "")
 
     def addTopic(self, topic):
@@ -74,9 +74,9 @@ class Ticket:
         else:
             raise ValueError("Invalid input")
         
-    def calculate_subject_sentiment(self):
+    def calculate_subject_sentiment(self, subject):
         sia = SentimentIntensityAnalyzer()
-        polarity_scores = sia.polarity_scores(self.subject)
+        polarity_scores = sia.polarity_scores(subject)
 
         if polarity_scores['compound'] > 0.05:
             self.subject_sentiment = "positive"
@@ -103,7 +103,7 @@ class Ticket:
 
 
 if __name__ == "__main__":
-    ticket = Ticket(1, 1, 1, "I demand a refund", "2021-01-01")
+    ticket = Ticket(1, 1, 1, "I can't find the 'Product_IP' of my phone.")
     ticket.addComment("Hello")
     ticket.addComment("World")
     print(ticket.readComments())
