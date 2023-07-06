@@ -85,6 +85,7 @@ class Ticket:
             "User ID": self.user_id,
             "Staff ID": self.staff_id,
             "Subject": self.subject,
+            "Topic": self.topic,
             "Status": self.status,
             "Subject Sentiment": self.subject_sentiment,
             "ML Priority": self.ml_priority,
