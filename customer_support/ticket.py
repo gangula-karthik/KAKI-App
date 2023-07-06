@@ -1,11 +1,13 @@
 import json
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+import time
 
 nltk.download('vader_lexicon')
 
 class Ticket:
     status = ['open', 'in progress', 'resolved']
+    topic = ['technical support', 'payment', 'others']
     def __init__(self, ticket_id, user_id, staff_id, subject, closed_at):
         self.ticket_id = ticket_id
         self.user_id = user_id
@@ -14,13 +16,36 @@ class Ticket:
         self.status = self.__class__.status[0]
         self.closed_at = closed_at
         self.calculate_subject_sentiment()
+        self.topic = None
         self.ml_priority = None
         self.comments = []
+        self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.closed_at = None
+    
+    def addTopic(self, topic):
+        topic = topic.lower()
+        if topic in self.__class__.topic:
+            self.topic = topic
+        else:
+            raise ValueError("Invalid topic")
+        
+    def updateTopic(self, new_topic):
+        new_topic = new_topic.lower()
+        if new_topic in self.__class__.topic:
+            self.topic = new_topic
+        else:
+            raise ValueError("Invalid topic")
+    
+    def deleteTopic(self):
+        self.topic = None
+
     
     def updateStatus(self, status):
         status = status.lower()
         if status in self.__class__.status:
             self.status = status
+            if self.status == "resolved": 
+                self.closed_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     def addComment(self, comment): 
         self.comments.append(comment)
@@ -61,10 +86,11 @@ class Ticket:
             "Staff ID": self.staff_id,
             "Subject": self.subject,
             "Status": self.status,
-            "Closed At": str(self.closed_at),
             "Subject Sentiment": self.subject_sentiment,
             "ML Priority": self.ml_priority,
-            "Comments": self.comments
+            "Comments": self.comments,
+            "Opened At": self.opened_at,
+            "Closed At": self.closed_at
         }, indent=4)
     
 
