@@ -5,15 +5,11 @@ from firebase_admin import db
 from firebase_admin import credentials
 import json
 
-database_init()
+cred = credentials.Certificate("customer_support/serviceAccountKey.json")
+firebase_admin.initialize_app(cred, {'databaseURL': 'https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 
-# print(json.dumps(db.reference("Users").get(), indent=4))
-kakiDB = db.reference("user")
 
-kakiDB.set({
-    "email": "johnwick@gmail.com",
-    "name": "John Wick"
-})
+
 
 class User: 
     def __init__(self, role_id, email): 
@@ -25,9 +21,6 @@ class User:
         self.ticket = Ticket(1, 1, 1, subject)
         self.ticket.addDescription(description)
         self.ticket.addTopic("technical support")
-        kakiDB.child("email").set({
-            "ticket": json.load(self.ticket.__str__())
-        })
 
     def update_ticket(self):
         pass
