@@ -11,7 +11,7 @@ class Indi_report:
         self.__FavouriteActivity__ = None
         self.__MostHelped__ = None
         self.__PointsFromHelped = None
-        self.__TotalPoints = None#
+        self.__TotalPoints = None
 
     def get_UserID(self):
         return self.__UserID__
