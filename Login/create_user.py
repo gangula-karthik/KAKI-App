@@ -6,7 +6,7 @@ cred = credentials.Certificate("Login\credentials.json")
 
 firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
-email = "mrngjunming.20@gmail.com"
+email = "gkarthiks.20@gmail.com"
 password = "nightsinker2010"
 
 
