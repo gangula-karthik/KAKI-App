@@ -12,13 +12,13 @@ class Ticket:
     def __init__(self, ticket_id, user_id, staff_id, subject):
         self.ticket_id = ticket_id
         self.user_id = user_id
-        self.staff_id = staff_id
+        self.staff_id = None
         self.subject = subject
         self.status = self.__class__.status[0]
         self.closed_at = None
         self.calculate_subject_sentiment(self.subject)
         self.topic = None
-        self.comments = []
+        self.descriptions = []
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
         self.addMLPriority(self.subject)
@@ -42,9 +42,17 @@ class Ticket:
             self.topic = new_topic
         else:
             raise ValueError("Invalid topic")
-    
-    def deleteTopic(self):
+        
+    def deleteTicket(self):
+        self.ticket_id = None
+        self.user_id = None
+        self.staff_id = None
+        self.subject = None
+        self.status = None
         self.topic = None
+        self.descriptions = None
+        self.opened_at = None
+        self.closed_at = None
 
     
     def updateStatus(self, status):
@@ -54,24 +62,24 @@ class Ticket:
             if self.status == "resolved": 
                 self.closed_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-    def addComment(self, comment): 
-        self.comments.append(comment)
+    def addDescription(self, description): 
+        self.descriptions.append(description)
     
-    def removeComment(self, commentIndex):
-        if commentIndex >= 0 and commentIndex < len(self.comments):
-            del self.comments[commentIndex]
+    def removeDescription(self, descriptionIndex):
+        if descriptionIndex >= 0 and descriptionIndex < len(self.descriptions):
+            del self.descriptions[descriptionIndex]
         else:
-            raise ValueError("Invalid comment index")
+            raise ValueError("Invalid description index")
 
-    def readComments(self):
-        if self.comments:
-            return self.comments
+    def readDescriptions(self):
+        if self.descriptions:
+            return self.descriptions
         else: 
-            return "No comments yet..."
+            return "No descriptions yet..."
 
-    def updateComments(self, commentIndex, newComment):
-        if commentIndex >= 0 and commentIndex < len(self.comments) and newComment and isinstance(newComment, str):
-            self.comments[commentIndex] = newComment
+    def updateDescriptions(self, descriptionIndex, newDescription):
+        if descriptionIndex >= 0 and descriptionIndex < len(self.descriptions) and newDescription and isinstance(newDescription, str):
+            self.descriptions[descriptionIndex] = newDescription
         else:
             raise ValueError("Invalid input")
         
@@ -88,6 +96,7 @@ class Ticket:
 
     def addReply(self, reply):
         self.replies.append(reply)
+
     
     def __str__(self):
         return json.dumps({
@@ -99,7 +108,7 @@ class Ticket:
             "Status": self.status,
             "Subject Sentiment": self.subject_sentiment,
             "ML Priority": self.ml_priority,
-            "Comments": self.comments,
+            "descriptions": self.descriptions,
             "Opened At": self.opened_at,
             "Closed At": self.closed_at
         }, indent=4)
@@ -108,15 +117,15 @@ class Ticket:
 
 if __name__ == "__main__":
     ticket = Ticket(1, 1, 1, "I can't find the 'Product_IP' of my phone.")
-    ticket.addComment("Hello")
-    ticket.addComment("World")
-    print(ticket.readComments())
+    ticket.addDescription("Hello")
+    ticket.addDescription("World")
+    print(ticket.readDescriptions())
 
-    ticket.updateComments(1, "World!")
-    print(ticket.readComments())
+    ticket.updateDescriptions(1, "World!")
+    print(ticket.readDescriptions())
 
-    ticket.removeComment(1)
-    print(ticket.readComments())
+    ticket.removeDescription(1)
+    print(ticket.readDescriptions())
 
     ticket.updateStatus("resolved")
     print(ticket.status)
