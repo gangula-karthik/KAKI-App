@@ -3,79 +3,30 @@
     
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../static/homepage.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>Welcome to KAKI 🍀</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            color: white;
-        }
-
-        #gradient {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(60deg, #00ff95 15%, #0000ff 85%);
-            background-size: 200% 200%;
-            z-index: -1;
-            animation: gradient 15s ease infinite;
-        }
-
-        @keyframes gradient {
-            0%, 100% {
-                background-position: 0 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .centered-text {
-            text-align: center;
-            z-index: 1;
-        }
-
-        .welcome-text {
-            font-size: 5em;
-            margin-bottom: 30px;
-        }
-
-        .signup-button {
-            display: inline-block;
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            width: 100px;
-            margin: 0 10px;
-        }
-
-        .slogan-text {
-            font-size: 1.5em;
-            margin-bottom: 30px;
-            font-weight: 100;
-        }
-    </style>
 </head>
 <body>
     <div id="gradient"></div>
     <div class="centered-text">
         <div class="welcome-text">Welcome to KAKI 🍀</div>
-        <div class="slogan-text">Using technology to bring back the Kampong spirit</div>
+        <div class="slogan-text">Let's use technology to bring back the Kampong spirit !</div>
         <br>
-        <a href="signup.html" class="signup-button">Sign Up 🎉</a>
-        <a href="login.html" class="signup-button">Login 🔐</a>
+        <a href="#" class="signup-button" id="signup-button">Sign Up 🎉</a>
+        <a href="#" class="login-button">Login 🔐</a>
     </div>
+
+    <script>
+        document.getElementById('signup-button').addEventListener('click', function() {
+            confetti({
+                particleCount: 500,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        });
+    </script>
 </body>
 </html>
