@@ -1,6 +1,7 @@
 
 class Indi_report:
     def __init__(self):
+        self.__UserID__ = None
         self.__Username__ = None
         self.__MonthlyPoints__ = None
         self.__MonthlyLineChart__ = None
@@ -10,7 +11,12 @@ class Indi_report:
         self.__FavouriteActivity__ = None
         self.__MostHelped__ = None
         self.__PointsFromHelped = None
-        self.__TotalPoints = None
+        self.__TotalPoints = None#
+
+    def get_UserID(self):
+        return self.__UserID__
+    def set_UserID(self, value):
+        self.__UserID__ = value
 
     def get_Username(self):
         return self.__Username__
@@ -65,6 +71,7 @@ class Indi_report:
 
 class Community_report:
     def __init__(self):
+        self.__UserID__ = None
         self.__Community__ = None
         self.__TotalPoint = None
         self.__LineChart__ = None
@@ -74,6 +81,11 @@ class Community_report:
         self.__ParticipationRate = None
         self.__NoOfActive__ = None
         self.__MostActive__ = None
+
+    def get_UserID(self):
+        return self.__UserID__
+    def set_UserID(self, value):
+        self.__UserID__ = value
 
     def get_Community(self):
         return self.__Community__
@@ -123,6 +135,7 @@ class Community_report:
 
 class Transaction_report:
     def __init__(self):
+        self.__UserID__ = None
         self.__Username__ = None
         self.__TotalSpent__ = None
         self.__LineChartSpent__ = None
@@ -130,6 +143,11 @@ class Transaction_report:
         self.__LineChartReceived__ = None
         self.__NoOfTransactions__ = None
         self.__LineChartCount__ = None
+
+    def get_UserID(self):
+        return self.__UserID__
+    def set_UserID(self, value):
+        self.__UserID__ = value
 
     def get_Username(self):
         return self.__Username__
