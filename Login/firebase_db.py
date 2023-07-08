@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 import json
 
-cred = credentials.Certificate("credentials.json")
+cred = credentials.Certificate("Login/credentials.json")
 
 firebase_admin.initialize_app(cred, {'databaseURL' : "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
@@ -23,15 +23,15 @@ firebase_admin.initialize_app(cred, {'databaseURL' : "https://kaki-db097-default
 #     "Email": "nightsinker.2005@gmail.com"
 # }
 
-data = {
-    "First Name": "Pihien",
-    "Last Name": "Seh", 
-    "Birthdate": "1/07/2005",
-    "Email": "seahpihien@gmail.com"
-}
+# data = {
+#     "First Name": "Pin Shien",
+#     "Last Name": "Seah", 
+#     "Birthdate": "14/07/2005",
+#     "Email": "seahpinshien@gmail.com"
+# }
 
-ref = db.reference("Users/customer/account_details")
-ref.push(data)
+# ref = db.reference("Users/customer/account_details")
+# ref.push(data)
 
 def get_data():
     ref = db.reference("Users/staff/account_details")

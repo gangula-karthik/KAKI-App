@@ -1,14 +1,13 @@
 from ticket import Ticket
-from db_setup import database_init
 import firebase_admin
-from firebase_admin import db
 from firebase_admin import credentials
-import json
+from firebase_admin import db
 
-cred = credentials.Certificate("customer_support/serviceAccountKey.json")
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/'})
-
-
+cred = credentials.Certificate("/Users/daaa/Downloads/KAKI-App/customer_support/serviceAccountKey.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/'
+})
+ref = db.reference('Users')
 
 
 class User: 
@@ -39,6 +38,8 @@ class Staff:
     pass
 
 if __name__ == "__main__":
-    user = User(1, "kars@gmail.com")
-    user.create_ticket("app is broken", "this app sux")
+    user = User(1, "karthik@gmail.com")
+    user.create_ticket("I am not able to login", "I am not able to login to my account, please help me")
+    print(user.view_ticket())
+    user.delete_ticket()
     print(user.view_ticket())

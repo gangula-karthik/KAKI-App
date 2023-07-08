@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
@@ -8,18 +8,15 @@ app = Flask(__name__)
 cred = credentials.Certificate("Login/credentials.json")
 firebase_admin.initialize_app(cred)
 
-@app.route('/', methods = ['POST', 'GET'])
+@app.route('/')
 def index():
-    return render_template('Signup.html')
-
-@app.route('/logout')
-def logout():
-    pass
+    return render_template('login.html')
 
 @app.route('/signup', methods=['POST'])
 def signup():
     email = request.form.get('email')
     password = request.form.get('password')
+
     try:
         user = auth.create_user(
             email=email,
@@ -30,4 +27,4 @@ def signup():
         return "Error creating user: " + str(e)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run()
