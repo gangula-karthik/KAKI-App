@@ -5,30 +5,28 @@
 {% endblock %}
 
 {% block content %}
-
-    <!-- more content -->
-<div class="Graphs">
-
-<h1 class = "title_report">{% block title %}{% endblock %}</h1>
-
-<div class = "Line_graph_report">
-{% block line_grapgh %}{% endblock %}
-</div>
-
-
-<div class = "pie_chart_report">
-{% block pie_chart %}{% endblock %}
-</div>
-
-<div class = "card_report">
-{% block card_report %}{% endblock %}
-</div>
-
-<h2 class = "title_leaderboard">LeaderBoard for {% block leaderboard_name %}{% endblock %}</h2>
-<div class = "leaderBoard_block">
-{% block leaderboard %}{% endblock %}
-</div>
-
-</div>
+<!--THis is the general structure of how the for loop will be to list out all the saved reports-->
+<!--     {% for user in users_list %}-->
+<!--         <tr>-->
+<!--             <td>{{ user.get_user_id() }}</td>-->
+<!--             <td>{{ user.get_first_name() }}</td>-->
+<!--             <td>{{ user.get_last_name() }}</td>-->
+<!--             <td>{{ user.get_gender() }}</td>-->
+<!--             {% if user.get_membership() == "F" %}-->
+<!--             <td>Fellow</td>-->
+<!--            {% elif user.get_membership() == "S" %}-->
+<!--             <td>Senior</td>-->
+<!--             {% elif user.get_membership() == "P" %}-->
+<!--             <td>Professional</td>-->
+<!--             {% endif %}-->
+<!--             <td>{{ user.get_remarks() }}</td>-->
+<!--             <td><a href="#" class="btn btn-warning">Update</a></td>-->
+<!--             <td>-->
+<!--                 <form action="" method="POST">-->
+<!--                 <input type="submit" value="Delete" class="btn btndanger">-->
+<!--                 </form>-->
+<!--             </td>-->
+<!--         </tr>-->
+<!--         {% endfor %}-->
 
 {% endblock %}

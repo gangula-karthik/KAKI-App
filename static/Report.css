@@ -54,3 +54,13 @@ border-radius:15px;
 float: right;
 margin-top:1%;
 }
+
+.Line_graph_transaction_report{
+background-color:#3F3F48;
+border:1px solid white;
+height: 28%;
+width:100%;
+border-radius:15px;
+float:left;
+margin-top:2%;
+}
