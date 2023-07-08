@@ -5,6 +5,11 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html', name="Sheldon")
+
+@app.route('/supportOverview', methods=['GET'])
+def customerOverview():
+    return render_template('support_overview.html', name="Sheldon")
+
 # Change the index.html to template.html to check your work as the index.html is not yet linked
 
 @app.route('/Report_generation/Individual_report')
