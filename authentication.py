@@ -10,7 +10,7 @@ firebase_admin.initialize_app(cred)
 
 @app.route('/')
 def index():
-    return render_template('Login/login.html')
+    return render_template('login.html')
 
 @app.route('/signup', methods=['POST'])
 def signup():
