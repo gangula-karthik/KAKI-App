@@ -6,6 +6,8 @@ app = Flask(__name__)
 def index():
     return render_template('template.html', name="Sheldon")
 # Change the index.html to template.html to check your work as the index.html is not yet linked
+
+# Customer support routes
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
     return render_template('customer_support/support_overview.html', name="Sheldon")
@@ -14,7 +16,7 @@ def customerOverview():
 def userTickets():
     return render_template('customer_support/ticket_discussion.html', name="Sheldon")
 
-
+# report generation routes
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
     return render_template('/Report_generation/Individual_report.html', name="Sheldon")
@@ -31,6 +33,7 @@ def Transactions_report():
 def Saved_report():
     return render_template('/Report_generation/Saved_report.html', name="Sheldon")
 
+#Transaction handling routes
 @app.route('/transaction_handling/marketplace')
 def marketplace():
     return render_template('/transaction_handling/marketplace.html', name="Sheldon")
