@@ -6,13 +6,14 @@ cred = credentials.Certificate("Account_management\credentials.json")
 
 firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
-email = "gkars.2@gmail.com"
-password = "nightsinker2010"
-
+email = input('Enter email: ')
+password = input('Enter password: ')
 
 user = auth.create_user(
     email=email,
-    password=password
+    password=password,
+    email_verified=False  # Set email verification status to False initially
 )
 
+verification_link = auth.generate_email_verification_link(email)
 print("User created successfully:", user.uid)
