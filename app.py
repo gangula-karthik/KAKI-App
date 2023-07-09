@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', name="Sheldon")
+    return render_template('template.html', name="Sheldon")
 
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
@@ -31,6 +31,10 @@ def Transactions_report():
 @app.route('/Report_generation/Saved_report')
 def Saved_report():
     return render_template('/Report_generation/Saved_report.html', name="Sheldon")
+
+@app.route('/transaction_handling/marketplace')
+def marketplace():
+    return render_template('/transaction_handling/marketplace.html', name="Sheldon")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
