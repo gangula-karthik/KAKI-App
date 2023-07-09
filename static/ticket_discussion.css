@@ -1,0 +1,10 @@
+.custom-form {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+
+.input-group .btn {
+    border-radius: 0px 15px 15px 0px !important;
+}
