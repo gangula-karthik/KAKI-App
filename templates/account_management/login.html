@@ -8,12 +8,17 @@
     <!-- font awesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- css stylesheet -->
-    <link rel="stylesheet" href="static\style.css">
+    <link rel="stylesheet" href="../../static/style.css">
 </head>
 <body>
     <div class="container" id="container">
         <div class="form-container sign-up-container">
-            <form action="#">
+            {% if exist_message %}
+            <div class="alert alert-danger"> 
+                <center>{{exist_message}}</center>
+            </div>
+
+            <form action="/create_account" method="POST">
                 <h1>Create Account</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -21,9 +26,10 @@
                     <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
                 </div>
                 <span>or use your email for registration</span>
-                <input type="text" placeholder="Name" />
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
+                <!-- <input type="text"  placeholder="Name" /> -->
+                <input type="email" name="user_email" placeholder="Email" />
+                <input type="password" name="user_pwd0" placeholder="Password" />
+                <input type="password" name="user_pwd1" placeholder="Confirm Password" />
                 <button>Sign Up</button>
             </form>
         </div>
@@ -56,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <script src="static\login.js"></script>
+        <script src="../../static/login.js"></script>
     </div>
 </body>
 </html>
