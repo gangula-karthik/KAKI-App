@@ -65,3 +65,33 @@ border-radius:15px;
 float:left;
 margin-top:2%;
 }
+
+.buttonLeft{
+background-color:#3A83F7;
+border-radius: 10px;
+font-size:20px;
+color:white;
+float:left;
+padding:0.5%;
+margin-top:3%;
+width: 10%;
+}
+
+.buttonRight{
+background-color:#3A83F7;
+border-radius: 10px;
+font-size:20px;
+color:white;
+float:right;
+padding:0.5%;
+margin-top:3%;
+width: 10%;
+}
+
+button.buttonRight:hover{
+background-color:#00008B
+}
+
+button.buttonLeft:hover{
+background-color:#00008B
+}
