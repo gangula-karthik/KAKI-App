@@ -1,5 +1,7 @@
 import firebase_admin
-from firebase_admin import credentials, db
+from firebase_admin import credentials, db, firestore
+from datetime import datetime, timedelta
+from calendar import month_abbr
 
 
 def initialize_firebase():
@@ -10,71 +12,123 @@ def initialize_firebase():
     })
 
 
-def extract_data_from_firebase(path, customer_key):
-    result_list = []
+def extract_record_by_value(key, value_field, target_value, details_fields):
+    # Initialize Firebase Admin SDK
+    cred = credentials.Certificate('path/to/serviceAccountKey.json')
+    firebase_admin.initialize_app(cred)
 
-    try:
-        ref = db.reference(path)
-        data = ref.get()
+    # Create a Firestore client
+    db = firestore.client()
 
-        if data:
-            customer_data = data.get(customer_key)
-            if customer_data:
-                result_list.append(customer_data)
-    except Exception as e:
-        print(f"Error occurred while fetching data from Firebase: {e}")
+    # Query Firestore for the specific record
+    records_ref = db.collection(key).where(value_field, '==', target_value).limit(1)
+    records = records_ref.get()
 
-    return result_list
+    for record in records:
+        record_data = record.to_dict()
+        return record_data
 
-
-def extract_data_from_firebase_attribute(path, attribute, value):
-    result_list = []
-
-    try:
-        ref = db.reference(path)
-        data = ref.get()
-
-        if data:
-            for key, value_dict in data.items():
-                if attribute in value_dict and value_dict[attribute] == value:
-                    result_list.append(value_dict)
-    except Exception as e:
-        print(f"Error occurred while fetching data from Firebase: {e}")
-
-    return result_list
+    return None
 
 
-def extract_individual_with_highest_quantity(path):
-    highest_quantity_individual = None
-    highest_quantity = float('-inf')  # Initialize with negative infinity
+def extract_last_12_months_values(collection_name, individual_id, value_field):
+    # Initialize Firebase Admin SDK
+    cred = credentials.Certificate('path/to/serviceAccountKey.json')
+    firebase_admin.initialize_app(cred)
 
-    try:
-        ref = db.reference(path)
-        data = ref.get()
+    # Create a Firestore client
+    db = firestore.client()
 
-        if data:
-            for key, value_dict in data.items():
-                quantity = value_dict.get("quantity")
-                if quantity is not None and quantity > highest_quantity:
-                    highest_quantity = quantity
-                    highest_quantity_individual = value_dict
-    except Exception as e:
-        print(f"Error occurred while fetching data from Firebase: {e}")
+    # Get the current date and time
+    current_date = datetime.now()
 
-    return highest_quantity_individual
+    # Create a dictionary to store the month-value mapping
+    month_values = {}
+
+    # Retrieve the values for the last 12 months
+    for i in range(12):
+        # Calculate the start and end dates for the month
+        start_date = current_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0) - timedelta(days=i*30)
+        end_date = current_date.replace(day=1, hour=23, minute=59, second=59, microsecond=999) - timedelta(days=i*30)
+        month_name = month_abbr[start_date.month]
+
+        # Query Firestore for the values within the month for the individual
+        records_ref = db.collection(collection_name).where('individual_id', '==', individual_id).where('timestamp', '>=', start_date).where('timestamp', '<=', end_date)
+        records = records_ref.get()
+
+        # Calculate the sum of the values for the month
+        month_value = sum(record.get(value_field) for record in records)
+
+        # Map the month to the value in the dictionary
+        month_values[month_name] = month_value
+
+    return month_values
 
 
-def extract_top_n_individuals_by_quantity(path, n):
-    individuals = []
+def extract_top_record_by_value(collection_name, value_field, name_field):
+    # Initialize Firebase Admin SDK
+    cred = credentials.Certificate('path/to/serviceAccountKey.json')
+    firebase_admin.initialize_app(cred)
 
-    try:
-        ref = db.reference(path)
-        data = ref.get()
+    # Create a Firestore client
+    db = firestore.client()
 
-        if data:
-            sorted_data = sorted(data.values(), key=lambda x: x.get("quantity", 0), reverse=True)
-            individuals = sorted_data[:n]
-    except Exception as e:
-        print(f"Error occurred while fetching data from Firebase: {e}")
+    # Retrieve the top record from Firestore
+    records_ref = db.collection(collection_name).order_by(value_field, direction='DESCENDING').limit(1)
+    records = records_ref.get()
 
-    return individuals
+    for record in records:
+        record_data = record.to_dict()
+        return record_data.get(name_field)
+
+    return None
+
+
+def extract_top_records(collection_name, value_field, details_fields, limit=5):
+    # Initialize Firebase Admin SDK
+    cred = credentials.Certificate('path/to/serviceAccountKey.json')
+    firebase_admin.initialize_app(cred)
+
+    # Create a Firestore client
+    db = firestore.client()
+
+    # Retrieve the top records from Firestore
+    records_ref = db.collection(collection_name).order_by(value_field, direction='DESCENDING').limit(limit)
+    records = records_ref.get()
+
+    top_records = []
+    for record in records:
+        record_data = {}
+        # Extract value field
+        record_data[value_field] = record.get(value_field)
+        # Extract details fields
+        for field in details_fields:
+            record_data[field] = record.get(field)
+
+        top_records.append(record_data)
+
+    return top_records
+
+def retrieve_participation_count(event_id):
+    # Initialize Firebase Admin SDK
+    cred = credentials.Certificate('path/to/serviceAccountKey.json')
+    firebase_admin.initialize_app(cred)
+
+    # Create a Firestore client
+    db = firestore.client()
+
+    # Retrieve the event document from Firestore
+    event_ref = db.collection('events').document(event_id)
+    event_doc = event_ref.get()
+
+    # Check if the event document exists
+    if event_doc.exists:
+        # Retrieve the 'participation_count' field value
+        participation_count = event_doc.get('participation_count')
+
+        if participation_count is not None:
+            return participation_count
+        else:
+            return 0  # Participation count not set for the event
+    else:
+        return 0  # Event document not found in Firestore
