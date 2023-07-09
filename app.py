@@ -12,7 +12,7 @@ def customerOverview():
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
-    return render_template('customer_support/tickets.html', name="Sheldon")
+    return render_template('customer_support/ticket_discussion.html', name="Sheldon")
 
 
 @app.route('/Report_generation/Individual_report')
