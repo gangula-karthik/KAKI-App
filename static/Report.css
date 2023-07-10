@@ -69,23 +69,23 @@ margin-top:2%;
 .buttonLeft{
 background-color:#3A83F7;
 border-radius: 10px;
-font-size:20px;
+font-size:100%;
 color:white;
 float:left;
 padding:0.5%;
 margin-top:3%;
-width: 10%;
+width: 150px;
 }
 
 .buttonRight{
 background-color:#3A83F7;
 border-radius: 10px;
-font-size:20px;
+font-size:100%;
 color:white;
 float:right;
 padding:0.5%;
 margin-top:3%;
-width: 10%;
+width: 150px;
 }
 
 button.buttonRight:hover{
