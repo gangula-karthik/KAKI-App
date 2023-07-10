@@ -1,29 +1,46 @@
 import matplotlib.pyplot as plt
 from io import BytesIO
-from io import BytesIO
-from PIL import Image
+import base64
+import io
 
-def create_pie_chart_with_legend():
+def create_line_graph():
     # Sample data
-    sizes = [30, 20, 15, 10, 25]
-    labels = ['A', 'B', 'C', 'D', 'E']
-    colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF']
+    x = range(12)
+    y = [5, 8, 3, 9, 1, 4, 7, 2, 6, 5, 3, 8]
 
-    # Create a figure and axis object
-    fig, ax = plt.subplots()
+    # Create a figure and axis object with black background
+    fig, ax = plt.subplots(facecolor='black')
 
-    # Plot the pie chart
-    wedges, _ = ax.pie(sizes, labels=labels, colors=colors)
+    # Plot the line graph with white line color
+    ax.plot(x, y, color='black')
 
-    # Equal aspect ratio ensures that pie is drawn as a circle
-    ax.axis('equal')
+    # Set the x-axis label
+    ax.set_xlabel('X-axis', color='white')
 
-    # Create a legend at the side
-    ax.legend(wedges, labels, loc='center left', bbox_to_anchor=(1, 0.5))
+    # Set the y-axis label
+    ax.set_ylabel('Y-axis', color='white')
+
+    # Set the title
+    ax.set_title('Line Graph Example', color='white')
+
+    # Set the color of the x-axis and y-axis lines
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
+
+    # Set the color of the x-axis and y-axis labels
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
+
+    # Set the color of the title
+    ax.title.set_color('white')
+
+    # Set the color of the ticks on the x-axis and y-axis
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
 
     # Save the plot to an in-memory buffer
     buffer = BytesIO()
-    plt.savefig(buffer, format='png', bbox_inches='tight')
+    plt.savefig(buffer, format='png', facecolor=fig.get_facecolor(), bbox_inches='tight')
     buffer.seek(0)
 
     # Close the plot to free memory
@@ -32,17 +49,11 @@ def create_pie_chart_with_legend():
     # Return the image buffer
     return buffer
 
-image_buffer = create_pie_chart_with_legend()
+# Call the line graph function and get the image buffer
+image_buffer = create_line_graph()
 
+# Show the image
+plt.imshow(plt.imread(image_buffer))
+plt.axis('off')
+plt.show()
 
-
-def show_image_from_buffer(buffer):
-    # Open the image from the buffer
-    image = Image.open(buffer)
-
-    # Display the image
-    plt.imshow(image)
-    plt.axis('off')
-    plt.show()
-
-show_image_from_buffer(image_buffer)

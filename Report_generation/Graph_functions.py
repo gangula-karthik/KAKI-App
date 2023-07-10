@@ -1,42 +1,53 @@
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
-
+import io
 
 def plot_line_graph(month, quantity,title):
+    # Sample data
+    x = month
+    y = quantity
 
+    # Create a figure and axis object with black background
+    fig, ax = plt.subplots(facecolor='black')
 
-    # Define the x and y values for the data points
-    months = month
-    quantities = quantity
+    # Plot the line graph with white line color
+    ax.plot(x, y, color='black')
 
-    fig, ax = plt.subplots()
+    # Set the x-axis label
+    ax.set_xlabel('X-axis', color='white')
 
-    # Create the line graph
-    plt.plot(months, quantities, marker='o', linestyle='-', color='white')
+    # Set the y-axis label
+    ax.set_ylabel('Y-axis', color='white')
 
+    # Set the title
+    ax.set_title(title, color='white')
 
-    ax.spines['bottom'].set_color('#17181C')  # Set color for the x-axis line
-    ax.spines['right'].set_color('#17181C')  # Make the y-axis line invisible
+    # Set the color of the x-axis and y-axis lines
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
 
+    # Set the color of the x-axis and y-axis labels
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
 
-    # Add labels and title
-    plt.xlabel('Months', color = 'white')
-    plt.ylabel('Quantity', color = 'white')
-    plt.title(title)
+    # Set the color of the title
+    ax.title.set_color('white')
 
-    # Convert the graph to a base64-encoded string
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
+    # Set the color of the ticks on the x-axis and y-axis
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+
+    # Save the plot to an in-memory buffer
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', facecolor=fig.get_facecolor(), bbox_inches='tight')
     buffer.seek(0)
-    image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    buffer.close()
 
-    # Generate the HTML code for embedding the graph in a website
-    html_code = f'<img src="data:image/png;base64,{image_base64}" alt="Line Graph">'
+    # Close the plot to free memory
+    plt.close()
 
-    # Return the HTML code
-    return html_code
+    # Return the image buffer
+    return buffer
 
 
 
