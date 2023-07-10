@@ -1,4 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory, send_file, make_response
+import pdfkit
+import datetime
+from io import BytesIO
+
 
 app = Flask(__name__)
 
@@ -23,11 +27,15 @@ def userTickets():
 # report generation routes
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
-    return render_template('/Report_generation/Individual_report.html', name="Sheldon")
+    now = datetime.datetime.now()
+    month = now.strftime("%B")
+    return render_template('/Report_generation/Individual_report.html', name="Sheldon", current_month = month)
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
-    return render_template('/Report_generation/Community_report.html', name="Sheldon")
+    now = datetime.datetime.now()
+    month = now.strftime("%B")
+    return render_template('/Report_generation/Community_report.html', name="Sheldon", current_month = month)
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():

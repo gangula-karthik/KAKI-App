@@ -4,10 +4,15 @@
 <link rel="stylesheet" href="/static/Report.css">
 {% endblock %}
 
+{% block javascript %}
+<script src ="user_report.js"></script>
+<script src = "https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+{% endblock %}
+
 {% block content %}
 
     <!-- more content -->
-<div class="Graphs">
+<div class="Graphs" id ="Content">
 
 <h1 class = "title_report">{% block title %}{% endblock %}</h1>
 
@@ -31,10 +36,11 @@
 
 <div>
     <button class = "buttonLeft">Save</button>
-    <button class = "buttonRight">Download</button>
+    <button class = "buttonRight" onclick="generatePDF()">Download</button>
 </div>
 
 </div>
+
 
 
 
