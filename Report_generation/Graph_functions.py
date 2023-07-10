@@ -51,7 +51,7 @@ def create_pie_chart_with_legend():
     fig, ax = plt.subplots()
 
     # Plot the pie chart
-    wedges, _ = ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%')
+    wedges, _ = ax.pie(sizes, labels=labels, colors=colors)
 
     # Equal aspect ratio ensures that pie is drawn as a circle
     ax.axis('equal')
