@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 from io import BytesIO
-import base64
-import io
 
-def create_line_graph():
+
+def plot_line_graph():
     # Sample data
     x = range(12)
     y = [5, 8, 3, 9, 1, 4, 7, 2, 6, 5, 3, 8]
@@ -14,6 +13,9 @@ def create_line_graph():
     # Plot the line graph with white line color
     ax.plot(x, y, color='black')
 
+    # Set the facecolor of the axes to grey
+    ax.set_facecolor('lightgrey')
+
     # Set the x-axis label
     ax.set_xlabel('X-axis', color='white')
 
@@ -21,7 +23,7 @@ def create_line_graph():
     ax.set_ylabel('Y-axis', color='white')
 
     # Set the title
-    ax.set_title('Line Graph Example', color='white')
+    ax.set_title('title', color='white')
 
     # Set the color of the x-axis and y-axis lines
     ax.spines['bottom'].set_color('white')
@@ -50,10 +52,9 @@ def create_line_graph():
     return buffer
 
 # Call the line graph function and get the image buffer
-image_buffer = create_line_graph()
+image_buffer = plot_line_graph()
 
 # Show the image
 plt.imshow(plt.imread(image_buffer))
 plt.axis('off')
 plt.show()
-

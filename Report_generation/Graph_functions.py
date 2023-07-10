@@ -14,6 +14,9 @@ def plot_line_graph(month, quantity,title):
     # Plot the line graph with white line color
     ax.plot(x, y, color='black')
 
+    # Set the facecolor of the axes to grey
+    ax.set_facecolor('lightgrey')
+
     # Set the x-axis label
     ax.set_xlabel('X-axis', color='white')
 
