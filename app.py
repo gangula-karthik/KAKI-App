@@ -12,6 +12,10 @@ def index():
 def customerOverview():
     return render_template('customer_support/support_overview.html', name="Sheldon")
 
+@app.route('/my_tickets', methods=['GET'])
+def myTickets():
+    return render_template('customer_support/my_tickets.html', name="Sheldon")
+
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
     return render_template('customer_support/ticket_discussion.html', name="Sheldon")
