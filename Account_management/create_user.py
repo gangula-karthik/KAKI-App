@@ -17,3 +17,4 @@ user = auth.create_user(
 
 verification_link = auth.generate_email_verification_link(email)
 print("User created successfully:", user.uid)
+print('email veriifcation:', verification_link)
