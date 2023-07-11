@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
+import pyrebase
 
 app = Flask(__name__)
 
