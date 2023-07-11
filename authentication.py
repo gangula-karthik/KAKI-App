@@ -26,7 +26,7 @@ def create_account():
                     password=pwd0
                 )
                 # auth.generate_email_verification_link(user['idToken'])
-                return render_template('account_management/verify_email.html')
+                return render_template('account_management/veryify_email.html')
             except auth.EmailAlreadyExistsError:
                 existing_account = "An account with this email already exists."
                 return render_template('account_management/login.html', exist_message=existing_account)
