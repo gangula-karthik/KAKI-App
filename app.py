@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory, send_file, make_response
-import pdfkit
+# import pdfkit
 import datetime
 from io import BytesIO
 
@@ -23,6 +23,10 @@ def myTickets():
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
     return render_template('customer_support/ticket_discussion.html', name="Sheldon")
+
+@app.route('/user_tickets/comments', methods=['GET'])
+def ticketComments():
+    return render_template('customer_support/ticket_comments.html', name="Sheldon")
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
