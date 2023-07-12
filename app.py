@@ -24,9 +24,9 @@ def myTickets():
 def userTickets():
     return render_template('customer_support/ticket_discussion.html', name="Sheldon")
 
-@app.route('/user_tickets/comments', methods=['GET'])
-def ticketComments():
-    return render_template('customer_support/ticket_comments.html', name="Sheldon")
+@app.route('/user_tickets/comments/<int:ticket_ID>', methods=['GET'])
+def ticketComments(ticket_ID):
+    return render_template('customer_support/ticket_comments.html', name="Sheldon", ticket_ID=ticket_ID)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
