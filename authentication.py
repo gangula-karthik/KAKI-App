@@ -9,6 +9,22 @@ app = Flask(__name__)
 cred = credentials.Certificate("Account_management/credentials.json")
 firebase_admin.initialize_app(cred)
 
+config = {
+    "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
+    "authDomain": "kaki-db097.firebaseapp.com",
+    "projectId": "kaki-db097",
+    "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    "storageBucket": "kaki-db097.appspot.com",
+    "messagingSenderId": "521940680838",
+    "appId": "1:521940680838:web:96e15f16f11bb306c91107",
+    "measurementId": "G-QMBGXFXJET"
+}
+
+firebase = pyrebase.initialize_app(config)
+
+pyredb = firebase.database()
+pyreauth = firebase.auth()
+pyrestorage = firebase.storage()
 
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
@@ -16,21 +32,17 @@ def index():
     if request.method == 'POST':
         email = request.form['user_email']
         password = request.form['user_pwd']
-
         try:
-            user = auth.get_user_by_email(email)
-
-            if user and user.email_verified:
-                auth_user = auth.sign_in_with_email_and_password(email, password)
+            user = pyreauth.sign_in_with_email_and_password(email, password)
+            user_info = pyreauth.get_account_info(user['idToken'])
+            if user_info and user_info['users'][0]['emailVerified']:
                 return render_template('template.html')
             else:
                 verify_message = 'Please verify your account'
                 return render_template('account_management/login.html', umessage=verify_message)
-
-        except auth.AuthError as e:
+        except:
             unsuccessful = 'Please check credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
-
     return render_template('account_management/login.html')
 
 
