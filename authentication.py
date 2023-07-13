@@ -21,7 +21,6 @@ config = {
 }
 
 firebase = pyrebase.initialize_app(config)
-
 pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
@@ -39,8 +38,6 @@ def index():
              unsuccessful = 'Please check your credentials'
              return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
-
-
 
 @app.route('/reset_password', methods=['GET', 'POST'])
 def forget_password():
@@ -70,21 +67,6 @@ def create_account():
                 return render_template('account_management/login.html', exist_message=existing_account)
     return render_template('account_management/login.html')
 
-
-# @app.route('/login', methods=['POST'])
-# def login():
-#     email = request.form['user_email']
-#     password = request.form['user_pwd']
-#     try:
-#         user = auth.get_user_by_email(email)
-#         auth.verify_password(email, password)  # Verify the password entered
-#         return render_template('template.html')
-#     except auth.UserNotFoundError:
-#         error_message = "Invalid email or password."
-#         return render_template('account_management/login.html', error_message=error_message)
-#     except ValueError:
-#         error_message = "Invalid email or password."
-#         return render_template('account_management/login.html', error_message=error_message)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
