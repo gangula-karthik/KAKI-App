@@ -33,16 +33,11 @@ def index():
         email = request.form['user_email']
         password = request.form['user_pwd']
         try:
-            user = pyreauth.sign_in_with_email_and_password(email, password)
-            user_info = pyreauth.get_account_info(user['idToken'])
-            if user_info and user_info['users'][0]['emailVerified']:
-                return render_template('template.html')
-            else:
-                verify_message = 'Please verify your account'
-                return render_template('account_management/login.html', umessage=verify_message)
+            user = pyreauth.sign_in_with_email_and_password(email,password)
+            return render_template('template.html')
         except:
-            unsuccessful = 'Please check credentials'
-            return render_template('account_management/login.html', umessage=unsuccessful)
+             unsuccessful = 'Please check your credentials'
+             return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
 
 
