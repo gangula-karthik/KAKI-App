@@ -1,12 +1,15 @@
 {% extends "/Report_generation/Report_template.html" %}
 
+{% block title %}My {{ current_month }} Community's report{% endblock %}
+
+{% block line_grapgh %}
+
+{% endblock %}
 
 
 
 
-{% block title %}My {{ current_month }} Contributions report{% endblock %}
 
-{% block line_grapgh %}{% endblock %}
 {% block pie_chart %}{% endblock %}
 {% block card_report %}{% endblock %}
 
@@ -26,4 +29,30 @@
 <!--    {% endfor %}-->
 
 
+{% endblock %}
+
+
+{% block js_chart %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
+<script>
+      var chrt = document.getElementById("Line").getContext("2d");
+      var chartId = new Chart(chrt, {
+         type: 'line',
+         data: {
+            labels: ["HTML", "CSS", "JAVASCRIPT", "CHART.JS", "JQUERY", "BOOTSTRP"],
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ data }},
+               backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen', 'lightblue', 'gold'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+         },
+      });
+   </script>
 {% endblock %}

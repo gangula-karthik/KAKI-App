@@ -27,6 +27,11 @@ border-radius:15px;
 float:left
 }
 
+#Line{
+width: 90%;
+height:100px;
+}
+
 .pie_chart_report{
 background-color:#3F3F48;
 border:1px solid white;

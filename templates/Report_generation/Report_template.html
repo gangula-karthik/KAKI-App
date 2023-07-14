@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block javascript %}
-<script src ="user_report.js"></script>
-
+<script src ="line.js"></script>
+<script src ="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -17,12 +17,12 @@
 <h1 class = "title_report">{% block title %}{% endblock %}</h1>
 
 <div class = "Line_graph_report">
-{% block line_grapgh %}{% endblock %}
+    <canvas id = "Line"></canvas>
 </div>
 
 
 <div class = "pie_chart_report">
-{% block pie_chart %}{% endblock %}
+    <canvas id = "Pie"></canvas>
 </div>
 
 <div class = "card_report">
@@ -53,6 +53,8 @@
 
 </script>
 {% endblock %}
+
+{% block js_chart %}{% endblock %}
 
 
 {% endblock %}

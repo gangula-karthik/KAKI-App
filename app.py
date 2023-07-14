@@ -1,7 +1,6 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory, send_file, make_response
-# import pdfkit
+from flask import Flask,  render_template
 import datetime
-from io import BytesIO
+
 
 
 app = Flask(__name__)
@@ -33,13 +32,13 @@ def ticketComments(ticket_ID):
 def Individual_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
-    return render_template('/Report_generation/Individual_report.html', name="Sheldon", current_month = month)
+    return render_template('/Report_generation/Individual_report.html', name="Sheldon", current_month = month, data = [5,6,7,8,9,10])
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
-    return render_template('/Report_generation/Community_report.html', name="Sheldon", current_month = month)
+    return render_template('/Report_generation/Community_report.html', name="Sheldon", current_month = month, data = [5,6,7,8,9,10])
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
