@@ -4,9 +4,9 @@
     <title>Messaging App</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .sidebar {
+        .sidebar-chat {
             height: 100vh;
-            background-color: #343a40; /* dark mode */
+
             color: white;
             padding: 20px;
         }
@@ -28,17 +28,28 @@
             background-color: #007bff; /* blue background */
             color: white;
         }
+        .chat {
+            height: 80vh;
+            border: 1px solid #ccc;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .message-input {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 	{% extends "template.html" %}
 
 
-	{% block content %}
-    <div class="container-fluid">
+{% block content %}
+
+    <div class="container-fluid overflow-hidden">
         <div class="row">
-            <div class="col-4 sidebar">
-                <h2>Friends</h2>
+            <div class="col-4 sidebar-chat overflow-auto">
+                <h2>Support Chat</h2>
                 <div class="mb-3">
                     <input type="text" class="form-control" id="searchBar" placeholder="Search friends">
                 </div>
@@ -47,15 +58,37 @@
                     <li><a href="#">Friend 1</a></li>
                     <li><a href="#">Friend 2</a></li>
                     <li><a href="#" class="selected">Friend 3</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					<li><a href="#">Friend 2</a></li>
+					
+
                     <!-- Add more as needed -->
                 </ul>
             </div>
             <div class="col-8">
-                <!-- Main content goes here -->
+                <!-- Chat interface -->
+                <div class="chat" id="chat">
+                    <!-- Chat messages will go here -->
+                </div>
+                <input type="text" class="form-control message-input" id="messageInput" placeholder="Type a message">
             </div>
         </div>
     </div>
-
 
 {% endblock %}
     <script>
@@ -75,7 +108,32 @@
 
                 // Add selected class to clicked friend
                 this.classList.add('selected');
+
+                // Clear chat
+                document.getElementById('chat').innerHTML = '';
+
+                // Add a message to the chat
+                var message = document.createElement('p');
+                message.textContent = 'Now chatting with ' + this.textContent;
+                document.getElementById('chat').appendChild(message);
             });
+        });
+
+        // Add event listener to message input
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            // Check if enter key was pressed
+            if (event.key === 'Enter') {
+                // Prevent form submission
+                event.preventDefault();
+
+                // Add a message to the chat
+                var message = document.createElement('p');
+                message.textContent = this.value;
+                document.getElementById('chat').appendChild(message);
+
+                // Clear the input
+                this.value = '';
+            }
         });
     </script>
 </body>
