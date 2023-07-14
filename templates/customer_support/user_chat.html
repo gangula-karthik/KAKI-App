@@ -3,42 +3,7 @@
 <head>
     <title>Messaging App</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .sidebar-chat {
-            height: 100vh;
-
-            color: white;
-            padding: 20px;
-        }
-        .friend-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .friend-list li {
-            padding: 10px 0;
-        }
-        .friend-list a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .friend-list a:hover, .friend-list a.selected {
-            background-color: #007bff; /* blue background */
-            color: white;
-        }
-        .chat {
-            height: 80vh;
-            border: 1px solid #ccc;
-            padding: 20px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-        }
-        .message-input {
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="../../static/user_chat.css">
 </head>
 <body>
 	{% extends "template.html" %}
@@ -46,7 +11,7 @@
 
 {% block content %}
 
-    <div class="container-fluid overflow-hidden">
+    <div class="container-fluid main-screen">
         <div class="row">
             <div class="col-4 sidebar-chat overflow-auto">
                 <h2>Support Chat</h2>
@@ -81,11 +46,41 @@
                 </ul>
             </div>
             <div class="col-8">
-                <!-- Chat interface -->
-                <div class="chat" id="chat">
-                    <!-- Chat messages will go here -->
+                <div class="chat-header">
+                    Chat with Friend 1
                 </div>
-                <input type="text" class="form-control message-input" id="messageInput" placeholder="Type a message">
+                <div class="chat-messages d-flex flex-column" id="chatMessages">
+                    <!-- Chat messages will go here -->
+                    <div class="chat-message receiver">
+                        Hello, how can I help you?
+                        <div class="timestamp">10:15 AM</div>
+                    </div>
+                    <div class="chat-message sender">
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        <div class="timestamp">10:16 AM</div>
+                    </div>
+                    <div class="chat-message sender">
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        I need help with my account.
+                        <div class="timestamp">10:16 AM</div>
+                    </div>
+                    
+                </div>
+                <div class="chat-input">
+                    <input type="text" class="form-control" id="chatInput" placeholder="Type a message">
+                    <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+                </div>
             </div>
         </div>
     </div>
