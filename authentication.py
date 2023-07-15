@@ -25,6 +25,7 @@ pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
 
+
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
