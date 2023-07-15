@@ -1,0 +1,94 @@
+<style>
+    body {
+        background-color: #15202b;
+    }
+
+    .card {
+        background-color: #192734;
+        color: #fff;
+    }
+
+    .card-link {
+        color: #1da1f2;
+    }
+
+    .btn {
+        color: #fff;
+        background-color: #1da1f2;
+    }
+
+    .btn:hover {
+        background-color: #0c84d2;
+    }
+
+    .options-dropdown {
+        color: #fff;
+    }
+
+    .carousel-inner > .item > img {
+  margin: 0 auto;
+}
+</style>
+
+<div class="container">
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1">
+                    <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                        alt="Profile Pic" class="rounded-circle" width="50" height="50">
+                </div>
+                <div class="col-10">
+                    <h5 class="card-title">username</h5>
+                    <p class="card-text">content</p>
+                    <div id="carouselExample" class="carousel slide">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active ">
+                                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-50" style="max-width: 900px; margin: 0 auto" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-50" style="max-width: 900px; margin: 0 auto" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-50" style="max-width: 900px; margin: 0 auto" alt="...">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary"><i class="fa-solid fa-caret-up"></i></button>
+                        <button type="button" class="btn btn-primary"><i class="fa-solid fa-caret-down"></i></button>
+                    </div>
+                    <button type="button" class="btn btn-primary">
+                        Comments <span class="badge text-bg-secondary">num</span>
+                    </button>
+
+
+                    <div class="col-1">
+                        <div class="dropdown">
+                            <a class="options-dropdown" class="dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right text-bg-dark"
+                                aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item text-bg-dark" href="#"><i class="fa-solid fa-bookmark"></i>
+                                    Bookmark</a>
+                                <a class="dropdown-item text-bg-dark" href="#"><i class="fa-solid fa-flag"></i> Flag</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
