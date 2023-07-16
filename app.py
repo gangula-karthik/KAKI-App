@@ -48,7 +48,7 @@ def Individual_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan","Feb","March","April","May","June"]
-    return render_template('/Report_generation/Individual_report.html', name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], neighbours_helped = '69')
+    return render_template('/Report_generation/Individual_report.html', name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], neighbours_helped = '69', number_of_activities = '69')
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
@@ -56,7 +56,7 @@ def Community_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan","Feb","March","April","May","June"]
-    return render_template('/Report_generation/Community_report.html', name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], most_contribute = 'Nameless')
+    return render_template('/Report_generation/Community_report.html', name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], most_contribute = 'Nameless', number_of_activities = '69')
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():

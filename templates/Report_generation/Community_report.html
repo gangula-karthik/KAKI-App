@@ -71,6 +71,7 @@
    </script>
 
 <script>
+   const title = 'Activities participated:' + ' ' + {{number_of_activities}}
    var chrt = document.getElementById("Pie").getContext("2d");
       var chartId = new Chart(chrt, {
          type: 'pie',
@@ -91,7 +92,7 @@
             plugins:{
                title:{
                   display: true,
-                  text: "My Community's points over the months",
+                  text: title,
                   color: '#FFFFFF',
                   font:{
                   size:20,},
