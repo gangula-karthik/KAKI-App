@@ -15,6 +15,10 @@ def index():
 def home():
     return render_template('homefeed.html', name="Sheldon")
 
+@app.route('/friend_request', methods=['GET'])
+def friendRequest():
+    return render_template('friend_request.html', name="Sheldon")
+
 # Customer support routes
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
