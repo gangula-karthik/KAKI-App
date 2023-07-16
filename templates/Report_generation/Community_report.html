@@ -1,6 +1,6 @@
 {% extends "/Report_generation/Report_template.html" %}
 
-{% block title %}My {{ current_month }} Community's report{% endblock %}
+{% block title %}My {{current_year}} {{ current_month }} Community's report{% endblock %}
 
 {% block line_grapgh %}
 
@@ -11,11 +11,14 @@
 
 
 {% block pie_chart %}{% endblock %}
-{% block card_report %}{% endblock %}
+{% block card_report %}
+ <h6 style="text-align: center;">Most contribution made in the community by:</h6>
+    <h3 style="text-align: center;"> {{ most_contribute }}</h3>
+{% endblock %}
 
 
 
-{% block leaderboard_name %}Individual points{% endblock %}
+{% block leaderboard_name %}Community's points{% endblock %}
 {% block leaderboard %}
 <!--Leaderboard-->
 <!-- A for loop that loops through all the instances to return a leaderboard in the form of a table-->
@@ -39,7 +42,9 @@
       var chartId = new Chart(chrt, {
          type: 'line',
          data: {
-            labels: ["HTML", "CSS", "JAVASCRIPT", "CHART.JS", "JQUERY", "BOOTSTRP"],
+
+            labels: {{ listMonths | tojson }},
+
             datasets: [{
                label: "online tutorial subjects",
                data: {{ data }},
@@ -52,7 +57,61 @@
          options: {
             maintainAspectRatio: false,
             responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "My Community's points over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
          },
       });
    </script>
+
+<script>
+   var chrt = document.getElementById("Pie").getContext("2d");
+      var chartId = new Chart(chrt, {
+         type: 'pie',
+         data: {
+
+            labels: ['Community service','Service','Community event','Others'],
+
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ pie_data }},
+               backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen'],
+               borderColor: ['black'],
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "My Community's points over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  },
+                legend:{
+                display: true,
+                color: '#FFFFFF',
+                position:'right',
+                labels:{
+                  boxWidth: 30,
+                  boxHeight: 10,
+
+                }
+
+                },
+            }
+         },
+      });
+
+
+   
+</script>
 {% endblock %}
