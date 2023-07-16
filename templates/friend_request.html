@@ -2,6 +2,9 @@
 
 
 {% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+
 <style>
 
 .grid-container {
@@ -79,5 +82,18 @@
         </div>
     </div>
 </div>
+
+<script>
+window.onload = function() {
+    anime({
+        targets: '.card',
+        scale: [0.1, 1],
+        opacity: [0, 1],
+        delay: anime.stagger(200),
+        easing: 'easeOutElastic(1, .5)'
+    });
+};
+</script>
+
 
 {% endblock %}
