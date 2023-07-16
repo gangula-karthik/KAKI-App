@@ -1,140 +1,152 @@
 <!DOCTYPE html>
 <!-- Coding By CodingNepal - codingnepalweb.com -->
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KAKI - Welcome to your neighbourhood</title>
-    <link rel="stylesheet" href="../static/navbar.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/86b959e400.js" crossorigin="anonymous"></script>
-    <!-- Fontawesome CDN Link -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
-  </head>
-  <body>
-    <nav class="sidebar">
-      <a href="#" class="logo">
-        <div class="welcome-text">Welcome 👋</div>
-        <div class="name-text">{{ name }}</div>
-      </a>
-      
-  
-      <div class="menu-content">
-        <ul class="menu-items">
-          <li class="item">
-            <a href="/home">Home</a>
-            <ul class="menu-items submenu">
-              <div class="menu-title">
-                <i class="fa-solid fa-chevron-left"></i>
-                Back
-              </div>
-              <li class="item">
-                <a href="#"></a>
-              </li>
-              <li class="item">
-                <a href="#">MyProducts</a>
-              </li>
-              <li class="item">
-                <a href="#">Services</a>
-                <li class="item">
-                  <a href="#">MyServices</a>
-                  <li class="item">
-                    <a href="#">Transaction History</a>
-              </li>
-            </ul>
-          </li>
 
-          <li class="item">
-            <div class="submenu-item">
-              <span>Marketplace</span>
-              <i class="fa-solid fa-chevron-right"></i>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAKI - Welcome to your neighbourhood</title>
+  <link rel="stylesheet" href="../static/navbar.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <script src="https://kit.fontawesome.com/86b959e400.js" crossorigin="anonymous"></script>
+  <!-- Fontawesome CDN Link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+</head>
+
+<body>
+  <nav class="sidebar">
+    <a href="#" class="logo">
+      <div class="welcome-text">Welcome 👋</div>
+      <div class="name-text">{{ name }}</div>
+    </a>
+
+
+    <div class="menu-content">
+      <ul class="menu-items">
+        <li class="item">
+          <div class="submenu-item">
+            <span>Home</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+
+          <ul class="menu-items submenu">
+            <div class="menu-title">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
             </div>
+            <li class="item">
+              <a href="#">Home Feed</a>
+            </li>
+            <li class="item">
+              <a href="#">My Posts</a>
+            <li class="item">
+              <a href="#">Bookmarks</a>
+            <li class="item">
+              <a href="#">Friend Request</a>
+            </li>
+            <li class="item">
+              <a href="#">Messages</a>
+            </li>
+            <li class="item">
+              <a href="#">Notice Board</a>
+            </li>
+          </ul>
+        </li>
 
-            <ul class="menu-items submenu">
-              <div class="menu-title">
-                <i class="fa-solid fa-chevron-left"></i>
-                Back
-              </div>
-              <li class="item">
-                <a href="/transaction_handling/marketplace">Marketplace</a>
-              </li>
-              <li class="item">
-                <a href="#">MyProducts</a>
-              </li>
-              <li class="item">
-                <a href="#">Services</a>
-                <li class="item">
-                  <a href="#">MyServices</a>
-                  <li class="item">
-                    <a href="#">Transaction History</a>
-              </li>
-            </ul>
-          </li>
-          <li class="item">
-            <div class="submenu-item">
-              <span>Customer Support</span>
-              <i class="fa-solid fa-chevron-right"></i>
+        <li class="item">
+          <div class="submenu-item">
+            <span>Marketplace</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+
+          <ul class="menu-items submenu">
+            <div class="menu-title">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
             </div>
+            <li class="item">
+              <a href="/transaction_handling/marketplace">Marketplace</a>
+            </li>
+            <li class="item">
+              <a href="#">MyProducts</a>
+            </li>
+            <li class="item">
+              <a href="#">Services</a>
+            <li class="item">
+              <a href="#">MyServices</a>
+            <li class="item">
+              <a href="#">Transaction History</a>
+            </li>
+          </ul>
+        </li>
+        <li class="item">
+          <div class="submenu-item">
+            <span>Customer Support</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
 
-            <ul class="menu-items submenu">
-              <div class="menu-title">
-                <i class="fa-solid fa-chevron-left"></i>
-                Back
-              </div>
-              <li class="item">
-                <a href="/support_overview">Overview</a>
-              </li>
-              <li class="item">
-                <a href="/user_tickets">All Tickets</a>
-              </li>
-              <li class="item">
-                <a href="/my_tickets">My Tickets</a>
-              </li>
-              <li class="item">
-                <a href="/user_chat">Chat</a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="item">
-            <div class="submenu-item">
-              <span>Report</span>
-              <i class="fa-solid fa-chevron-right"></i>
+          <ul class="menu-items submenu">
+            <div class="menu-title">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
             </div>
+            <li class="item">
+              <a href="/support_overview">Overview</a>
+            </li>
+            <li class="item">
+              <a href="/user_tickets">All Tickets</a>
+            </li>
+            <li class="item">
+              <a href="/my_tickets">My Tickets</a>
+            </li>
+            <li class="item">
+              <a href="/user_chat">Chat</a>
+            </li>
+          </ul>
+        </li>
 
-            <ul class="menu-items submenu">
-              <div class="menu-title">
-                <i class="fa-solid fa-chevron-left"></i>
-                Back
-              </div>
-              <li class="item">
-                <a href="/Report_generation/Individual_report">Individual Report</a>
-              </li>
-              <li class="item">
-                <a href="/Report_generation//Community_report">Community Report</a>
-              </li>
-              <li class="item">
-                <a href="/Report_generation//Transactions_report">Transactions Report</a>
-              </li>
-              <li class="item">
-                <a href="/Report_generation//Saved_report">Saved Report</a>
-              </li>
-            </ul>
-          </li>
+        <li class="item">
+          <div class="submenu-item">
+            <span>Report</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+
+          <ul class="menu-items submenu">
+            <div class="menu-title">
+              <i class="fa-solid fa-chevron-left"></i>
+              Back
+            </div>
+            <li class="item">
+              <a href="/Report_generation/Individual_report">Individual Report</a>
+            </li>
+            <li class="item">
+              <a href="/Report_generation//Community_report">Community Report</a>
+            </li>
+            <li class="item">
+              <a href="/Report_generation//Transactions_report">Transactions Report</a>
+            </li>
+            <li class="item">
+              <a href="/Report_generation//Saved_report">Saved Report</a>
+            </li>
+          </ul>
+        </li>
 
 
 
-          <li class="item">
-            <a href="#">Settings</a>
-          </li>
-        </ul>
-      </div>
-      <div class="logo-bottom">
+        <li class="item">
+          <a href="#">Settings</a>
+        </li>
+      </ul>
+    </div>
+    <div class="logo-bottom">
       <i class="fa-sharp fa-solid fa-seedling"></i>
       KAKI
-      </div>
-    </nav>
-    <script src="../static/navbar.js"></script>
-  </body>
+    </div>
+  </nav>
+  <script src="../static/navbar.js"></script>
+</body>
+
 </html>
