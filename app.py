@@ -1,10 +1,39 @@
 from flask import Flask, render_template
 import datetime
-
+import logging
+import colorlog
+from colorama import Fore
 
 
 app = Flask(__name__)
 
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+    '%(log_color)s%(levelname)-8s%(reset)s %(message)s',
+    log_colors={
+        'DEBUG':    'cyan',
+        'INFO':     'green',
+        'WARNING':  'yellow',
+        'ERROR':    'red',
+        'CRITICAL': 'red',
+    }
+))
+
+logger = colorlog.getLogger()
+logger.addHandler(handler)
+
+@app.before_first_request
+def init_app():
+    app.logger.info("Starting app...")
+    app.logger.info(Fore.GREEN + """
+                    | | / / / _ \ | | / /_   _|
+                    | |/ / / /_\ \| |/ /  | |  
+                    |    \ |  _  ||    \  | |  
+                    | |\  \| | | || |\  \_| |_ 
+                    \_| \_/\_| |_/\_| \_/\___/ ver 1.1.0
+                    
+                    A product by Team Rocket 🚀
+                """)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -72,4 +101,5 @@ def marketplace():
     return render_template('/transaction_handling/marketplace.html', name="Sheldon")
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     app.run(debug=True, port=5000)
