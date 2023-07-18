@@ -2,15 +2,7 @@
 
 {% block title %}My {{ current_month }} Community's report{% endblock %}
 
-{% block line_grapgh %}
 
-{% endblock %}
-
-
-
-
-
-{% block pie_chart %}{% endblock %}
 {% block card_report %}
  <h6 style="text-align: center;">Number of Neighbours helped:</h6>
     <h3 style="text-align: center;"> {{ neighbours_helped }}</h3>
@@ -48,7 +40,7 @@
             datasets: [{
                label: "online tutorial subjects",
                data: {{ data }},
-               backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen', 'lightblue', 'gold'],
+               backgroundColor: ['Green'],
                borderColor: ['black'],
                borderWidth: 2,
                pointRadius: 5,

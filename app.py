@@ -90,7 +90,11 @@ def Community_report():
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
-    return render_template('/Report_generation/Transactions_report.html', name="Sheldon")
+    now = datetime.datetime.now()
+    month = now.strftime("%B")
+    current_year = now.year
+    ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
+    return render_template('/Report_generation/Transactions_report.html', name="Sheldon",current_month = month, data1 = [5,6,7,8,9,10], data2 = [5,6,7,8,9,10], data3 = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
 
 @app.route('/Report_generation/Saved_report')
 def Saved_report():

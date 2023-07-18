@@ -5,25 +5,151 @@
 <link rel="stylesheet" href="/static/Report.css">
 {% endblock %}
 
+{% block javascript %}
+
+<script src ="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
 {% block content %}
-<div class="Graphs">
+<div class="Graphs" id ="Content">
 
-<h1 class = "title_report">My Transactions</h1>
-
-<div class = "Line_graph_transaction_report">
-
-</div>
-
+<h1 class = "title_report">My {{ current_year}} {{ current_month }} Transactions</h1>
 
 <div class = "Line_graph_transaction_report">
+    <canvas id = "Line1"></canvas>
+
+</div>
+
+
+<div class = "Line_graph_transaction_report">
+    <canvas id = "Line2"></canvas>
 
 </div>
 
 <div class = "Line_graph_transaction_report">
+    <canvas id = "Line3"></canvas>
 
 </div>
 
+<div>
+    <button class = "buttonLeft">Save</button>
+    <button class = "buttonRight" onclick="generatePDF()">Download</button>
+</div>
 
 </div>
+{% endblock %}
+
+
+{% block javascript2 %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
+<script>
+      var chrt1 = document.getElementById("Line1").getContext("2d");
+      var chartId1 = new Chart(chrt1, {
+         type: 'line',
+         data: {
+
+            labels: {{ listMonths | tojson }},
+
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ data1 }},
+               backgroundColor: ['Green'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "My Community's points over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
+         },
+      });
+   </script>
+
+
+<script>
+      var chrt2 = document.getElementById("Line2").getContext("2d");
+      var chartId2 = new Chart(chrt2, {
+         type: 'line',
+         data: {
+
+            labels: {{ listMonths | tojson }},
+
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ data2 }},
+               backgroundColor: ['Green'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "My Community's points over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
+         },
+      });
+   </script>
+
+
+<script>
+      var chrt3 = document.getElementById("Line3").getContext("2d");
+      var chartId3 = new Chart(chrt3, {
+         type: 'line',
+         data: {
+
+            labels: {{ listMonths | tojson }},
+
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ data3 }},
+               backgroundColor: ['Green'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "My Community's points over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
+         },
+      });
+   </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
+<script>
+    function generatePDF() {
+    var content = document.getElementById("Content")
+    html2pdf(content)
+
+}
+</script>
 {% endblock %}
