@@ -26,13 +26,14 @@ logger.addHandler(handler)
 def init_app():
     app.logger.info("Starting app...")
     app.logger.info(Fore.GREEN + """
-                    | | / / / _ \ | | / /_   _|
-                    | |/ / / /_\ \| |/ /  | |  
-                    |    \ |  _  ||    \  | |  
-                    | |\  \| | | || |\  \_| |_ 
-                    \_| \_/\_| |_/\_| \_/\___/ ver 1.1.0
-                    
-                    A product by Team Rocket 🚀
+    | | / / / _ \ | | / /_   _|
+    | |/ / / /_\ \| |/ /  | |  
+    |    \ |  _  ||    \  | |  
+    | |\  \| | | || |\  \_| |_ 
+    \_| \_/\_| |_/\_| \_/\___/ ver 1.1.0
+    
+    A product by Team Rocket Dev 🚀
+    Software is lincensed under MIT License
                 """)
 
 @app.route('/', methods=['GET'])
