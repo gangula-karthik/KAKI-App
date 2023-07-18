@@ -3,6 +3,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="/static/Report.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
 {% endblock %}
 
 {% block javascript %}
@@ -41,7 +42,7 @@
 
 
 {% block javascript2 %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
+
 <script>
       var chrt1 = document.getElementById("Line1").getContext("2d");
       var chartId1 = new Chart(chrt1, {
