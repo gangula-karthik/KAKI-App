@@ -28,7 +28,7 @@ float:left;
 text-align:center;
 }
 
-#Line{
+#Line, Line1, Line2, Line3{
 width: 90%;
 height:100px;
 }

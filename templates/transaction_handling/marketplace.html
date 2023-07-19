@@ -1,10 +1,183 @@
 {% extends "template.html" %}
-
-
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/marketplace.html" />
+{% endblock %}
 {% block content %}
-<ul>
-    {% for product in products %}
-      <li>{{ product.name }} - {{ product.price }}</li>
-    {% endfor %}
-  </ul>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marketplace</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+    header {
+      color: #f0ebeb;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+    .product {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+    .product img {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .product-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 0 5px;
+    }
+    .product-description {
+      margin: 0 0 5px;
+    }
+    .product-price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #f0ebeb;
+      margin-bottom: 10px;
+    }
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .product-info div {
+      margin-bottom: 5px;
+    }
+    .seller-name,
+    .rating,
+    .item-condition {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Marketplace</h1>
+  </header>
+  <div class="search-container">
+  <input type="text" class="search-input" id="searchInput" placeholder="Search for products...">
+  <button onclick="searchProducts()" style="padding: 5px 10px; background-color: #007bff; color: #fff; border: none; cursor: pointer;">Search</button>
+</div>
+  <div class="container">
+    <div class="product">
+      <img src="book.jpg" alt="Book">
+      <div class="product-title">Fantastic Book</div>
+      <div class="product-description">
+        This is a fantastic book that will take you on an unforgettable journey through its captivating plot,keeping you turning the pages until the very end.
+      </div>
+      <div class="product-price">$14.99</div>
+      <div class="seller-name">Seller: Jane Doe</div>
+      <div class="rating">Rating: 4.7/5</div>
+      <div class="item-condition">Condition: Like New</div>
+    </div>
+    <div class="product">
+      <img src="bicycle.jpg" alt="Bicycle">
+      <div class="product-title">Vintage Bicycle</div>
+      <div class="product-description">
+        This vintage bicycle is a true gem for bike enthusiasts. Its classic design and sturdy build make it perfect for leisurely rides in the neighborhood.
+      </div>
+      <div class="product-price">$199.99</div>
+      <div class="seller-name">Seller: John Smith</div>
+      <div class="rating">Rating: 4.5/5</div>
+      <div class="item-condition">Condition: Used</div>
+    </div>
+    <div class="product">
+      <img src="garden-tools.jpg" alt="Garden Tools">
+      <div class="product-title">Garden Tools Set</div>
+      <div class="product-description">
+        This garden tools set is perfect for anyone with a green thumb. It includes everything you need to tend to your garden and grow beautiful plants.
+      </div>
+      <div class="product-price">$49.99</div>
+      <div class="seller-name">Seller: Mary Johnson</div>
+      <div class="rating">Rating: 4.8/5</div>
+      <div class="item-condition">Condition: New</div>
+    </div>
+    <div class="product">
+      <img src="camera.jpg" alt="Camera">
+      <div class="product-title">Digital Camera</div>
+      <div class="product-description">
+        This digital camera is perfect for capturing all your special moments. Its high-resolution sensor and advanced features ensure stunning photos and videos.
+      </div>
+      <div class="product-price">$299.99</div>
+      <div class="seller-name">Seller: Michael Brown</div>
+      <div class="rating">Rating: 4.6/5</div>
+      <div class="item-condition">Condition: Used</div>
+    </div>
+    <div class="product">
+      <img src="skateboard.jpg" alt="Skateboard">
+      <div class="product-title">Skateboard</div>
+      <div class="product-description">
+        This skateboard is perfect for beginners and experienced riders alike. Its durable construction and smooth wheels ensure a fun and safe ride.
+      </div>
+      <div class="product-price">$49.99</div>
+      <div class="seller-name">Seller: Robert Johnson</div>
+      <div class="rating">Rating: 4.4/5</div>
+      <div class="item-condition">Condition: Used</div>
+    </div>
+    <div class="product">
+      <img src="cookware.jpg" alt="Cookware">
+      <div class="product-title">Cookware Set</div>
+      <div class="product-description">
+        This cookware set is a must-have for any aspiring chef. It includes high-quality pots, pans, and utensils to help you create delicious meals.
+      </div>
+      <div class="product-price">$79.99</div>
+      <div class="seller-name">Seller: Emily Lee</div>
+      <div class="rating">Rating: 4.9/5</div>
+      <div class="item-condition">Condition: Like New</div>
+    </div>
+    <div class="product">
+      <img src="guitar.jpg" alt="Guitar">
+      <div class="product-title">Acoustic Guitar</div>
+      <div class="product-description">
+        This acoustic guitar is perfect for music enthusiasts and aspiring musicians. Its rich tones and comfortable playability make it a joy to play.
+      </div>
+      <div class="product-price">$199.99</div>
+      <div class="seller-name">Seller: Sarah Brown</div>
+      <div class="rating">Rating: 4.3/5</div>
+      <div class="item-condition">Condition: Used</div>
+    </div>
+    <div class="product">
+      <img src="painting.jpg" alt="Painting">
+      <div class="product-title">Original Painting</div>
+      <div class="product-description">
+        This original painting is a masterpiece that will add beauty and elegance to any home. Its stunning colors and intricate details are truly captivating.
+      </div>
+      <div class="product-price">$499.99</div>
+      <div class="seller-name">Seller: William Doe</div>
+      <div class="rating">Rating: 4.2/5</div>
+      <div class="item-condition">Condition: Like New</div>
+    </div>
+    <div class="product">
+      <img src="headphones.jpg" alt="Headphones">
+      <div class="product-title">Wireless Headphones</div>
+      <div class="product-description">
+        These wireless headphones deliver an immersive audio experience. With noise-canceling technology and long battery life, they are perfect for music lovers on the go.
+      </div>
+      <div class="product-price">$99.99</div>
+      <div class="seller-name">Seller: Lisa Johnson</div>
+      <div class="rating">Rating: 4.7/5</div>
+      <div class="item-condition">Condition: New</div>
+    </div>
+  </div>
+</body>
+</html>
+
 {% endblock %}
