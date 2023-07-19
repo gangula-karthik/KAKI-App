@@ -1,9 +1,7 @@
-from flask import Flask, render_template
-import datetime
 import logging
+from flask import Flask, request, render_template
 import colorlog
 from colorama import Fore
-
 
 app = Flask(__name__)
 
@@ -19,8 +17,13 @@ handler.setFormatter(colorlog.ColoredFormatter(
     }
 ))
 
-logger = colorlog.getLogger()
-logger.addHandler(handler)
+# Add the handler to Flask's logger
+app.logger.addHandler(handler)
+
+# Configure Werkzeug logger
+werkzeug_logger = logging.getLogger('werkzeug')
+werkzeug_logger.setLevel(logging.ERROR)
+werkzeug_logger.propagate = False
 
 @app.before_first_request
 def init_app():
@@ -35,6 +38,17 @@ def init_app():
     A product by Team Rocket Dev 🚀
     Software is lincensed under MIT License
                 """)
+
+class CustomRequestLoggingMiddleware(object):
+    def __init__(self, app):
+        self._app = app
+
+    def __call__(self, environ, start_response):
+        app.logger.info('Request type: %s', environ.get('REQUEST_METHOD'))
+        app.logger.info('Path: %s', environ.get('PATH_INFO'))
+        return self._app(environ, start_response)
+
+app.wsgi_app = CustomRequestLoggingMiddleware(app.wsgi_app)
 
 @app.route('/', methods=['GET'])
 def index():
