@@ -10,49 +10,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-dark text-light">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">New Ticket</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Subject</label>
-            <input type="text" class="form-control bg-dark text-light" id="recipient-name">
-          </div>
-          <div class="mb-3">
-            <label for="message-text" class="col-form-label">Description</label>
-            <textarea class="form-control bg-dark text-light" id="message-text"></textarea>
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <select class="form-select bg-dark text-light" id="autoSizingSelect">
-                <option selected>Add Topic</option>
-                <option><a class="dropdown-item " href="#">Billing Issues</a></option>
-                <option><a class="dropdown-item " href="#">Technical Issues</a></option>
-                <option><a class="dropdown-item " href="#">Listing & Account Issues</a></option>
-                <option><a class="dropdown-item" href="#">Other</a></option>
-              </select>
-            </div>
-            <div class="col-7">
-              <div class="mb-3">
-                <input class="form-control bg-dark text-light" type="file" id="formFileMultiple" multiple>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+{% include 'customer_support/ticket_creation_modal.html' %}
 
 
 
