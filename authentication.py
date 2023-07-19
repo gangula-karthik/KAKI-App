@@ -40,14 +40,14 @@ def index():
              return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
 
-@app.route('/reset_password', methods=['GET', 'POST'])
-def forget_password():
-    if request.method == 'POST':
-        email = request.form['user_email']
-        auth.generate_password_reset_link(email)
-        print(auth.generate_password_reset_link(email))
-        return render_template('account_management/login.html')
-    return render_template('account_management/login.html')
+# @app.route('/reset_password', methods=['GET', 'POST'])
+# def forget_password():
+#     if request.method == 'POST':
+#         email = request.form['user_email']
+#         auth.generate_password_reset_link(email)
+#         print(auth.generate_password_reset_link(email))
+#         return render_template('account_management/login.html')
+#     return render_template('account_management/login.html')
 
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
@@ -68,6 +68,16 @@ def create_account():
                 return render_template('account_management/login.html', exist_message=existing_account)
     return render_template('account_management/login.html')
 
+
+@app.route('/forget_password', methods=['GET', 'POST'])
+def forget_password():
+    user_email = request.form.get('user_email')
+    try:
+        pyreauth.send_password_reset_email(user_email)
+        return 'Password reset email sent successfully.'
+    except:
+        r_email = 'Error sending password reset email'
+        return render_template('account_management/forget_password.html', exist_message=r_email)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
