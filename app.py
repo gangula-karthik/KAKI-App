@@ -2,6 +2,7 @@ import logging
 from flask import Flask, request, render_template
 import colorlog
 from colorama import Fore
+import datetime
 
 app = Flask(__name__)
 
@@ -17,14 +18,6 @@ handler.setFormatter(colorlog.ColoredFormatter(
     }
 ))
 
-# Add the handler to Flask's logger
-app.logger.addHandler(handler)
-
-# Configure Werkzeug logger
-werkzeug_logger = logging.getLogger('werkzeug')
-werkzeug_logger.setLevel(logging.ERROR)
-werkzeug_logger.propagate = False
-
 @app.before_first_request
 def init_app():
     app.logger.info("Starting app...")
@@ -38,17 +31,6 @@ def init_app():
     A product by Team Rocket Dev 🚀
     Software is lincensed under MIT License
                 """)
-
-class CustomRequestLoggingMiddleware(object):
-    def __init__(self, app):
-        self._app = app
-
-    def __call__(self, environ, start_response):
-        app.logger.info('Request type: %s', environ.get('REQUEST_METHOD'))
-        app.logger.info('Path: %s', environ.get('PATH_INFO'))
-        return self._app(environ, start_response)
-
-app.wsgi_app = CustomRequestLoggingMiddleware(app.wsgi_app)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -120,5 +102,4 @@ def marketplace():
     return render_template('/transaction_handling/marketplace.html', name="Sheldon")
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     app.run(debug=True, port=5000)
