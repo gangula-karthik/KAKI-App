@@ -22,6 +22,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
 def init_app():
     app.logger.info("Starting app...")
     app.logger.info(Fore.GREEN + """
+                    
     | | / / / _ \ | | / /_   _|
     | |/ / / /_\ \| |/ /  | |  
     |    \ |  _  ||    \  | |  
