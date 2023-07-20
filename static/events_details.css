@@ -1,0 +1,46 @@
+.title_report{
+text-align:center;
+}
+
+.background{
+background-color:#3F3F48;
+border-radius:15px;
+}
+
+.details{
+padding-bottom:30px;
+}
+
+.details p {
+    margin: 0;
+}
+
+.buttonLeft{
+background-color:#3A83F7;
+border-radius: 10px;
+font-size:100%;
+color:white;
+float:left;
+padding:0.5%;
+margin-top:3%;
+width: 150px;
+}
+
+.buttonRight{
+background-color:#3A83F7;
+border-radius: 10px;
+font-size:100%;
+color:white;
+float:right;
+padding:0.5%;
+margin-top:3%;
+width: 150px;
+}
+
+button.buttonRight:hover{
+background-color:#00008B
+}
+
+button.buttonLeft:hover{
+background-color:#00008B
+}

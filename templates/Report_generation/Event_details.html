@@ -1,0 +1,68 @@
+{% extends "template.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/events_details.css">
+{% endblock %}
+
+{% block content %}
+
+<div id = "Content">
+<h1 class ="title_report">Events</h1>
+
+<div class="background">
+
+    <h3 class = "title_report">Event name</h3>
+
+    <div class ="details">
+        <p>Venue: {{Venue}}</p>
+        <p>Date: {{Date}}</p>
+        <p>Time: {{Time}}</p>
+    </div>
+
+    <div class ="details">
+        <p>Overall-In-Charge: {{OIC}}</p>
+        <p>Date posted: {{Date_posted}}</p>
+        <p>Close date: {{Close_date}}</p>
+    </div>
+
+    <div class ="details">
+        <p>Sign-ups: {{Sign_ups}}</p>
+        <p>Attended: {{Attended}}</p>
+        <p>participation: {{Participation}}</p>
+    </div>
+
+    <div class = "details">
+        <p>Description: {{Description}}</p>
+    </div>
+
+</div>
+</div>
+
+
+    <div>
+    <button class = "buttonLeft">Save</button>
+    <button class = "buttonRight" onclick="generatePDF()">Download</button>
+</div>
+
+
+
+
+{% endblock %}
+
+
+{% block javascript2 %}
+
+<script>
+    function generatePDF() {
+    const content = document.getElementById("Content");
+    const options = {
+	filename: 'my-document.pdf',
+	html2canvas: { scale: 2 },
+	jsPDF: {format:[330,500]}
+};
+html2pdf().set(options).from(content).save();
+
+}
+
+</script>
+{% endblock %}
