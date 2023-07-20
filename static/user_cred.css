@@ -84,11 +84,16 @@ form {
 	text-align: center;
 }
 
-input {
+input,
+select {
 	background-color: #eee;
 	border: none;
 	padding: 12px 15px;
 	margin: 8px 0;
+	width: 100%;
+}
+
+select {
 	width: 100%;
 }
 
@@ -110,16 +115,6 @@ input {
 	height: 100%;
 	transition: all 0.6s ease-in-out;
 }
-
-/* .sign-in-container {
-	left: 0;
-	width: 00%;
-	z-index: 2;
-}
-
-.container.right-panel-active .sign-in-container {
-	transform: translateX(0);
-} */
 
 .sign-up-container {
 	left: 0;
