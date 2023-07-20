@@ -11,18 +11,26 @@
 
 
 {% block leaderboard_name %}Individual points{% endblock %}
-{% block leaderboard %}
-<!--Leaderboard-->
-<!-- A for loop that loops through all the instances to return a leaderboard in the form of a table-->
-<!-- To add the limit on the app.py by treating it as a list-->
-<!--    {% for player in players %}-->
-<!--    <tr>-->
-<!--        <td>{{ loop.index }}</td>-->
-<!--        <td>{{ player.name }}</td>-->
-<!--        <td>{{ player.score }}</td>-->
-<!--    </tr>-->
-<!--    {% endfor %}-->
 
+
+{% block leaderboard %}
+<h1 style="text-align:center;">Leaderboard</h1>
+<div style= "padding-left: 135px ; ">
+<div class="leaderboard-item">
+            <span>Rank</span>
+            <span>Name</span>
+            <span>Score</span>
+        </div>
+            {% for entry in leaderboard %}
+            <div>
+                <span>{{ loop.index }}</span>
+                <span>{{ entry.name }}</span>
+                <span>{{ entry.score }}</span>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}
 

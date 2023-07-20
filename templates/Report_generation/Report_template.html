@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block css %}
-<link rel="stylesheet" href="/static/Report.css">
+<link rel="stylesheet" href="../static/Report.css" type="text/css">
 {% endblock %}
 
 {% block javascript %}
@@ -36,9 +36,11 @@
 </div>
 
 <h2 class = "title_leaderboard">LeaderBoard for {% block leaderboard_name %}{% endblock %}</h2>
+
 <div class = "leaderBoard_block">
 {% block leaderboard %}{% endblock %}
 </div>
+
 </div>
 <div>
     <button class = "buttonLeft">Save</button>
