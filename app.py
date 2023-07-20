@@ -35,8 +35,8 @@ def init_app():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('template.html', name="Sheldon")
-# Change the index.html to template.html to check your work as the index.html is not yet linked
+    return render_template('/Report_generation/Event_details.html', name="Sheldon")
+# Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
 def home():
