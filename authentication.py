@@ -40,15 +40,6 @@ def index():
              return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
 
-# @app.route('/reset_password', methods=['GET', 'POST'])
-# def forget_password():
-#     if request.method == 'POST':
-#         email = request.form['user_email']
-#         auth.generate_password_reset_link(email)
-#         print(auth.generate_password_reset_link(email))
-#         return render_template('account_management/login.html')
-#     return render_template('account_management/login.html')
-
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
@@ -80,6 +71,25 @@ def forget_password():
     except:
         r_email = 'Error sending password reset email'
         return render_template('account_management/forget_password.html', exist_message=r_email)
+    
+
+@app.route('/add_user_credentials', methods=['GET','POST'])
+def add_user_credentials():
+    if request.method == 'POST':
+        name = request.form['name']
+        username = request.form['username']
+        birthdate = request.form['birthdate']
+        town = request.form['town']
+
+        data = {
+            "name": name,
+            "username": username,
+            "birthdate": birthdate,
+            "town": town
+        }
+
+        pyredb.child("Users").child("Consumer").child(username).set(data)
+        return "Data added successfully to Firebase!"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
