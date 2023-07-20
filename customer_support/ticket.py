@@ -1,3 +1,42 @@
+# Users Collection: This collection holds user data. Each document in this collection corresponds to a unique user and uses a unique user ID as its identifier.
+# json
+# Copy code
+# "users": {
+#     "uniqueUserID": {
+#         "name": "user's full name",
+#         "email": "user's email address",
+#         "profile_picture": "URL of the user's profile picture",
+#         "posts": ["array of postID that this user created"]
+#     },
+#     ...
+# }
+# Posts Collection: This collection holds post data. Each document corresponds to a unique post and uses a unique post ID as its identifier.
+# json
+# Copy code
+# "posts": {
+#     "uniquePostID": {
+#         "userID": "ID of the user who created the post",
+#         "timestamp": "creation time of the post",
+#         "content": "text content of the post",
+#         "image_url": "URL of the image in the post, if any",
+#         "likes": ["array of userIDs who liked this post"],
+#         "comments": ["array of commentID that belong to this post"]
+#     },
+#     ...
+# }
+# Comments Collection: This collection holds comment data. Each document corresponds to a unique comment and uses a unique comment ID as its identifier.
+# json
+# Copy code
+# "comments": {
+#     "uniqueCommentID": {
+#         "userID": "ID of the user who created the comment",
+#         "postID": "ID of the post where this comment was made",
+#         "timestamp": "creation time of the comment",
+#         "content": "text content of the comment"
+#     },
+#     ...
+# }
+
 import json
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
