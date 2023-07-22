@@ -1,11 +1,49 @@
 {% extends "/Report_generation/Report_template.html" %}
 
-{% block title %}My {{ current_month }} Community's report{% endblock %}
+{% block title %}My {{ current_month }} individual report{% endblock %}
 
 
 {% block card_report %}
  <h6 style="text-align: center;">Number of Neighbours helped:</h6>
     <h3 style="text-align: center;"> {{ neighbours_helped }}</h3>
+
+<style>
+
+
+    .leaderboard_row{
+    background-color: #1E1F23;
+    width:90%;
+
+    }
+
+
+
+    .score-column{
+    float:right;
+    padding-right:10px;
+    }
+
+    .name-column{
+    margin-left:20px;
+    }
+
+    .leaderboard_table{
+    width:100%
+    }
+
+    .rank-column{
+    float:left;
+    padding-left:10px;
+    }
+
+    .splitter-gap{
+    margin-top:30px;
+    }
+
+
+
+
+</style>
 {% endblock %}
 
 
@@ -15,23 +53,27 @@
 
 {% block leaderboard %}
 <h1 style="text-align:center;">Leaderboard</h1>
-<div style= "padding-left: 135px ; ">
-<div class="leaderboard-item">
-            <span>Rank</span>
-            <span>Name</span>
-            <span>Score</span>
-        </div>
+<table class = "leaderboard_table">
+        <thead>
+            <tr class = "leaderboard_row">
+                <!-- Add CSS classes to the <th> elements for styling, if desired -->
+                <th class="rank-column">Rank</th>
+                <th class="name-column">Name</th>
+                <th class="score-column">Score</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for entry in leaderboard %}
-            <div>
-                <span>{{ loop.index }}</span>
-                <span>{{ entry.name }}</span>
-                <span>{{ entry.score }}</span>
-            </div>
+            <div class="splitter-gap">
+            <tr class = "leaderboard_row">
+                <td class="rank-column">{{ loop.index }}</td>
+                <td class="name-column">{{ entry.name }}</td>
+                <td class="score-column">{{ entry.score }}</td>
+            </tr>
+                </div>
             {% endfor %}
         </tbody>
     </table>
-</div>
-
 {% endblock %}
 
 

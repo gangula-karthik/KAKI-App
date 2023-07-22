@@ -1,0 +1,31 @@
+{% extends "template.html" %}
+
+{% block css %}
+<style>
+.saved_cards{
+background-color:#5B5B5B;
+margin-top: 50px !important;
+height: 175px !important;
+border-radius: 15px !important;
+}
+
+.link_report{
+margin-left:30px;
+color:white;
+font-size:30px;
+}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Saved Reports</h1>
+<div>
+            {% for event in events %}
+            <div  class="saved_cards">
+                <a class='link_report' href="{{ event.report_link }}">{{ event.name }}</a>
+            </div>
+            {% endfor %}
+</div>
+{% endblock %}
