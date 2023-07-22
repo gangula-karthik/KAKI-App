@@ -15,7 +15,7 @@
         <div class="form-container sign-up-container">
             {% if exist_message %}
             <div class="alert alert-danger"> 
-                <center>{{ exist_message }}</center>
+                <center style="color:red">{{ exist_message }}</center>
             </div>
             {% endif %}
             <form action="/create_account" method="POST">
@@ -34,7 +34,7 @@
         </div>
         <div class="form-container sign-in-container">
             {% if umessage %}
-            <div class="alert alert-danger"> <center>{{ umessage }}</center>  </div>
+            <div class="alert alert-danger"> <center style="color:red">{{ umessage }}</center>  </div>
             {% endif %}
             <form action="/index" method="POST">
                 <h1>Sign in</h1>
