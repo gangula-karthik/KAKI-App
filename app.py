@@ -35,7 +35,21 @@ def init_app():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('/Report_generation/Event_details.html', name="Sheldon")
+    events = [
+        {
+            "name": "Event 1",
+            "report_link": "http://example.com/report/event1"
+        },
+        {
+            "name": "Event 2",
+            "report_link": "http://example.com/report/event2"
+        },
+        {
+            "name": "Event 3",
+            "report_link": "http://example.com/report/event3"
+        }
+    ]
+    return render_template('/Report_generation/event_list.html', name="Sheldon", events = events)
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
@@ -109,9 +123,42 @@ def Transactions_report():
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
     return render_template('/Report_generation/Transactions_report.html', name="Sheldon",current_month = month, data1 = [5,6,7,8,9,10], data2 = [5,6,7,8,9,10], data3 = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
 
-@app.route('/Report_generation/Saved_report')
+@app.route('/Report_generation/saved_reports')
 def Saved_report():
-    return render_template('/Report_generation/Saved_report.html', name="Sheldon")
+    events = [
+        {
+            "name": "Event 1",
+            "report_link": "http://example.com/report/event1"
+        },
+        {
+            "name": "Event 2",
+            "report_link": "http://example.com/report/event2"
+        },
+        {
+            "name": "Event 3",
+            "report_link": "http://example.com/report/event3"
+        }
+    ]
+    return render_template('/Report_generation/saved_reports.html', name="Sheldon", events = events)
+
+
+@app.route('/Report_generation/event_list')
+def Event_list():
+    events = [
+        {
+            "name": "Event 1",
+            "report_link": "http://example.com/report/event1"
+        },
+        {
+            "name": "Event 2",
+            "report_link": "http://example.com/report/event2"
+        },
+        {
+            "name": "Event 3",
+            "report_link": "http://example.com/report/event3"
+        }
+    ]
+    return render_template('/Report_generation/event_list.html', name="Sheldon", events = events)
 
 #Transaction handling routes
 @app.route('/transaction_handling/marketplace')
