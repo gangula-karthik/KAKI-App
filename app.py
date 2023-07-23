@@ -35,7 +35,7 @@ def init_app():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('/Report_generation/Event_details.html', name="Sheldon")
+    return render_template('index.html', name="Sheldon")
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
