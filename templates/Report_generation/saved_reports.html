@@ -15,6 +15,18 @@ color:white;
 font-size:30px;
 }
 
+.delete_button{
+background-color:#3A83F7;
+border-radius: 10px;
+font-size:100%;
+color:white;
+float:right;
+padding:0.5%;
+width: 150px;
+margin-right:3px;
+margin-top:2px;
+}
+
 
 </style>
 {% endblock %}
@@ -25,7 +37,9 @@ font-size:30px;
             {% for event in events %}
             <div  class="saved_cards">
                 <a class='link_report' href="{{ event.report_link }}">{{ event.name }}</a>
+                <button class = "delete_button">Delete</button>
             </div>
+
             {% endfor %}
 </div>
 {% endblock %}

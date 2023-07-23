@@ -2,25 +2,32 @@
 
 {% block title %}My {{ current_month }} individual report{% endblock %}
 
-
-{% block card_report %}
- <h6 style="text-align: center;">Number of Neighbours helped:</h6>
-    <h3 style="text-align: center;"> {{ neighbours_helped }}</h3>
-
+{% block css2 %}
 <style>
+.leaderBoard_block{
+background-color:#3F3F48;
+border:1px solid white;
+height: 40%;
+width:100%;
+border-radius:15px;
+float: right;
+margin-top:1%;
+overflow-y:scroll;
+}
+    .leaderboard_table {
+    border-collapse:separate;
+    border-spacing:0 10px;
 
-
+    }
     .leaderboard_row{
     background-color: #1E1F23;
     width:90%;
-
     }
-
-
 
     .score-column{
     float:right;
     padding-right:10px;
+    border-radius: 0 10px 10px 0;
     }
 
     .name-column{
@@ -34,16 +41,17 @@
     .rank-column{
     float:left;
     padding-left:10px;
+    border-radius: 10px 0 0 10px;
     }
-
-    .splitter-gap{
-    margin-top:30px;
-    }
-
-
 
 
 </style>
+{% endblock %}
+
+{% block card_report %}
+ <h6 style="text-align: center;">Number of Neighbours helped:</h6>
+    <h3 style="text-align: center;"> {{ neighbours_helped }}</h3>
+
 {% endblock %}
 
 
@@ -53,6 +61,7 @@
 
 {% block leaderboard %}
 <h1 style="text-align:center;">Leaderboard</h1>
+
 <table class = "leaderboard_table">
         <thead>
             <tr class = "leaderboard_row">
@@ -64,16 +73,16 @@
         </thead>
         <tbody>
             {% for entry in leaderboard %}
-            <div class="splitter-gap">
             <tr class = "leaderboard_row">
                 <td class="rank-column">{{ loop.index }}</td>
                 <td class="name-column">{{ entry.name }}</td>
                 <td class="score-column">{{ entry.score }}</td>
             </tr>
-                </div>
+
             {% endfor %}
         </tbody>
     </table>
+
 {% endblock %}
 
 

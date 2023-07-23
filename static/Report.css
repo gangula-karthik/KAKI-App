@@ -60,6 +60,7 @@ width:100%;
 border-radius:15px;
 float: right;
 margin-top:1%;
+overflow-y:scroll;
 }
 
 .Line_graph_transaction_report{
