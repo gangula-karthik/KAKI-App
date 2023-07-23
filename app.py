@@ -56,6 +56,10 @@ def index():
 def home():
     return render_template('homefeed.html', name="Sheldon")
 
+@app.route('/noticeboard', methods=['GET'])
+def noticeboard():
+    return render_template('notices.html', name="Sheldon")
+
 @app.route('/friend_request', methods=['GET'])
 def friendRequest():
     return render_template('friend_request.html', name="Sheldon")
