@@ -73,8 +73,9 @@
     <h1>Marketplace</h1>
   </header>
   <div class="search-container">
-  <input type="text" class="search-input" id="searchInput" placeholder="Search for products...">
-  <button onclick="searchProducts()" style="padding: 5px 10px; background-color: #007bff; color: #fff; border: none; cursor: pointer;">Search</button>
+  <input type="text" class="search-input" id="searchInput" placeholder="Search for products..." style="padding: 5px 10px; ; border-radius:7px;">
+  <button onclick="searchProducts()" style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
+    <button onclick="sellProducts()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button>
 </div>
   <div class="container">
     {% for product in products %}
