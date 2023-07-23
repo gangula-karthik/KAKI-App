@@ -3,6 +3,12 @@ from flask import Flask, request, render_template
 import colorlog
 from colorama import Fore
 import datetime
+import sys
+sys.path.append("Report_generation")
+from Report_generation.Forms import CreateUserForm
+
+
+
 
 app = Flask(__name__)
 
@@ -35,7 +41,18 @@ def init_app():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', name="Sheldon")
+    details = {
+        'event_name': 'Sample Event',
+        'event_date': '2023-07-30',
+        'event_description': 'This is a sample event description.',
+        'venue': 'Sample Venue',
+        'time': '12:00 PM',
+        'overall_in_charge': 'John Doe',
+        'dateposted': '2023-07-23',
+    }
+
+
+    return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
@@ -165,13 +182,67 @@ def Event_list():
 
 @app.route('/Report_generation/Event_details.html')
 def Event_details():
-    details = [
-        {"name": "Event", "date": "19-01-2020","OIC": 'joe','date-posted':'10-01-2020','description':"shdjadh sud asduadh as asdias dhasu dasdsa dasid sasud hsuid hajfsdgre gkdrgj ibmd b bp pjwuscnsc sdj reiohduao " },
-
-    ]
+    details = {
+        'event_name': 'Sample Event',
+        'event_date': '2023-07-30',
+        'event_description': 'This is a sample event description.',
+        'venue': 'Sample Venue',
+        'time': '12:00 PM',
+        'overall_in_charge': 'John Doe',
+        'dateposted': '2023-07-23',
+    }
 
 
     return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
+
+@app.route('/Report_generation/update.html', methods = ['GET', 'POST'])
+def update():
+    event_details = {
+        'event_name': 'Sample Event',
+        'event_date': '2023-07-30',
+        'event_location': 'Sample City',
+        'event_description': 'This is a sample event description.',
+        'venue': 'Sample Venue',
+        'time': '12:00 PM',
+        'overall_in_charge': 'John Doe',
+        'dateposted': '2023-07-23',
+    }
+    update_user_form = CreateUserForm(request.form)
+    # if request.method == 'POST' and update_user_form.validate():
+
+        # firebase portion
+        # users_dict = {}
+        # db = shelve.open('storage.db', 'w')
+        # users_dict = db['Users']
+
+
+        # class portion
+        # user = users_dict.get(id)
+        # user.set_first_name(update_user_form.first_name.data)
+        # user.set_last_name(update_user_form.last_name.data)
+        # user.set_gender(update_user_form.gender.data)
+        # user.set_membership(update_user_form.membership.data)
+        # user.set_remarks(update_user_form.remarks.data)
+
+        # db['Users'] = users_dict
+        # db.close()
+
+        # return redirect(url_for('retrieve_users'))
+    # else:
+    #     users_dict = {}
+    #     db = shelve.open('storage.db', 'r')
+    #     users_dict = db['Users']
+    #     db.close()
+    #
+    #     user = users_dict.get(id)
+    #     update_user_form.first_name.data = user.get_first_name()
+    #     update_user_form.last_name.data = user.get_last_name()
+    #     update_user_form.gender.data = user.get_gender()
+    #     update_user_form.membership.data = user.get_membership()
+    #     update_user_form.remarks.data = user.get_remarks()
+    #
+    #     return render_template('updateUser.html', form=update_user_form)
+    return render_template('/Report_generation/update.html', name="Sheldon", form=update_user_form,event=event_details)
 
 #Transaction handling routes
 @app.route('/transaction_handling/marketplace')
