@@ -247,7 +247,19 @@ def update():
 #Transaction handling routes
 @app.route('/transaction_handling/marketplace')
 def marketplace():
-    return render_template('/transaction_handling/marketplace.html', name="Sheldon")
+    products = [
+        {
+            'title': 'Fantastic Book',
+            'description': 'This is a fantastic book that...',
+            'price': 14.99,
+            'seller': 'Jane Doe',
+            'rating': 4.7,
+            'condition': 'Like New',
+            'image': 'book.jpg',
+        },
+        # Add more product dictionaries here for other products
+    ]
+    return render_template('/transaction_handling/marketplace.html', name="Sheldon", products=products)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
