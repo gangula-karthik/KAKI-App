@@ -1,0 +1,61 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+<style>
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+        padding: 20px;
+    }
+</style>
+
+
+<div class="board">
+    <div class="card bg-dark text-light" style="width: 18rem; border: 1px solid #3F3F48;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Event 1 <span class="badge text-bg-warning">Ads</span></h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Details</a>
+        </div>
+    </div>
+    
+    <div class="card bg-dark text-light" style="width: 18rem; border: 1px solid #3F3F48;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Card title <span class="badge text-bg-info">Event</span></h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Details</a>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light" style="width: 18rem; border: 1px solid #3F3F48;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Card title <span class="badge text-bg-success">Notice</span></h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Details</a>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light" style="width: 18rem; border: 1px solid #3F3F48;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Details</a>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light" style="width: 18rem; border: 1px solid #3F3F48;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Details</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
