@@ -56,6 +56,18 @@ def index():
 def home():
     return render_template('homefeed.html', name="Sheldon")
 
+@app.route('/myposts', methods=['GET'])
+def mypost():
+    return render_template('homefeed.html', name="Sheldon")
+
+@app.route('/bookmarks', methods=['GET'])
+def bookmarks():
+    return render_template('homefeed.html', name="Sheldon")
+
+@app.route('/chat', methods=['GET'])
+def chat():
+    return render_template('customer_support/user_chat.html', name="Sheldon")
+
 @app.route('/noticeboard', methods=['GET'])
 def noticeboard():
     return render_template('notices.html', name="Sheldon")
