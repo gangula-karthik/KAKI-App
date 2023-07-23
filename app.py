@@ -35,21 +35,7 @@ def init_app():
 
 @app.route('/', methods=['GET'])
 def index():
-    events = [
-        {
-            "name": "Event 1",
-            "report_link": "http://example.com/report/event1"
-        },
-        {
-            "name": "Event 2",
-            "report_link": "http://example.com/report/event2"
-        },
-        {
-            "name": "Event 3",
-            "report_link": "http://example.com/report/event3"
-        }
-    ]
-    return render_template('/Report_generation/event_list.html', name="Sheldon", events = events)
+    return render_template('/Report_generation/Event_details.html', name="Sheldon")
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
@@ -159,6 +145,17 @@ def Event_list():
         }
     ]
     return render_template('/Report_generation/event_list.html', name="Sheldon", events = events)
+
+
+@app.route('/Report_generation/Event_details.html')
+def Event_details():
+    details = [
+        {"name": "Event", "date": "19-01-2020","OIC": 'joe','date-posted':'10-01-2020','description':"shdjadh sud asduadh as asdias dhasu dasdsa dasid sasud hsuid hajfsdgre gkdrgj ibmd b bp pjwuscnsc sdj reiohduao " },
+
+    ]
+
+
+    return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
 
 #Transaction handling routes
 @app.route('/transaction_handling/marketplace')
