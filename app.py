@@ -321,7 +321,7 @@ def marketplace():
             'image': 'Paining.jpg',
         },
         {
-            'title': 'Wireless Headphones',
+            'title': 'Headphones',
             'description': 'These wireless headphones deliver an immersive audio experience. With noise-canceling technology and long battery life, they are perfect for music lovers on the go.',
             'price': 99.99,
             'seller': 'Lisa Johnson',
