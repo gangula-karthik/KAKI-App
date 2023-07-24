@@ -3,6 +3,12 @@ from flask import Flask, request, render_template
 import colorlog
 from colorama import Fore
 import datetime
+import sys
+sys.path.append("Report_generation")
+from Report_generation.Forms import CreateUserForm
+
+
+
 
 app = Flask(__name__)
 
@@ -35,7 +41,18 @@ def init_app():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', name="Sheldon")
+    details = {
+        'event_name': 'Sample Event',
+        'event_date': '2023-07-30',
+        'event_description': 'This is a sample event description.',
+        'venue': 'Sample Venue',
+        'time': '12:00 PM',
+        'overall_in_charge': 'John Doe',
+        'dateposted': '2023-07-23',
+    }
+
+
+    return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
@@ -165,18 +182,157 @@ def Event_list():
 
 @app.route('/Report_generation/Event_details.html')
 def Event_details():
-    details = [
-        {"name": "Event", "date": "19-01-2020","OIC": 'joe','date-posted':'10-01-2020','description':"shdjadh sud asduadh as asdias dhasu dasdsa dasid sasud hsuid hajfsdgre gkdrgj ibmd b bp pjwuscnsc sdj reiohduao " },
-
-    ]
+    details = {
+        'event_name': 'Sample Event',
+        'event_date': '2023-07-30',
+        'event_description': 'This is a sample event description.',
+        'venue': 'Sample Venue',
+        'time': '12:00 PM',
+        'overall_in_charge': 'John Doe',
+        'dateposted': '2023-07-23',
+    }
 
 
     return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
 
+@app.route('/Report_generation/update.html', methods = ['GET', 'POST'])
+def update():
+    event_details = {
+        'event_name': 'Sample Event',
+        'event_date': '2023-07-30',
+        'event_location': 'Sample City',
+        'event_description': 'This is a sample event description.',
+        'venue': 'Sample Venue',
+        'time': '12:00 PM',
+        'overall_in_charge': 'John Doe',
+        'dateposted': '2023-07-23',
+    }
+    update_user_form = CreateUserForm(request.form)
+    # if request.method == 'POST' and update_user_form.validate():
+
+        # firebase portion
+        # users_dict = {}
+        # db = shelve.open('storage.db', 'w')
+        # users_dict = db['Users']
+
+
+        # class portion
+        # user = users_dict.get(id)
+        # user.set_first_name(update_user_form.first_name.data)
+        # user.set_last_name(update_user_form.last_name.data)
+        # user.set_gender(update_user_form.gender.data)
+        # user.set_membership(update_user_form.membership.data)
+        # user.set_remarks(update_user_form.remarks.data)
+
+        # db['Users'] = users_dict
+        # db.close()
+
+        # return redirect(url_for('retrieve_users'))
+    # else:
+    #     users_dict = {}
+    #     db = shelve.open('storage.db', 'r')
+    #     users_dict = db['Users']
+    #     db.close()
+    #
+    #     user = users_dict.get(id)
+    #     update_user_form.first_name.data = user.get_first_name()
+    #     update_user_form.last_name.data = user.get_last_name()
+    #     update_user_form.gender.data = user.get_gender()
+    #     update_user_form.membership.data = user.get_membership()
+    #     update_user_form.remarks.data = user.get_remarks()
+    #
+    #     return render_template('updateUser.html', form=update_user_form)
+    return render_template('/Report_generation/update.html', name="Sheldon", form=update_user_form,event=event_details)
+
 #Transaction handling routes
 @app.route('/transaction_handling/marketplace')
 def marketplace():
-    return render_template('/transaction_handling/marketplace.html', name="Sheldon")
+    products = [
+        {
+            'title': 'Fantastic Book',
+            'description': ' This is a fantastic book that will take you on an unforgettable journey through its captivating plot,keeping you turning the pages until the very end.',
+            'price': 14.99,
+            'seller': 'Jane Doe',
+            'rating': 4.7,
+            'condition': 'Like New',
+            'image': 'book.jpg',
+        },
+        {
+            'title': 'Vintage Bicycle',
+            'description': ' This vintage bicycle is a true gem for bike enthusiasts. Its classic design and sturdy build make it perfect for leisurely rides in the neighborhood.',
+            'price': 199.99,
+            'seller': 'John Smith',
+            'rating': 4.5,
+            'condition': 'Used',
+            'image': 'bicycle.jpg',
+        },
+        {
+            'title': 'Garden Tools',
+            'description': 'This garden tools set is perfect for anyone with a green thumb. It includes everything you need to tend to your garden and grow beautiful plants.',
+            'price': 49.99,
+            'seller': 'Mary Johnson',
+            'rating': 4.8,
+            'condition': 'New',
+            'image': 'gardentools.jpg',
+        },
+        {
+            'title': 'Digital Camera',
+            'description': 'This digital camera is perfect for capturing all your special moments. Its high-resolution sensor and advanced features ensure stunning photos and videos.',
+            'price': 299.99,
+            'seller': 'Michael Brown',
+            'rating': 4.6,
+            'condition': 'Used',
+            'image': 'digitalcamera.jpg',
+        },
+        {
+            'title': 'Skateboard',
+            'description': 'This skateboard is perfect for beginners and experienced riders alike. Its durable construction and smooth wheels ensure a fun and safe ride.',
+            'price': 49.99,
+            'seller': 'Robert Johnson',
+            'rating': 4.4,
+            'condition': 'Used',
+            'image': 'skateboard.jpg',
+        },
+        {
+            'title': 'Cookware Set',
+            'description': 'This cookware set is a must-have for any aspiring chef. It includes high-quality pots, pans, and utensils to help you create delicious meals.',
+            'price': 79.99,
+            'seller': 'Emily Lee',
+            'rating': 4.9,
+            'condition': 'Like New',
+            'image': 'Cookware.jpg',
+        },
+        {
+            'title': 'Acoustic Guitar',
+            'description': 'This acoustic guitar is perfect for music enthusiasts and aspiring musicians. Its rich tones and comfortable playability make it a joy to play.',
+            'price': 199.99,
+            'seller': 'Sarah Brown',
+            'rating': 4.3,
+            'condition': 'Used',
+            'image': 'acousticguitar.jpg',
+        },
+        {
+            'title': 'Original Painting',
+            'description': 'This original painting is a masterpiece that will add beauty and elegance to any home. Its stunning colors and intricate details are truly captivating.',
+            'price': 499.99,
+            'seller': 'William Doe',
+            'rating': 4.2,
+            'condition': 'Like New',
+            'image': 'Paining.jpg',
+        },
+        {
+            'title': 'Headphones',
+            'description': 'These wireless headphones deliver an immersive audio experience. With noise-canceling technology and long battery life, they are perfect for music lovers on the go.',
+            'price': 99.99,
+            'seller': 'Lisa Johnson',
+            'rating': 4.7,
+            'condition': 'Used',
+            'image': 'wirelessheadphones.jpg',
+        },
+
+        # Add more product dictionaries here for other products
+    ]
+    return render_template('/transaction_handling/marketplace.html', name="Sheldon", products=products)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

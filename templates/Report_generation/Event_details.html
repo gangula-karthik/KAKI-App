@@ -11,25 +11,19 @@
 
 <div class="background">
 
-    <h3 class = "title_report">Event name</h3>
+    <h3 class = "title_report">{{details.event_name}}</h3>
 
     <div class ="details">
-        <p>Venue: {{Venue}}</p>
-        <p>Date: {{Date}}</p>
-        <p>Time: {{Time}}</p>
+        <p>Date: {{details.event_date}}</p>
+        <p>Time: {{details.time}}</p>
     </div>
 
     <div class ="details">
-        <p>Overall-In-Charge: {{OIC}}</p>
-        <p>Date posted: {{Date_posted}}</p>
-        <p>Close date: {{Close_date}}</p>
+        <p>Overall-In-Charge: {{details.overall_in_charge}}</p>
+        <p>Date posted: {{details.dateposted}}</p>
+        <p>Location: {{details.venue}}</p>
     </div>
 
-    <div class ="details">
-        <p>Sign-ups: {{Sign_ups}}</p>
-        <p>Attended: {{Attended}}</p>
-        <p>participation: {{Participation}}</p>
-    </div>
 
     <div class = "details">
         <p>Description: {{Description}}</p>
@@ -40,7 +34,7 @@
 
 
     <div>
-    <button class = "buttonLeft">Save</button>
+    <button class = "buttonLeft" onclick="location.href = '/Report_generation/update.html';">Edit</button>
     <button class = "buttonRight" onclick="generatePDF()">Download</button>
 </div>
 

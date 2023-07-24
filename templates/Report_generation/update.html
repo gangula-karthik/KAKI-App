@@ -1,29 +1,35 @@
 {% extends "template.html" %}
 
 
-{% block title %}Update event{% endblock %}
-
-
 {% block content %}
-{% from "formHelper.html" import render_field %}
+{% from "_formHelper.html" import render_field %}
 
 <h1 class="display-4">Update User</h1>
 
-<form method="POST" action="">
-  <div class="form-group">
-    {{ render_field(form.name, class="form-control") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.date_posted, class="form-control") }}
-  </div>
-    <div class="form-group">
-    {{ render_field(form.event_date, class="form-control") }}
-  </div>
-  <div id="prof">
-    <div class="form-group">
-      {{ render_field(form.remarks, class="form-control") }}
-    </div>
-  </div>
-  <input type="submit" value="Submit" class="btn btn-primary"/>
-</form>
+<form method="post" action="/update">
+        <label for="venue">Venue:</label>
+        <input type="text" id="venue" name="venue" value="{{ event.venue }}" required><br>
+
+        <label for="event_date">Event Date:</label>
+        <input type="date" id="event_date" name="event_date" value="{{ event.event_date }}" required><br>
+
+        <label for="time">Time:</label>
+        <input type="text" id="time" name="time" value="{{ event.time }}" required><br>
+
+        <label for="overall_in_charge">Overall in Charge:</label>
+        <input type="text" id="overall_in_charge" name="overall_in_charge" value="{{ event.overall_in_charge }}" required><br>
+
+        <label for="dateposted">Date Posted:</label>
+        <input type="date" id="dateposted" name="dateposted" value="{{ event.dateposted }}" required><br>
+
+        <label for="event_location">Event Location:</label>
+        <input type="text" id="event_location" name="event_location" value="{{ event.event_location }}" required><br>
+
+         <label for="event_description">Event Description:</label><br>
+        <textarea id="event_description" name="event_description" rows="4" cols="50" required>{{ event.event_description }}</textarea><br>
+
+
+        <input type="submit" value="Submit">
+    </form>
+
 {% endblock %}
