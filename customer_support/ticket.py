@@ -49,9 +49,6 @@ class Ticket:
         except Exception as e:
             print(f"Error while pushing data to Firebase: {e}")
 
-    def addTicketID(self, ticket_id):
-        self.ticket_id = ticket_id
-
     def addStaffID(self, staff_id):
         self.staff_id = staff_id
     
@@ -75,6 +72,8 @@ class Ticket:
             raise ValueError("Invalid topic")
         
     def deleteTicket(self):
+        db.child(f'/tickets/{self.ticket_id}').remove()
+        print("Ticket deleted successfully.")
         self.ticket_id = None
         self.user_id = None
         self.staff_id = None
@@ -144,3 +143,4 @@ class Ticket:
 
 if __name__ == "__main__":
     t3 = Ticket("leap", "I want my refund", "bought a scam product", "payment")
+    t3.deleteTicket()
