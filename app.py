@@ -41,20 +41,20 @@ handler.setFormatter(colorlog.ColoredFormatter(
     }
 ))
 
-@app.before_first_request
-def init_app():
-    app.logger.info("Starting app...")
-    app.logger.info(Fore.GREEN + """
+# @app.before_first_request
+# def init_app():
+#     app.logger.info("Starting app...")
+#     app.logger.info(Fore.GREEN + """
                     
-    | | / / / _ \ | | / /_   _|
-    | |/ / / /_\ \| |/ /  | |  
-    |    \ |  _  ||    \  | |  
-    | |\  \| | | || |\  \_| |_ 
-    \_| \_/\_| |_/\_| \_/\___/ ver 1.1.0
+#     | | / / / _ \ | | / /_   _|
+#     | |/ / / /_\ \| |/ /  | |  
+#     |    \ |  _  ||    \  | |  
+#     | |\  \| | | || |\  \_| |_ 
+#     \_| \_/\_| |_/\_| \_/\___/ ver 1.1.0
     
-    A product by Team Rocket Dev 🚀
-    Software is lincensed under MIT License
-                """)
+#     A product by Team Rocket Dev 🚀
+#     Software is lincensed under MIT License
+#                 """)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -161,7 +161,7 @@ def Individual_report():
     {"name": "Player 5", "score": 69}
 ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], neighbours_helped = '69', number_of_activities = '69')
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'],neighbours_helped = '69', number_of_activities = '69')
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
@@ -177,7 +177,7 @@ def Community_report():
         {"name": "Player 5", "score": 69}
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], most_contribute = 'Nameless', number_of_activities = '69')
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'], most_contribute = 'Nameless', number_of_activities = '69')
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
