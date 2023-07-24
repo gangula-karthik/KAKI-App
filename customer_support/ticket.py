@@ -41,7 +41,7 @@ class Ticket:
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
         self.addMLPriority(self.subject)
-        self.replies = {} # replies should contain username, reply, time
+        self.replies = [] # replies should be a list of dictionaries
         try:
             self.ticket_id = db.child('/tickets').push(self.__dict__)['name']
             db.child(f'/tickets/{self.ticket_id}').update({"ticket_id": self.ticket_id})
@@ -93,10 +93,7 @@ class Ticket:
                 self.closed_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     
     def removeDescription(self, descriptionIndex):
-        if descriptionIndex >= 0 and descriptionIndex < len(self.descriptions):
-            del self.descriptions[descriptionIndex]
-        else:
-            raise ValueError("Invalid description index")
+        self.descriptions = None
 
     def readDescriptions(self):
         if self.descriptions:
@@ -122,7 +119,14 @@ class Ticket:
             self.subject_sentiment = "neutral"
 
     def addReply(self, username, reply):
-        self.replies[username] = [reply, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
+        reply_data = {
+            "username": username,
+            "reply": reply,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        }
+        self.replies.append(reply_data)
+        db.child(f'/tickets/{self.ticket_id}/replies').set(self.replies)
+
 
     
     def __str__(self):
@@ -139,8 +143,3 @@ class Ticket:
             "Opened At": self.opened_at,
             "Closed At": self.closed_at
         }, indent=4)
-
-
-if __name__ == "__main__":
-    t3 = Ticket("leap", "I want my refund", "bought a scam product", "payment")
-    t3.deleteTicket()
