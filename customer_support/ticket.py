@@ -24,7 +24,7 @@ db = firebase.database()
 
 class Ticket:
     status = ['open', 'in progress', 'resolved']
-    topic = ['technical support', 'payment', 'others']
+    topic = ['billing', 'technical', 'listing', 'other']
     def __init__(self, user_id, subject, descriptions, topic):
         self.ticket_id = None
         self.user_id = user_id
@@ -41,6 +41,7 @@ class Ticket:
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
         self.addMLPriority(self.subject)
+        self.images = []
         self.replies = [] # replies should be a list of dictionaries
         try:
             self.ticket_id = db.child('/tickets').push(self.__dict__)['name']
@@ -63,6 +64,9 @@ class Ticket:
             self.topic = topic
         else:
             raise ValueError("Invalid topic")
+    
+    def addImages(self, image_url):
+        self.images.append(image_url)
         
     def updateTopic(self, new_topic):
         new_topic = new_topic.lower()

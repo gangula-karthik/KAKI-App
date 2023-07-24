@@ -6,11 +6,28 @@ import datetime
 import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
+from customer_support.ticket import Ticket
+from imageUploader import FirebaseStorageClient
+from werkzeug.utils import secure_filename
+import os
+from dotenv import load_dotenv
 
 
+
+
+config = {
+    "apiKey": load_dotenv("PYREBASE_API_TOKEN"),
+    "authDomain": "kaki-db097.firebaseapp.com",
+    "projectId": "kaki-db097",
+    "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    "storageBucket": "kaki-db097.appspot.com",
+}
 
 
 app = Flask(__name__)
+
+app.config['UPLOAD_FOLDER'] = "/uploads"
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
@@ -87,6 +104,34 @@ def customerOverview():
 @app.route('/user_chat', methods=['GET'])
 def staffChat():
     return render_template('customer_support/user_chat.html', name="Sheldon")
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/new_ticket', methods=['POST'])
+def new_ticket():
+    subject = request.form.get('subject')
+    description = request.form.get('description')
+    topic = request.form.get('topic')
+    file = request.files.get('file')
+    user_id = 'Leap'
+
+    if file:
+        # get the file name, this doesn't include the path
+        filename = secure_filename(file.filename)
+        
+        # upload the file to firebase storage
+        firebase_storage_client = FirebaseStorageClient(config, "ticket_images")
+        firebase_storage_client.upload(file, filename) # passing file object directly
+        url = firebase_storage_client.get_url(filename)
+        
+        # create new ticket and add image url
+        ticket = Ticket(user_id, subject, description, topic)
+        ticket.addImages(url)
+
+    return 'Ticket Created Successfully'
+
 
 
 @app.route('/my_tickets', methods=['GET'])
