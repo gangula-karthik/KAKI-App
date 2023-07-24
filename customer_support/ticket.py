@@ -3,7 +3,7 @@ import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import time
 import pyrebase
-import fasttext
+# import fasttext
 from dotenv import load_dotenv
 
 nltk.download('vader_lexicon')
