@@ -1,17 +1,17 @@
 
-class Report:
+class Saved_Report:
     report_id_count = 0
     def __init__(self,id):
         self.__report_id__= id
 
 
-class Indi_Report(Report):
+class Indi_Report(Saved_Report):
 
     def __init__(self):
 
-        Report.report_id_count+=1
-        super().__init__(Report.report_id_count)
-        self.__report_id__ =Report.report_id_count
+        Saved_Report.report_id_count+=1
+        super().__init__(Saved_Report.report_id_count)
+        self.__report_id__ =Saved_Report.report_id_count
         self.__leaderboard__ = None
         self.__CurrentMonth__=None
         self.__CurrentYear__=None
@@ -81,12 +81,12 @@ class Indi_Report(Report):
         self.__pieLabel__ = pie_label
 
 
-class Com_Report(Report):
+class Com_Report(Saved_Report):
 
     def __init__(self):
-        Report.report_id_count += 1
-        super().__init__(Report.report_id_count)
-        self.__report_id__ = Report.report_id_count
+        Saved_Report.report_id_count += 1
+        super().__init__(Saved_Report.report_id_count)
+        self.__report_id__ = Saved_Report.report_id_count
         self.__leaderboard__ = None
         self.__CurrentMonth__ = None
         self.__CurrentYear__ = None
@@ -156,10 +156,10 @@ class Com_Report(Report):
         self.__pieLabel__ = pie_label
 
 
-class trans_report(Report):
+class trans_report(Saved_Report):
     def __init__(self):
-        Report.report_id_count += 1
-        super().__init__(Report.report_id_count)
+        Saved_Report.report_id_count += 1
+        super().__init__(Saved_Report.report_id_count)
         self.__transactionDataIn__ =None
         self.__transactionDataOut__ = None
         self.__NoTransactionData = None
@@ -184,38 +184,8 @@ class trans_report(Report):
         self.__NoTransactionData = no_transaction_data
 
 
-class General_report(Report):
+class events_report():
     def __init__(self):
-        Report.report_id_count += 1
-        super().__init__(Report.report_id_count)
-        self.__NoUser__ =None
-        self.__NoTransactionData = None
-        self.__NoActivities__ = None
-
-    def get_no_user(self):
-        return self.__NoUser__
-
-    def get_no_transaction_data(self):
-        return self.__NoTransactionData__
-
-    def get_no_activities(self):
-        return self.__NoActivities__
-
-        # Setter methods
-
-    def set_no_user(self, no_user):
-        self.__NoUser__ = no_user
-
-    def set_no_transaction_data(self, no_transaction_data):
-        self.__NoTransactionData__ = no_transaction_data
-
-    def set_no_activities(self, no_activities):
-        self.__NoActivities__ = no_activities
-
-class events_report(Report):
-    def __init__(self):
-        Report.report_id_count += 1
-        super().__init__(Report.report_id_count)
         self.__event_name__ =None
         self.__event_date = None
         self.__venue__ = None
@@ -267,7 +237,3 @@ class events_report(Report):
     def set_date_posted(self, date_posted):
         self.__dateposted__ = date_posted
 
-class saved_report():
-    def __init__(self):
-        self.__id__ = None
-        self.__data__ = None
