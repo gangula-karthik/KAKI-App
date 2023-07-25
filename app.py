@@ -151,10 +151,10 @@ def myTickets():
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
     allTickets = pyredb.child("tickets").get()
-    ticketKeys = [i.key() for i in allTickets.each()]
-    return render_template('customer_support/ticket_discussion.html', name="Sheldon", keys=ticketKeys)
+    tickets = [i.val() for i in allTickets.each()]
+    return render_template('customer_support/ticket_discussion.html', name="Sheldon", data=tickets)
 
-@app.route('/user_tickets/<int:ticket_ID>', methods=['GET'])
+@app.route('/user_tickets/<ticket_ID>', methods=['GET'])
 def ticketComments(ticket_ID):
     return render_template('customer_support/ticket_comments.html', name="Sheldon", ticket_ID=ticket_ID)
 

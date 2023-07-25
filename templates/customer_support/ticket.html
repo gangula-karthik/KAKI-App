@@ -13,17 +13,17 @@
 <div class="card mt-4 mx-auto" id="ticket-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
-      <p class="card-text"><small class="text-white-50">ID: {{ ticket.id}}</small></p>
-      <p class="card-text"><small class="text-white-50">3 mins ago</small></p>
+      <p class="card-text"><small class="text-white-50">ID: {{ ticket.ticket_id}}</small></p>
+      <p class="card-text"><small class="text-white-50">{{ ticket.opened_at }}</small></p>
     </div>
-    <h5 class="card-title">Post title</h5>
-    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+    <h5 class="card-title">{{ ticket.subject }}</h5>
+    <p class="card-text">{{ ticket.descriptions }}</p>
     <div class="d-flex justify-content-between align-items-end">
       <div>
         <img src="path_to_profile_pic.jpg" alt="profile pic" class="rounded-circle" style="width: 30px; height: 30px;">
-        <small class="text-info">  Username</small>
+        <small class="text-info">  {{ ticket.user_id }}</small>
       </div>
-      <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=100) }}">Open Chat</button>
+      <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}">Open Chat</button>
     </div>
   </div>
 </div>

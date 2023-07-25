@@ -27,9 +27,9 @@
 
 
 
-{% include 'customer_support/ticket.html' %}
-{% include 'customer_support/ticket.html' %}
-{% include 'customer_support/ticket.html' %}
+{% for ticket in data %}
+  {% include 'customer_support/ticket.html' %}
+{% endfor %}
 
 
 
