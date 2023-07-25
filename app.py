@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for
 import colorlog
 from colorama import Fore
 import datetime
@@ -29,6 +29,7 @@ firebase = pyrebase.initialize_app(config)
 pyredb = firebase.database()
 
 app = Flask(__name__)
+app.secret_key = 'karthik123'
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -103,7 +104,8 @@ def friendRequest():
 # Customer support routes
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
-    return render_template('customer_support/support_overview.html', name="Sheldon")
+    messages = get_flashed_messages()
+    return render_template('customer_support/support_overview.html', name="Sheldon", messages=messages)
 
 @app.route('/user_chat', methods=['GET'])
 def staffChat():
@@ -135,7 +137,10 @@ def new_ticket():
         # create new ticket and add image url
         ticket.addImages(url)
 
-    return 'Ticket Created Successfully'
+    flash('Ticket has been submitted 🚀')
+    
+    messages = get_flashed_messages()  # Get the flashed messages
+    return redirect(url_for('customerOverview'))
 
 
 
