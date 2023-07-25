@@ -1,0 +1,26 @@
+{% extends "template.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/MyProducts.html" />
+{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ product.title }} Details</title>
+</head>
+<body>
+    <h1>{{ product.title }}</h1>
+    <img src="{{ product.image }}" alt="{{ product.title }}" style="width: 200px; height: 200px;">
+    <p>{{ product.description }}</p>
+    <p>Price: ${{ product.price }}</p>
+    <p>Seller: {{ product.seller }}</p>
+    <p>Rating: {{ product.rating }}/5</p>
+    <p>Condition: {{ product.condition }}</p>
+
+    <!-- Add a "Chat Now" button linking to a chat page -->
+    <a href="/chat/{{ product.id }}">
+        <button>Chat Now</button>
+    </a>
+</body>
+</html>
+{% endblock %}
