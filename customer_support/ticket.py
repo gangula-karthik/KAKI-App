@@ -2,31 +2,60 @@ import json
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import time
-import fasttext
+import pyrebase
+# import fasttext
+from dotenv import load_dotenv
 
 nltk.download('vader_lexicon')
 
+config = {
+    "apiKey": load_dotenv("PYREBASE_API_TOKEN"),
+    "authDomain": "kaki-db097.firebaseapp.com",
+    "projectId": "kaki-db097",
+    "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    "storageBucket": "kaki-db097.appspot.com",
+    "messagingSenderId": "521940680838",
+    "appId": "1:521940680838:web:96e15f16f11bb306c91107",
+    "measurementId": "G-QMBGXFXJET"
+}
+
+firebase = pyrebase.initialize_app(config)
+db = firebase.database()
+
 class Ticket:
     status = ['open', 'in progress', 'resolved']
-    topic = ['technical support', 'payment', 'others']
-    def __init__(self, ticket_id, user_id, staff_id, subject):
-        self.ticket_id = ticket_id
+    topic = ['billing', 'technical', 'listing', 'other']
+    def __init__(self, user_id, subject, descriptions, topic):
+        self.ticket_id = None
         self.user_id = user_id
         self.staff_id = None
         self.subject = subject
         self.status = self.__class__.status[0]
         self.closed_at = None
         self.calculate_subject_sentiment(self.subject)
-        self.topic = None
-        self.descriptions = []
+        if topic in self.__class__.topic:
+            self.topic = topic
+        else:
+            raise ValueError("Invalid topic")
+        self.descriptions = descriptions
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
         self.addMLPriority(self.subject)
-        self.replies = []
+        self.images = []
+        self.replies = [] # replies should be a list of dictionaries
+        try:
+            self.ticket_id = db.child('/tickets').push(self.__dict__)['name']
+            db.child(f'/tickets/{self.ticket_id}').update({"ticket_id": self.ticket_id})
+            print("Data pushed to Firebase successfully.")
+        except Exception as e:
+            print(f"Error while pushing data to Firebase: {e}")
+
+    def addStaffID(self, staff_id):
+        self.staff_id = staff_id
     
     def addMLPriority(self, subject):
-        model = fasttext.load_model("customer_support/model.bin")
-        priority = model.predict(subject)
+        model = fasttext.load_model("/Users/daaa/Downloads/KAKI-App/customer_support/model.bin")
+        priority = model.predict(f"{self.topic} {self.subject} {self.descriptions}")
         self.ml_priority = priority[0][0].replace("__label__", "").replace("\"", "")
 
     def addTopic(self, topic):
@@ -35,6 +64,9 @@ class Ticket:
             self.topic = topic
         else:
             raise ValueError("Invalid topic")
+    
+    def addImages(self, image_url):
+        self.images.append(image_url)
         
     def updateTopic(self, new_topic):
         new_topic = new_topic.lower()
@@ -44,6 +76,8 @@ class Ticket:
             raise ValueError("Invalid topic")
         
     def deleteTicket(self):
+        db.child(f'/tickets/{self.ticket_id}').remove()
+        print("Ticket deleted successfully.")
         self.ticket_id = None
         self.user_id = None
         self.staff_id = None
@@ -61,15 +95,9 @@ class Ticket:
             self.status = status
             if self.status == "resolved": 
                 self.closed_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
-    def addDescription(self, description): 
-        self.descriptions.append(description)
     
     def removeDescription(self, descriptionIndex):
-        if descriptionIndex >= 0 and descriptionIndex < len(self.descriptions):
-            del self.descriptions[descriptionIndex]
-        else:
-            raise ValueError("Invalid description index")
+        self.descriptions = None
 
     def readDescriptions(self):
         if self.descriptions:
@@ -94,8 +122,15 @@ class Ticket:
         else:
             self.subject_sentiment = "neutral"
 
-    def addReply(self, reply):
-        self.replies.append(reply)
+    def addReply(self, username, reply):
+        reply_data = {
+            "username": username,
+            "reply": reply,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        }
+        self.replies.append(reply_data)
+        db.child(f'/tickets/{self.ticket_id}/replies').set(self.replies)
+
 
     
     def __str__(self):
@@ -112,22 +147,3 @@ class Ticket:
             "Opened At": self.opened_at,
             "Closed At": self.closed_at
         }, indent=4)
-    
-
-
-if __name__ == "__main__":
-    ticket = Ticket(1, 1, 1, "I can't find the 'Product_IP' of my phone.")
-    ticket.addDescription("Hello")
-    ticket.addDescription("World")
-    print(ticket.readDescriptions())
-
-    ticket.updateDescriptions(1, "World!")
-    print(ticket.readDescriptions())
-
-    ticket.removeDescription(1)
-    print(ticket.readDescriptions())
-
-    ticket.updateStatus("resolved")
-    print(ticket.status)
-
-    print(ticket)

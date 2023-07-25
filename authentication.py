@@ -34,7 +34,7 @@ def index():
         password = request.form['user_pwd']
         try:
             user = pyreauth.sign_in_with_email_and_password(email,password)
-            return render_template('template.html')
+            return render_template('homefeed.html')
         except:
              unsuccessful = 'Please check your credentials'
              return render_template('account_management/login.html', umessage=unsuccessful)

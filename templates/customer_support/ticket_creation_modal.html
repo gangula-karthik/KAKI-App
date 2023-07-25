@@ -1,41 +1,39 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content bg-dark text-light">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">New Ticket</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="mb-3">
-              <label for="recipient-name" class="col-form-label">Subject</label>
-              <input type="text" class="form-control bg-dark text-light" id="recipient-name">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">New Ticket</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/new_ticket" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Subject</label>
+            <input type="text" class="form-control bg-dark text-light" id="recipient-name" name="subject">
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Description</label>
+            <textarea class="form-control bg-dark text-light" id="message-text" name="description"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <select class="form-select bg-dark text-light" id="autoSizingSelect" name="topic">
+                <option selected class="disabled">Add Topic</option>
+                <option value="billing">Billing Issues</option>
+                <option value="technical">Technical Issues</option>
+                <option value="listing">Listing & Account Issues</option>
+                <option value="other">Other</option>
+              </select>
             </div>
-            <div class="mb-3">
-              <label for="message-text" class="col-form-label">Description</label>
-              <textarea class="form-control bg-dark text-light" id="message-text"></textarea>
-            </div>
-            <div class="row">
-              <div class="col-5">
-                <select class="form-select bg-dark text-light" id="autoSizingSelect">
-                  <option selected class="disabled">Add Topic</option>
-                  <option><a class="dropdown-item " href="#">Billing Issues</a></option>
-                  <option><a class="dropdown-item " href="#">Technical Issues</a></option>
-                  <option><a class="dropdown-item " href="#">Listing & Account Issues</a></option>
-                  <option><a class="dropdown-item" href="#">Other</a></option>
-                </select>
+            <div class="col-7">
+              <div class="mb-3">
+                <input class="form-control bg-dark text-light" type="file" id="formFileMultiple" name="file" multiple>
               </div>
-              <div class="col-7">
-                <div class="mb-3">
-                  <input class="form-control bg-dark text-light" type="file" id="formFileMultiple" multiple>
-                </div>
-              </div>
             </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary w-100 py-2 fs-5">Send Ticket</button>
-        </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2 fs-5">Send Ticket</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
