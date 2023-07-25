@@ -26,7 +26,6 @@ class Ticket:
     status = ['open', 'in progress', 'resolved']
     topic = ['billing', 'technical', 'listing', 'other']
     def __init__(self, user_id, subject, descriptions, topic):
-        self.ticket_id = None
         self.user_id = user_id
         self.staff_id = None
         self.subject = subject
@@ -54,9 +53,12 @@ class Ticket:
         self.staff_id = staff_id
     
     def addMLPriority(self, subject):
-        model = fasttext.load_model("/Users/daaa/Downloads/KAKI-App/customer_support/model.bin")
-        priority = model.predict(f"{self.topic} {self.subject} {self.descriptions}")
-        self.ml_priority = priority[0][0].replace("__label__", "").replace("\"", "")
+        """
+        BROKEN: FIX IMMEDIATELY
+        """
+        # model = fasttext.load_model("/Users/daaa/Downloads/KAKI-App/customer_support/model.bin")
+        # priority = model.predict(f"{self.topic} {self.subject} {self.descriptions}")
+        # self.ml_priority = priority[0][0].replace("__label__", "").replace("\"", "")
 
     def addTopic(self, topic):
         topic = topic.lower()
@@ -135,7 +137,6 @@ class Ticket:
     
     def __str__(self):
         return json.dumps({
-            "Ticket ID": self.ticket_id,
             "User ID": self.user_id,
             "Staff ID": self.staff_id,
             "Subject": self.subject,

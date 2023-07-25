@@ -14,10 +14,13 @@
       </div>
     </div>
     <div class="col-md-4 d-flex justify-content-end">
-      <button class="btn btn-primary my-2 my-sm-0">Raise a ticket <i class="fa-solid fa-plus"></i></button>
+      <button class="btn btn-primary my-2 my-sm-0" data-bs-toggle="modal" data-bs-target="#exampleModal"
+      data-bs-whatever="@mdo">Raise a ticket <i class="fa-solid fa-plus"></i></button>
     </div>
   </div>
 </div>
+
+{% include 'customer_support/ticket_creation_modal.html' %}
 
 
     
