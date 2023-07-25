@@ -2,45 +2,16 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-class Saved_Report:
-    report_id_count = 0
-
-    def __init__(self, report_id):
-        self.__report_id__ = report_id
-
-    def save_to_firebase(self):
-        report_data = {
-            "report_id": self.__report_id__,
-        }
-
-        # Save the report data to Firebase Realtime Database
-        ref = db.reference("/saved_reports")  # Replace "/saved_reports" with the path where you want to store the data
-        new_report_ref = ref.push()
-        new_report_ref.set(report_data)
-
-    @classmethod
-    def load_from_firebase(cls, report_id):
-        # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("/saved_reports")  # Replace "/saved_reports" with the path where your data is stored
-        report_ref = ref.child(report_id).get()
-
-        if report_ref:
-            return cls(report_ref.get("report_id"))
-        else:
-            return None
-
-    def update_to_firebase(self, attribute_name, new_value):
-        # Update specific attribute of the report in Firebase Realtime Database
-        ref = db.reference("/saved_reports")  # Replace "/saved_reports" with the path where your data is stored
-        report_ref = ref.child(self.__report_id__)
-        report_ref.update({attribute_name: new_value})
 
 
-class Indi_Report(Saved_Report):
+
+
+class Indi_Report:
+    counter = 0
     def __init__(self):
-        Saved_Report.report_id_count += 1
-        super().__init__(Saved_Report.report_id_count)
-        self.__report_id__ = Saved_Report.report_id_count
+        number = str(Trans_Report.counter + 1)
+        report_id = 'I' + number
+        self.__report_id__ = report_id
         self.__leaderboard__ = None
         self.__CurrentMonth__ = None
         self.__CurrentYear__ = None
@@ -51,11 +22,73 @@ class Indi_Report(Saved_Report):
         self.__activities__ = None
         self.__pieLabel__ = None
 
-    # ... (getter and setter methods as before)
+    # Getter and setter methods for Indi_Report attributes
+    def get_report_id(self):
+        return self.__report_id__
 
+    def set_report_id(self, report_id):
+        self.__report_id__ = report_id
+
+    def get_leaderboard(self):
+        return self.__leaderboard__
+
+    def set_leaderboard(self, leaderboard):
+        self.__leaderboard__ = leaderboard
+
+    def get_current_month(self):
+        return self.__CurrentMonth__
+
+    def set_current_month(self, current_month):
+        self.__CurrentMonth__ = current_month
+
+    def get_current_year(self):
+        return self.__CurrentYear__
+
+    def set_current_year(self, current_year):
+        self.__CurrentYear__ = current_year
+
+    def get_list_months(self):
+        return self.__listMonths__
+
+    def set_list_months(self, list_months):
+        self.__listMonths__ = list_months
+
+    def get_line_data(self):
+        return self.__lineData__
+
+    def set_line_data(self, line_data):
+        self.__lineData__ = line_data
+
+    def get_pie_data(self):
+        return self.__pieData__
+
+    def set_pie_data(self, pie_data):
+        self.__pieData__ = pie_data
+
+    def get_neighbours_helped(self):
+        return self.__neighboursHelped__
+
+    def set_neighbours_helped(self, neighbours_helped):
+        self.__neighboursHelped__ = neighbours_helped
+
+    def get_activities(self):
+        return self.__activities__
+
+    def set_activities(self, activities):
+        self.__activities__ = activities
+
+    def get_pie_label(self):
+        return self.__pieLabel__
+
+    def set_pie_label(self, pie_label):
+        self.__pieLabel__ = pie_label
+
+    # Add getter and setter methods for other attributes as needed
+
+    # Method to save Indi_Report to Firebase
     def save_to_firebase(self):
         report_data = {
-            "report_id": self.__report_id__,
+            "Report_id": self.__report_id__,
             "leaderboard": self.__leaderboard__,
             "current_month": self.__CurrentMonth__,
             "current_year": self.__CurrentYear__,
@@ -67,43 +100,44 @@ class Indi_Report(Saved_Report):
             "pie_label": self.__pieLabel__,
         }
 
-        # Save the report data to Firebase Realtime Database
-        ref = db.reference("/reports")  # Replace "/reports" with the path where you want to store the data
+        ref = db.reference("Users/Saved_report/Indi_report/")
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
-    def load_from_firebase(self, report_id):
-        # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("/reports")  # Replace "/reports" with the path where your data is stored
-        report_ref = ref.child(report_id).get()
+    # Method to load Indi_Report from Firebase using report_id
+    @classmethod
+    def load_from_firebase(cls, target_report_id):
+        ref = db.reference("/Users/Saved_report/Indi_report")
+        report_data = ref.get()
+        for report_id, data in report_data.items():
+            if data.get('Report_id') == target_report_id:
+                return data
 
-        if report_ref:
-            self.__report_id__ = report_ref.get("report_id")
-            self.__leaderboard__ = report_ref.get("leaderboard")
-            self.__CurrentMonth__ = report_ref.get("current_month")
-            self.__CurrentYear__ = report_ref.get("current_year")
-            self.__listMonths__ = report_ref.get("list_months")
-            self.__lineData__ = report_ref.get("line_data")
-            self.__pieData__ = report_ref.get("pie_data")
-            self.__neighboursHelped__ = report_ref.get("neighbours_helped")
-            self.__activities__ = report_ref.get("activities")
-            self.__pieLabel__ = report_ref.get("pie_label")
-            return True
-        else:
-            return False
+        return None
 
+    # Method to update specific attribute of the report in Firebase
     def update_to_firebase(self, attribute_name, new_value):
-        # Update specific attribute of the report in Firebase Realtime Database
-        ref = db.reference("/reports")  # Replace "/reports" with the path where your data is stored
+        ref = db.reference("/Users/Saved_report/Indi_report")
         report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
 
+    def delete_from_firebase(self):
+        if self.__report_id__:
+            ref = db.reference("/Users/Saved_report/Indi_report")
+            report_ref = ref.child(self.__report_id__)
+            report_ref.delete()
+        else:
+            print("No report ID found. Cannot delete from Firebase.")
 
-class Com_Report(Saved_Report):
+
+
+
+class Com_Report:
+    counter = 0
     def __init__(self):
-        Saved_Report.report_id_count += 1
-        super().__init__(Saved_Report.report_id_count)
-        self.__report_id__ = Saved_Report.report_id_count
+        number = str(Trans_Report.counter + 1)
+        report_id = 'C' + number
+        self.__report_id__ = report_id
         self.__leaderboard__ = None
         self.__CurrentMonth__ = None
         self.__CurrentYear__ = None
@@ -114,15 +148,77 @@ class Com_Report(Saved_Report):
         self.__activities__ = None
         self.__pieLabel__ = None
 
-    # ... (getter and setter methods as before)
+    # Getter and setter methods for Com_Report attributes
+    def get_report_id(self):
+        return self.__report_id__
 
+    def set_report_id(self, report_id):
+        self.__report_id__ = report_id
+
+    def get_leaderboard(self):
+        return self.__leaderboard__
+
+    def set_leaderboard(self, leaderboard):
+        self.__leaderboard__ = leaderboard
+
+    def get_current_month(self):
+        return self.__CurrentMonth__
+
+    def set_current_month(self, current_month):
+        self.__CurrentMonth__ = current_month
+
+    def get_current_year(self):
+        return self.__CurrentYear__
+
+    def set_current_year(self, current_year):
+        self.__CurrentYear__ = current_year
+
+    def get_list_months(self):
+        return self.__listMonths__
+
+    def set_list_months(self, list_months):
+        self.__listMonths__ = list_months
+
+    def get_line_data(self):
+        return self.__lineData__
+
+    def set_line_data(self, line_data):
+        self.__lineData__ = line_data
+
+    def get_pie_data(self):
+        return self.__pieData__
+
+    def set_pie_data(self, pie_data):
+        self.__pieData__ = pie_data
+
+    def get_most_contributed(self):
+        return self.__MostContributed__
+
+    def set_most_contributed(self, most_contributed):
+        self.__MostContributed__ = most_contributed
+
+    def get_activities(self):
+        return self.__activities__
+
+    def set_activities(self, activities):
+        self.__activities__ = activities
+
+    def get_pie_label(self):
+        return self.__pieLabel__
+
+    def set_pie_label(self, pie_label):
+        self.__pieLabel__ = pie_label
+
+    # Add getter and setter methods for other attributes as needed
+
+    # Method to save Com_Report to Firebase
     def save_to_firebase(self):
         report_data = {
-            "report_id": self.__report_id__,
+            "Report_id": self.__report_id__,
             "leaderboard": self.__leaderboard__,
             "current_month": self.__CurrentMonth__,
             "current_year": self.__CurrentYear__,
-            "list_months": self.__listMonths__,
+            "listMonths": self.__listMonths__,
             "line_data": self.__lineData__,
             "pie_data": self.__pieData__,
             "most_contributed": self.__MostContributed__,
@@ -130,84 +226,135 @@ class Com_Report(Saved_Report):
             "pie_label": self.__pieLabel__,
         }
 
-        # Save the report data to Firebase Realtime Database
-        ref = db.reference("/com_reports")  # Replace "/com_reports" with the path where you want to store the data
+        ref = db.reference("/Users/Saved_report/Com_report")
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
+    # Method to load Com_Report from Firebase using report_id
     @classmethod
-    def load_from_firebase(cls, report_id):
-        # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("/com_reports")  # Replace "/com_reports" with the path where your data is stored
-        report_ref = ref.child(report_id).get()
+    def load_from_firebase(cls, target_report_id):
+        ref = db.reference("/Users/Saved_report/Com_report")
+        report_data = ref.get()
+        for report_id, data in report_data.items():
+            if data.get('Report_id') == target_report_id:
+                return data
 
-        if report_ref:
-            com_report_instance = cls()
-            com_report_instance.__report_id__ = report_ref.get("report_id")
-            com_report_instance.__leaderboard__ = report_ref.get("leaderboard")
-            com_report_instance.__CurrentMonth__ = report_ref.get("current_month")
-            com_report_instance.__CurrentYear__ = report_ref.get("current_year")
-            com_report_instance.__listMonths__ = report_ref.get("list_months")
-            com_report_instance.__lineData__ = report_ref.get("line_data")
-            com_report_instance.__pieData__ = report_ref.get("pie_data")
-            com_report_instance.__MostContributed__ = report_ref.get("most_contributed")
-            com_report_instance.__activities__ = report_ref.get("activities")
-            com_report_instance.__pieLabel__ = report_ref.get("pie_label")
-            return com_report_instance
-        else:
-            return None
+        return None
 
+    # Method to update specific attribute of the report in Firebase
     def update_to_firebase(self, attribute_name, new_value):
-        # Update specific attribute of the report in Firebase Realtime Database
-        ref = db.reference("/com_reports")  # Replace "/com_reports" with the path where your data is stored
+        ref = db.reference("/Users/Saved_report/Com_report")
         report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
 
 
-class trans_report(Saved_Report):
+    def delete_from_firebase(self):
+        if self.__report_id__:
+            ref = db.reference("/Users/Saved_report/Com_report")
+            report_ref = ref.child(self.__report_id__)
+            report_ref.delete()
+        else:
+            print("No report ID found. Cannot delete from Firebase.")
+
+
+class Trans_Report:
+    counter = 0
+
     def __init__(self):
-        Saved_Report.report_id_count += 1
-        super().__init__(Saved_Report.report_id_count)
+        number = str(Trans_Report.counter + 1)
+        report_id = 'T' + number
+        self.__report_id__ = report_id
         self.__transactionDataIn__ = None
         self.__transactionDataOut__ = None
-        self.__NoTransactionData = None
+        self.__NoTransactionData__ = None
+        self.__current_month__ = None
+        self.__current_year__ = None
+        self.__listMonths__ = None
 
-    # ... (getter and setter methods as before)
+    # Getter and setter methods for Trans_Report attributes
+    def get_report_id(self):
+        return self.__report_id__
 
+    def set_report_id(self, report_id):
+        self.__report_id__ = report_id
+
+    def get_transaction_data_in(self):
+        return self.__transactionDataIn__
+
+    def set_transaction_data_in(self, transaction_data_in):
+        self.__transactionDataIn__ = transaction_data_in
+
+    def get_transaction_data_out(self):
+        return self.__transactionDataOut__
+
+    def set_transaction_data_out(self, transaction_data_out):
+        self.__transactionDataOut__ = transaction_data_out
+
+    def get_no_transaction_data(self):
+        return self.__NoTransactionData__
+
+    def set_no_transaction_data(self, no_transaction_data):
+        self.__NoTransactionData__ = no_transaction_data
+
+    def get_current_month(self):
+        return self.__current_month__
+
+    def set_current_month(self, current_month):
+        self.__current_month__ = current_month
+
+    def get_current_year(self):
+        return self.__current_year__
+
+    def set_current_year(self, current_year):
+        self.__current_year__ = current_year
+
+    def get_list_months(self):
+        return self.__listMonths__
+
+    def set_list_months(self, list_months):
+        self.__listMonths__ = list_months
+
+    # Method to save Trans_Report to Firebase
     def save_to_firebase(self):
         report_data = {
-            "report_id": self._Saved_Report__report_id__,  # Use the protected attribute from the parent class
-            "transaction_data_in": self.__transactionDataIn__,
-            "transaction_data_out": self.__transactionDataOut__,
-            "no_transaction_data": self.__NoTransactionData,
+            "Report_id": self.__report_id__,
+            "transactionDataIn": self.__transactionDataIn__,
+            "transactionDataOut": self.__transactionDataOut__,
+            "NoTransactionData": self.__NoTransactionData__,
+            "current_month": self.__current_month__,
+            "current_year": self.__current_year__,
+            "listMonths": self.__listMonths__,
         }
 
-        # Save the report data to Firebase Realtime Database
-        ref = db.reference("/trans_reports")  # Replace "/trans_reports" with the path where you want to store the data
+        ref = db.reference("/Users/Saved_report/Trans_report")
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
+    # Method to load Trans_Report from Firebase using report_id
     @classmethod
-    def load_from_firebase(cls, report_id):
-        # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("/trans_reports")  # Replace "/trans_reports" with the path where your data is stored
-        report_ref = ref.child(report_id).get()
+    def load_from_firebase(cls, target_report_id):
+        ref = db.reference("/Users/Saved_report/Trans_report")
+        report_data = ref.get()
+        for report_id, data in report_data.items():
+            if data.get('Report_id') == target_report_id:
+                return data
 
-        if report_ref:
-            trans_report_instance = cls()
-            trans_report_instance._Saved_Report__report_id__ = report_ref.get("report_id")
-            trans_report_instance.__transactionDataIn__ = report_ref.get("transaction_data_in")
-            trans_report_instance.__transactionDataOut__ = report_ref.get("transaction_data_out")
-            trans_report_instance.__NoTransactionData = report_ref.get("no_transaction_data")
-            return trans_report_instance
-        else:
-            return None
+        return None
 
+    # Method to update specific attribute of the report in Firebase
     def update_to_firebase(self, attribute_name, new_value):
-        # Update specific attribute of the report in Firebase Realtime Database
-        ref = db.reference("/trans_reports")  # Replace "/trans_reports" with the path where your data is stored
-        report_ref = ref.child(self._Saved_Report__report_id__)  # Use the protected attribute from the parent class
+        ref = db.reference("/Users/Saved_report/Trans_report")
+        report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
+
+    def delete_from_firebase(self):
+        if self.__report_id__:
+            ref = db.reference("/Users/Saved_report/Transaction_report")
+            report_ref = ref.child(self.__report_id__)
+            report_ref.delete()
+        else:
+            print("No report ID found. Cannot delete from Firebase.")
+
 
 
 class events_report():
@@ -234,14 +381,14 @@ class events_report():
         }
 
         # Save the report data to Firebase Realtime Database
-        ref = db.reference("/events_reports")  # Replace "/events_reports" with the path where you want to store the data
+        ref = db.reference("Users/Saved_report/events_reports")  # Replace "/events_reports" with the path where you want to store the data
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     @classmethod
     def load_from_firebase(cls, report_id):
         # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("/events_reports")  # Replace "/events_reports" with the path where your data is stored
+        ref = db.reference("Users/Saved_report/events_reports")  # Replace "/events_reports" with the path where your data is stored
         report_ref = ref.child(report_id).get()
 
         if report_ref:
@@ -259,6 +406,34 @@ class events_report():
 
     def update_to_firebase(self, attribute_name, new_value):
         # Update specific attribute of the report in Firebase Realtime Database
-        ref = db.reference("/events_reports")  # Replace "/events_reports" with the path where your data is stored
+        ref = db.reference("Users/Saved_report/events_reports")  # Replace "/events_reports" with the path where your data is stored
         report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
+
+
+
+cred = credentials.Certificate('../Account_management/credentials.json')
+firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+
+# Assuming you have already initialized the Firebase SDK and set up the database reference (db)
+
+indi_report = Indi_Report()
+indi_report.set_leaderboard({"user1": 100, "user2": 200})
+indi_report.set_current_month("July")
+indi_report.set_current_year(2023)
+indi_report.set_list_months(["January", "February", "March"])
+indi_report.set_line_data([10, 20, 30, 40])
+indi_report.set_pie_data({"data1": 50, "data2": 60})
+indi_report.set_neighbours_helped({"neighbor1": 5, "neighbor2": 10})
+indi_report.set_activities(["activity1", "activity2", "activity3"])
+indi_report.set_pie_label("label1")
+
+# Save the Indi_Report to Firebase
+indi_report.save_to_firebase()
+
+# Load the Indi_Report from Firebase using the report_id
+report_id_to_load = indi_report.get_report_id()
+loaded_report_data = Indi_Report.load_from_firebase(report_id_to_load)
+print(loaded_report_data)
+
+
