@@ -3,6 +3,7 @@ from flask import Flask, request, render_template
 import colorlog
 from colorama import Fore
 import datetime
+import pyrebase
 import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
@@ -23,6 +24,9 @@ config = {
     "storageBucket": "kaki-db097.appspot.com",
 }
 
+
+firebase = pyrebase.initialize_app(config)
+pyredb = firebase.database()
 
 app = Flask(__name__)
 
@@ -117,6 +121,8 @@ def new_ticket():
     file = request.files.get('file')
     user_id = 'Leap'
 
+    ticket = Ticket(user_id, subject, description, topic)
+
     if file:
         # get the file name, this doesn't include the path
         filename = secure_filename(file.filename)
@@ -127,7 +133,6 @@ def new_ticket():
         url = firebase_storage_client.get_url(filename)
         
         # create new ticket and add image url
-        ticket = Ticket(user_id, subject, description, topic)
         ticket.addImages(url)
 
     return 'Ticket Created Successfully'
@@ -140,9 +145,11 @@ def myTickets():
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
-    return render_template('customer_support/ticket_discussion.html', name="Sheldon")
+    allTickets = pyredb.child("tickets").get()
+    ticketKeys = [i.key() for i in allTickets.each()]
+    return render_template('customer_support/ticket_discussion.html', name="Sheldon", keys=ticketKeys)
 
-@app.route('/user_tickets/comments/<int:ticket_ID>', methods=['GET'])
+@app.route('/user_tickets/<int:ticket_ID>', methods=['GET'])
 def ticketComments(ticket_ID):
     return render_template('customer_support/ticket_comments.html', name="Sheldon", ticket_ID=ticket_ID)
 
