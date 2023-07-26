@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-from Report_generation.report_class import Com_Report, Indi_Report
+from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -29,10 +29,9 @@ config = {
     "storageBucket": "kaki-db097.appspot.com",
 }
 
-cred = credentials.Certificate('Account_management/credentials.json')
-firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
-# firebase = pyrebase.initialize_app(config)
-# pyredb = firebase.database()
+# cred = credentials.Certificate('Account_management/credentials.json')
+# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+
 
 app = Flask(__name__)
 app.secret_key = 'karthik123'
@@ -304,13 +303,34 @@ def save_data_indi():
 
     # Return a response to indicate success (you can customize this based on your needs)
     return jsonify({"message": "Data saved successfully!"})
+
+@app.route('/save_data/trans', methods=['POST'])
+def save_data_trans():
+    # Retrieve data from the frontend (make sure to include the necessary fields in your AJAX request)
+    data = request.json
+
+    # Create a Com_Report instance and set the attributes from the received data
+    report_trans = Trans_Report()
+    report_trans.set_current_month(data['current_month'])
+    report_trans.set_current_year(data['current_year'])
+    report_trans.set_list_months(data['listMonths'])
+    report_trans.set_Total_spent(data['Total_spent'])
+    report_trans.set_Total_received(data['Total_received'])
+    report_trans.set_no_transaction_data(data['Total_number'])
+    # Add other attributes as needed
+
+    # Save the report to Firebase using the class method
+    report_trans.save_to_firebase()
+
+    # Return a response to indicate success (you can customize this based on your needs)
+    return jsonify({"message": "Data saved successfully!"})
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, data1 = [5,6,7,8,9,10], data2 = [5,6,7,8,9,10], data3 = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
+    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [5,6,7,8,9,10], Total_received = [5,6,7,8,9,10], Total_number = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
 
 @app.route('/Report_generation/saved_reports')
 def Saved_report():

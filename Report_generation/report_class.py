@@ -9,7 +9,8 @@ from firebase_admin import db
 class Indi_Report:
     counter = 0
     def __init__(self):
-        number = str(Trans_Report.counter + 1)
+        Trans_Report.counter += 1
+        number = str()
         report_id = 'I' + number
         self.__report_id__ = report_id
         self.__leaderboard__ = None
@@ -135,7 +136,8 @@ class Indi_Report:
 class Com_Report:
     counter = 0
     def __init__(self):
-        number = str(Trans_Report.counter + 1)
+        Trans_Report.counter += 1
+        number = str(Trans_Report.counter)
         report_id = 'C' + number
         self.__report_id__ = report_id
         self.__leaderboard__ = None
@@ -261,11 +263,12 @@ class Trans_Report:
     counter = 0
 
     def __init__(self):
-        number = str(Trans_Report.counter + 1)
+        Trans_Report.counter += 1
+        number = str(Trans_Report.counter)
         report_id = 'T' + number
         self.__report_id__ = report_id
-        self.__transactionDataIn__ = None
-        self.__transactionDataOut__ = None
+        self.__Total_received__ = None
+        self.__Total_spent__ = None
         self.__NoTransactionData__ = None
         self.__current_month__ = None
         self.__current_year__ = None
@@ -278,17 +281,17 @@ class Trans_Report:
     def set_report_id(self, report_id):
         self.__report_id__ = report_id
 
-    def get_transaction_data_in(self):
-        return self.__transactionDataIn__
+    def get_Total_received(self):
+        return self.__Total_received__
 
-    def set_transaction_data_in(self, transaction_data_in):
-        self.__transactionDataIn__ = transaction_data_in
+    def set_Total_received(self, transaction_data_in):
+        self.__Total_received__ = transaction_data_in
 
-    def get_transaction_data_out(self):
-        return self.__transactionDataOut__
+    def get_Total_spent(self):
+        return self.__Total_spent__
 
-    def set_transaction_data_out(self, transaction_data_out):
-        self.__transactionDataOut__ = transaction_data_out
+    def set_Total_spent(self, transaction_data_out):
+        self.__Total_spent__ = transaction_data_out
 
     def get_no_transaction_data(self):
         return self.__NoTransactionData__
@@ -318,8 +321,8 @@ class Trans_Report:
     def save_to_firebase(self):
         report_data = {
             "Report_id": self.__report_id__,
-            "transactionDataIn": self.__transactionDataIn__,
-            "transactionDataOut": self.__transactionDataOut__,
+            "Total_spent": self.__Total_spent__,
+            "Total_received": self.__Total_received__,
             "NoTransactionData": self.__NoTransactionData__,
             "current_month": self.__current_month__,
             "current_year": self.__current_year__,
@@ -362,26 +365,7 @@ class Trans_Report:
 
 # cred = credentials.Certificate('../Account_management/credentials.json')
 # firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
-#
-# # Assuming you have already initialized the Firebase SDK and set up the database reference (db)
-#
-# indi_report = Indi_Report()
-# indi_report.set_leaderboard({"user1": 100, "user2": 200})
-# indi_report.set_current_month("July")
-# indi_report.set_current_year(2023)
-# indi_report.set_list_months(["January", "February", "March"])
-# indi_report.set_line_data([10, 20, 30, 40])
-# indi_report.set_pie_data({"data1": 50, "data2": 60})
-# indi_report.set_neighbours_helped({"neighbor1": 5, "neighbor2": 10})
-# indi_report.set_activities(["activity1", "activity2", "activity3"])
-# indi_report.set_pie_label("label1")
-#
-# # Save the Indi_Report to Firebase
-# indi_report.save_to_firebase()
-#
-# # Load the Indi_Report from Firebase using the report_id
-# report_id_to_load = indi_report.get_report_id()
-# loaded_report_data = Indi_Report.load_from_firebase(report_id_to_load)
-# print(loaded_report_data)
+
+
 
 
