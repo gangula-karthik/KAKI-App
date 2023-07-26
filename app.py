@@ -205,6 +205,11 @@ def get_ticket(ticket_id):
         return jsonify({'error': 'Ticket not found'}), 404
     return ticket[0]
 
+@app.route('/delete_ticket/<ticket_id>', methods=['POST'])
+def delete_ticket(ticket_id):
+    deleteTicket(ticket_id)
+    referrer_url = request.referrer
+    return redirect(referrer_url)
 
 
 @app.route('/my_tickets', methods=['GET'])

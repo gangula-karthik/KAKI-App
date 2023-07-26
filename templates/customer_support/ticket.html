@@ -21,20 +21,24 @@
         <img src="path_to_profile_pic.jpg" alt="profile pic" class="rounded-circle" style="width: 30px; height: 30px;">
         <small class="text-info"> {{ ticket.user_id }}</small>
       </div>
-      <div>
+      <div class="d-flex align-items-center">
         {% if ticket.user_id == user_name %}
-        <button class="btn btn-info edit-button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+        <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2">
+          <button type="submit" class="btn btn-outline-danger"><i class="fa-solid fa-trash-can"></i> Delete Ticket</button>
+        </form>
+        <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
           data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
-        <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}">Open
+        <button class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i class="fa-solid fa-comments"></i> Open
           Chat</button>
       </div>
+      
     </div>
   </div>
 </div>
 
 <script>
-  
+
   document.addEventListener('DOMContentLoaded', (event) => {
     let buttons = document.querySelectorAll('.edit-button');
     buttons.forEach((button) => {
