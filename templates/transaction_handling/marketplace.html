@@ -75,7 +75,25 @@
   <div class="search-container">
   <input type="text" class="search-input" id="searchInput" placeholder="Search for products..." style="padding: 5px 10px; ; border-radius:7px;">
   <button onclick="searchProducts()" style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
-    <button onclick="sellProducts()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button>
+    <button onclick="showSellForm()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button>
+    <div id="sellFormContainer" style="display: none;">
+    <form id="sellForm" onsubmit="submitSellForm(event)">
+      <label for="productTitle">Product Title:</label>
+      <input type="text" id="productTitle" required><br>
+
+      <label for="productDescription">Product Description:</label>
+      <textarea id="productDescription" required></textarea><br>
+
+      <label for="productPrice">Product Price ($):</label>
+      <input type="number" id="productPrice" required><br>
+
+      <label for="productImage">Product Image URL:</label>
+      <input type="text" id="productImage" required><br>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
 </div>
   <div class="container">
     {% for product in products %}
@@ -96,6 +114,58 @@
       window.location.href = `/MyProducts.html?seller=${encodeURIComponent(sellerName)}&product=${encodeURIComponent(productID)}`;
     }
   </script>
+<script>
+  function searchProducts() {
+    const searchInput = document.getElementById("searchInput");
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    // Filter products based on the search term
+    const filteredProducts = products.filter((product) =>
+      product.title.toLowerCase().includes(searchTerm) ||
+      product.description.toLowerCase().includes(searchTerm)
+    );
+
+    // Update the display with filtered products
+    updateMarketplaceDisplay(filteredProducts);
+  }
+
+  function updateMarketplaceDisplay(productsToDisplay) {
+    const marketplaceContainer = document.querySelector(".container");
+
+    // Clear existing products from the display
+    while (marketplaceContainer.firstChild) {
+      marketplaceContainer.removeChild(marketplaceContainer.firstChild);
+    }
+
+    // Display products
+    if (productsToDisplay && productsToDisplay.length > 0) {
+      for (const product of productsToDisplay) {
+        const productDiv = document.createElement("div");
+        productDiv.classList.add("product");
+
+        productDiv.innerHTML = `
+          <img src="${product.image}" alt="${product.title}">
+          <div class="product-title">${product.title}</div>
+          <div class="product-description">${product.description}</div>
+          <div class="product-price">$${product.price}</div>
+          <div class="seller-name">Seller: ${product.seller}</div>
+          <div class="rating">Rating: ${product.rating}/5</div>
+          <div class="item-condition">Condition: ${product.condition}</div>
+          <button onclick="startChat('${product.seller}', '${product.product_id}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
+        `;
+
+        marketplaceContainer.appendChild(productDiv);
+      }
+    } else {
+      // Display a message when no products match the search
+      const noProductsDiv = document.createElement("div");
+      noProductsDiv.innerText = "No products found.";
+      marketplaceContainer.appendChild(noProductsDiv);
+    }
+  }
+
+  // ... (The rest of your code remains unchanged)
+</script>
 </body>
 </html>
 
