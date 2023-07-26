@@ -19,8 +19,34 @@
 
     <!-- Add a "Chat Now" button linking to a chat page -->
     <a href="/chat/{{ product.id }}">
-        <button>Chat Now</button>
+        <button style="padding: 12px 20px; background-color: #ff0019; color: #fff; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
     </a>
+
+    <!-- Chat Log Display -->
+    <div class="chat-log">
+        <!-- The chat messages will be displayed here -->
+    </div>
+
+    <!-- Add an input field and a button for sending messages -->
+    <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button onclick="sendMessage()" style="padding: 8px 15px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Send</button>
+    </div>
+
+    <!-- JavaScript code for sending and displaying messages -->
+    <script>
+        // Function to send a message
+        function sendMessage() {
+            var messageInput = document.getElementById("messageInput");
+            var message = messageInput.value;
+
+            // Add code here to send the message to the server and handle the logic for updating the chat log
+            // You may need to use AJAX or WebSocket to send and receive messages in real-time.
+
+            // After sending the message, clear the input field
+            messageInput.value = "";
+        }
+    </script>
 </body>
 </html>
 {% endblock %}

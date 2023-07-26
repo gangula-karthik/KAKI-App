@@ -37,3 +37,28 @@
     </div>
   </div>
 </div>
+
+
+
+<script>
+
+button.addEventListener('click', function(){
+    let ticketId = this.getAttribute('data-id');
+    
+    // Fetch the ticket data
+    fetch(`/get_ticket/${ticketId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('recipient-name').value = data.subject;
+            document.getElementById('message-text').value = data.description;
+            document.getElementById('autoSizingSelect').value = data.topic;
+            document.querySelector('#exampleModal form').action = `/update_ticket/${ticketId}`;
+        });
+});
+
+    // Set the form's action to the new ticket route when the modal is hidden
+    $('#exampleModal').on('hidden.bs.modal', function (event) {
+        document.querySelector('#exampleModal form').action = '/new_ticket';
+    });
+
+</script>
