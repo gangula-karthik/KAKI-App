@@ -34,26 +34,6 @@
           <button type="submit" class="btn btn-primary w-100 py-2 fs-5">Send Ticket</button>
         </form>
       </div>
-      {% for message in messages %}
-      <div class="toast" id="myToast" data-autohide="false" style="position: absolute; top: 0; right: 0;">
-        <div class="toast-header">
-          <strong class="mr-auto text-primary">Message</strong>
-          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
-        </div>
-        <div class="toast-body">
-          {{ message }}
-        </div>
-      </div>
-      {% endfor %}
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          var toastHTMLElement = document.getElementById('myToast');
-          if (toastHTMLElement) {
-            var toastElement = new bootstrap.Toast(toastHTMLElement);
-            toastElement.show();
-          }
-        });
-      </script>
     </div>
   </div>
 </div>

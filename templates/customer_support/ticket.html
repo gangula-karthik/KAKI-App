@@ -23,7 +23,7 @@
       </div>
       <div>
         {% if ticket.user_id == user_name %}
-        <button class="btn btn-info"><i class="fa-solid fa-gear"></i> Settings</button>
+        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
         <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}">Open
           Chat</button>

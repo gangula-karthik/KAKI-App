@@ -32,7 +32,7 @@
 {% if data|length == 0 %}
 
 
-  
+
 <div class="container d-flex align-items-center justify-content-center" style="height: 70vh;">
   <div class="text-center">
     <h1 style="font-size: 4rem;">😭</h1>
@@ -42,13 +42,14 @@
     <button class="btn btn-primary">Back to Home</button>
   </div>
 </div>
-{% endif %}
 
+{% else %}
 
 {% for ticket in data %}
 {% include 'customer_support/ticket.html' %}
 {% endfor %}
 
 
+{% endif %}
 
 {% endblock %}
