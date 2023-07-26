@@ -22,9 +22,9 @@
         <small class="text-info"> {{ ticket.user_id }}</small>
       </div>
       <div>
-        {{ if ticket.user_id == name}}
+        {% if ticket.user_id == user_name %}
         <button class="btn btn-info"><i class="fa-solid fa-gear"></i> Settings</button>
-        {{ endif }}
+        {% endif %}
         <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}">Open
           Chat</button>
       </div>

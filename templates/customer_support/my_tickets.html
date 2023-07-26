@@ -20,17 +20,13 @@
   </div>
 </div>
 
+
 {% include 'customer_support/ticket_creation_modal.html' %}
 
 
-    
-
-
-
+{% for ticket in data %}
 {% include 'customer_support/ticket.html' %}
-{% include 'customer_support/ticket.html' %}
-{% include 'customer_support/ticket.html' %}
-
+{% endfor %}
 
 
 {% endblock %}
