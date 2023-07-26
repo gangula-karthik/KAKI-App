@@ -29,8 +29,8 @@ config = {
     "storageBucket": "kaki-db097.appspot.com",
 }
 
-# cred = credentials.Certificate('Account_management/credentials.json')
-# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+cred = credentials.Certificate('Account_management/credentials.json')
+firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
 
 app = Flask(__name__)
