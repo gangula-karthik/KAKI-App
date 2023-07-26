@@ -8,6 +8,28 @@
   }
 </style>
 
+<!-- modal for deletion confirmation -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this ticket? Once deleted, it cannot be recovered
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2">
+          <button type="submit" class="btn btn-danger">Delete Ticket</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="card mt-4 mx-auto" id="ticket-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
@@ -23,19 +45,17 @@
       </div>
       <div class="d-flex align-items-center">
         {% if ticket.user_id == user_name %}
-        <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2">
-          <button type="submit" class="btn btn-outline-danger"><i class="fa-solid fa-trash-can"></i> Delete Ticket</button>
-        </form>
+        <button class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-solid fa-trash-can"></i> Delete Ticket</button>
         <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
           data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
         <button class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i class="fa-solid fa-comments"></i> Open
           Chat</button>
       </div>
-      
     </div>
   </div>
 </div>
+
 
 <script>
 
