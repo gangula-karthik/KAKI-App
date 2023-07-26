@@ -47,12 +47,12 @@
 
 </div>
 <div>
-    <button class = "buttonLeft">Save</button>
+    <button class = "buttonLeft" id ="saveButton">Save</button>
     <button class = "buttonRight" onclick="generatePDF()">Download</button>
 </div>
 
 
-
+<div id="notification"></div>
 {% block javascript2 %}
 
 <script>
@@ -71,6 +71,6 @@ html2pdf().set(options).from(content).save();
 {% endblock %}
 
 {% block js_chart %}{% endblock %}
-
+{% block javascript3 %} {% endblock %}
 
 {% endblock %}

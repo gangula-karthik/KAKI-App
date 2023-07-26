@@ -12,6 +12,11 @@ from imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
+from flask import Flask, request, jsonify
+from Report_generation.report_class import Com_Report
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 
 
 
@@ -24,9 +29,10 @@ config = {
     "storageBucket": "kaki-db097.appspot.com",
 }
 
-
-firebase = pyrebase.initialize_app(config)
-pyredb = firebase.database()
+cred = credentials.Certificate('Account_management/credentials.json')
+firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+# firebase = pyrebase.initialize_app(config)
+# pyredb = firebase.database()
 
 app = Flask(__name__)
 app.secret_key = 'karthik123'
@@ -188,8 +194,8 @@ def Individual_report():
 @app.route('/Report_generation/Community_report')
 def Community_report():
     now = datetime.datetime.now()
-    month = now.strftime("%B")
-    current_year = now.year
+    month = str(now.strftime("%B"))
+    current_year = str(now.year)
     ListMonths = ["Jan","Feb","March","April","May","June"]
     leaderboard_data = [
         {"name": "Player 1", "score": 100},
@@ -199,7 +205,31 @@ def Community_report():
         {"name": "Player 5", "score": 69}
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'], most_contribute = 'Nameless', number_of_activities = '69')
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'], most_contribute = 'Nameless', number_of_activities = '69')
+
+@app.route('/save_data/com', methods=['POST'])
+def save_data_com():
+    # Retrieve data from the frontend (make sure to include the necessary fields in your AJAX request)
+    data = request.json
+
+    # Create a Com_Report instance and set the attributes from the received data
+    report = Com_Report()
+    report.set_leaderboard(data['leaderboard'])
+    report.set_current_month(data['current_month'])
+    report.set_current_year(data['current_year'])
+    report.set_list_months(data['listMonths'])
+    report.set_line_data(data['line_data'])
+    report.set_pie_data(data['pie_data'])
+    report.set_most_contributed(data['most_contributed'])
+    report.set_activities(data['activities'])
+    report.set_pie_label(data['pie_label'])
+    # Add other attributes as needed
+
+    # Save the report to Firebase using the class method
+    report.save_to_firebase()
+
+    # Return a response to indicate success (you can customize this based on your needs)
+    return jsonify({"message": "Data saved successfully!"})
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
