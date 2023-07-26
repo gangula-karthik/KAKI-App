@@ -195,6 +195,12 @@ def update_ticket(ticket_id):
     return redirect(url_for('myTickets'))
 
 
+@app.route('/search')
+def search():
+    query = request.args.get('query')
+    results = semanticSearch(query)
+    return results
+
 def ticketRetrieval():
     allTickets = pyredb.child("tickets").get()
     try:
