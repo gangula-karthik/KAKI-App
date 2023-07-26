@@ -39,7 +39,7 @@ class Ticket:
         self.descriptions = descriptions
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
-        self.addMLPriority(self.subject)
+        # self.addMLPriority(self.subject)
         self.images = []
         self.replies = [] # replies should be a list of dictionaries
         try:
@@ -70,12 +70,24 @@ class Ticket:
     def addImages(self, image_url):
         self.images.append(image_url)
         
-    def updateTopic(self, new_topic):
+    def updateTopic(self, ticket_id, new_topic):
         new_topic = new_topic.lower()
         if new_topic in self.__class__.topic:
             self.topic = new_topic
+            self.ticket_id = ticket_id
+            db.child(f'/tickets/{self.ticket_id}').update({"topic": self.topic})
         else:
             raise ValueError("Invalid topic")
+        
+    def updateSubject(self, ticket_id, new_subject):
+        self.ticket_id = ticket_id
+        self.subject = new_subject
+        db.child(f'/tickets/{self.ticket_id}').update({"subject": self.subject})
+
+    def updateDescriptions(self, ticket_id, new_descriptions):
+        self.ticket_id = ticket_id
+        self.descriptions = new_descriptions
+        db.child(f'/tickets/{self.ticket_id}').update({"descriptions": self.descriptions})
         
     def deleteTicket(self):
         db.child(f'/tickets/{self.ticket_id}').remove()
@@ -98,20 +110,6 @@ class Ticket:
             if self.status == "resolved": 
                 self.closed_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     
-    def removeDescription(self, descriptionIndex):
-        self.descriptions = None
-
-    def readDescriptions(self):
-        if self.descriptions:
-            return self.descriptions
-        else: 
-            return "No descriptions yet..."
-
-    def updateDescriptions(self, descriptionIndex, newDescription):
-        if descriptionIndex >= 0 and descriptionIndex < len(self.descriptions) and newDescription and isinstance(newDescription, str):
-            self.descriptions[descriptionIndex] = newDescription
-        else:
-            raise ValueError("Invalid input")
         
     def calculate_subject_sentiment(self, subject):
         sia = SentimentIntensityAnalyzer()
@@ -137,14 +135,26 @@ class Ticket:
     
     def __str__(self):
         return json.dumps({
+            "Ticket ID": self.ticket_id,
             "User ID": self.user_id,
             "Staff ID": self.staff_id,
             "Subject": self.subject,
             "Topic": self.topic,
             "Status": self.status,
             "Subject Sentiment": self.subject_sentiment,
-            "ML Priority": self.ml_priority,
+            # "ML Priority": self.ml_priority,
             "descriptions": self.descriptions,
             "Opened At": self.opened_at,
             "Closed At": self.closed_at
         }, indent=4)
+
+
+
+if __name__ == "__main__": 
+    t2 = Ticket("user1", "subject1", "descriptions1", "billing")
+    print(t2)
+    time.sleep(4)
+    t2.updateSubject(t2.ticket_id, "time to punch wall")
+    t2.updateTopic(t2.ticket_id, "technical")
+    t2.updateDescriptions(t2.ticket_id, "website stole my damn money")
+    print(t2)

@@ -151,6 +151,11 @@ def ticketRetrieval():
         tickets = []
     return tickets
 
+@app.route('/get_ticket/<ticket_id>', methods=['GET'])
+def get_ticket(ticket_id):
+    ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id]
+    return ticket
+
 
 @app.route('/my_tickets', methods=['GET'])
 def myTickets():

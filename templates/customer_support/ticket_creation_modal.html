@@ -37,3 +37,22 @@
     </div>
   </div>
 </div>
+
+
+
+<script>
+
+button.addEventListener('click', function(){
+    let ticketId = this.getAttribute('data-id');
+    
+    // Fetch the ticket data
+    fetch(`/get_ticket/${ticketId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('recipient-name').value = data.subject;
+            document.getElementById('message-text').value = data.description;
+            document.getElementById('autoSizingSelect').value = data.topic;
+        });
+});
+
+</script>
