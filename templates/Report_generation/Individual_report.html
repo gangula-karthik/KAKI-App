@@ -98,7 +98,7 @@ overflow-y:scroll;
 
             datasets: [{
                label: "online tutorial subjects",
-               data: {{ data }},
+               data: {{ line_data | tojson}},
                backgroundColor: ['Green'],
                borderColor: ['black'],
                borderWidth: 2,
@@ -128,10 +128,10 @@ overflow-y:scroll;
          type: 'pie',
          data: {
 
-            labels: {{pie_label}},
+            labels: {{pie_label | tojson}},
 
             datasets: [{
-               data: {{ pie_data }},
+               data: {{ pie_data | tojson }},
                backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen'],
                borderColor: ['black'],
             }],
@@ -166,3 +166,35 @@ overflow-y:scroll;
 
 </script>
 {% endblock %}
+
+{% block javascript3 %}
+    <script>
+        $(document).ready(function() {
+        $('#saveButton').on('click', function() {
+            var dataToSend = {
+                leaderboard: '{{ leaderboard | tojson }}',
+                current_month: '{{ current_month }}',
+                current_year: '{{ current_year }}',
+                listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string
+                line_data: {{ line_data | tojson }}, // safe filter to avoid escaping the JSON string
+                pie_data: {{ pie_data | tojson }}, // safe filter to avoid escaping the JSON string
+                neighbours_helped: '{{ neighbours_helped }}',
+                activities: '{{ activities }}',
+                pie_label: {{ pie_label | tojson  }}, // safe filter to avoid escaping the JSON string
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/save_data/indi',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSend),
+                success: function(response) {
+                    console.log(response.message);
+                },
+
+            });
+        });
+    });
+    </script>
+
+ {% endblock %}
