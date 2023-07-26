@@ -7,15 +7,18 @@
   <div class="row align-items-center">
     <div class="col-md-8">
       <div class="input-group" style="width:400px;">
-        <input type="text" class="custom-input form-control" style="color: rgba(255, 255, 255, 0.42); border: 1.5px solid #3F3F48; background: #1E1F23;" aria-label="Search">
+        <input type="text" class="custom-input form-control"
+          style="color: rgba(255, 255, 255, 0.42); border: 1.5px solid #3F3F48; background: #1E1F23;"
+          aria-label="Search">
         <div class="input-group-append">
-          <button class="btn btn-primary my-2 my-sm-0" style="border-radius: 0px 5px 5px 0px;border: 1.5px solid #3F3F48;" type="submit">Search</button>
+          <button class="btn btn-primary my-2 my-sm-0"
+            style="border-radius: 0px 5px 5px 0px;border: 1.5px solid #3F3F48;" type="submit">Search</button>
         </div>
       </div>
     </div>
     <div class="col-md-4 d-flex justify-content-end">
       <button class="btn btn-primary my-2 my-sm-0" data-bs-toggle="modal" data-bs-target="#exampleModal"
-      data-bs-whatever="@mdo">Raise a ticket <i class="fa-solid fa-plus"></i></button>
+        data-bs-whatever="@mdo">Raise a ticket <i class="fa-solid fa-plus"></i></button>
     </div>
   </div>
 </div>
@@ -23,12 +26,27 @@
 {% include 'customer_support/ticket_creation_modal.html' %}
 
 
-    
 
+
+
+{% if data|length == 0 %}
+
+
+  
+<div class="container d-flex align-items-center justify-content-center" style="height: 70vh;">
+  <div class="text-center">
+    <h1 style="font-size: 4rem;">😭</h1>
+    <h3 style="font-size: 3rem;">Well, this is awkward</h3>
+    <h6>Looks like there is nothing right now, check back later.</h6>
+    <br>
+    <button class="btn btn-primary">Back to Home</button>
+  </div>
+</div>
+{% endif %}
 
 
 {% for ticket in data %}
-  {% include 'customer_support/ticket.html' %}
+{% include 'customer_support/ticket.html' %}
 {% endfor %}
 
 

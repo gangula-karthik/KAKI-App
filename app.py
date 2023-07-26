@@ -30,6 +30,7 @@ pyredb = firebase.database()
 
 app = Flask(__name__)
 app.secret_key = 'karthik123'
+current_user = 'sheldon'
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -74,42 +75,42 @@ def index():
     }
 
 
-    return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
+    return render_template('/Report_generation/Event_details.html', name=current_user,details = details)
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('homefeed.html', name="Sheldon")
+    return render_template('homefeed.html', name=current_user)
 
 @app.route('/myposts', methods=['GET'])
 def mypost():
-    return render_template('homefeed.html', name="Sheldon")
+    return render_template('homefeed.html', name=current_user)
 
 @app.route('/bookmarks', methods=['GET'])
 def bookmarks():
-    return render_template('homefeed.html', name="Sheldon")
+    return render_template('homefeed.html', name=current_user)
 
 @app.route('/chat', methods=['GET'])
 def chat():
-    return render_template('customer_support/user_chat.html', name="Sheldon")
+    return render_template('customer_support/user_chat.html', name=current_user)
 
 @app.route('/noticeboard', methods=['GET'])
 def noticeboard():
-    return render_template('notices.html', name="Sheldon")
+    return render_template('notices.html', name=current_user)
 
 @app.route('/friend_request', methods=['GET'])
 def friendRequest():
-    return render_template('friend_request.html', name="Sheldon")
+    return render_template('friend_request.html', name=current_user)
 
 # Customer support routes
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
     messages = get_flashed_messages()
-    return render_template('customer_support/support_overview.html', name="Sheldon", messages=messages)
+    return render_template('customer_support/support_overview.html', name=current_user, messages=messages)
 
 @app.route('/user_chat', methods=['GET'])
 def staffChat():
-    return render_template('customer_support/user_chat.html', name="Sheldon")
+    return render_template('customer_support/user_chat.html', name=current_user)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -146,17 +147,20 @@ def new_ticket():
 
 @app.route('/my_tickets', methods=['GET'])
 def myTickets():
-    return render_template('customer_support/my_tickets.html', name="Sheldon")
+    return render_template('customer_support/my_tickets.html', name=current_user)
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
     allTickets = pyredb.child("tickets").get()
-    tickets = [i.val() for i in allTickets.each()]
-    return render_template('customer_support/ticket_discussion.html', name="Sheldon", data=tickets)
+    try:
+        tickets = [i.val() for i in allTickets.each()]
+    except:
+        tickets = []
+    return render_template('customer_support/ticket_discussion.html', name=current_user, data=tickets)
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET'])
 def ticketComments(ticket_ID):
-    return render_template('customer_support/ticket_comments.html', name="Sheldon", ticket_ID=ticket_ID)
+    return render_template('customer_support/ticket_comments.html', name=current_user, ticket_ID=ticket_ID)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
@@ -173,7 +177,7 @@ def Individual_report():
     {"name": "Player 5", "score": 69}
 ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'],neighbours_helped = '69', number_of_activities = '69')
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, name=current_user, current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'],neighbours_helped = '69', number_of_activities = '69')
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
@@ -189,7 +193,7 @@ def Community_report():
         {"name": "Player 5", "score": 69}
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, name="Sheldon", current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'], most_contribute = 'Nameless', number_of_activities = '69')
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, name=current_user, current_month = month, data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'], most_contribute = 'Nameless', number_of_activities = '69')
 
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
@@ -197,7 +201,7 @@ def Transactions_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    return render_template('/Report_generation/Transactions_report.html', name="Sheldon",current_month = month, data1 = [5,6,7,8,9,10], data2 = [5,6,7,8,9,10], data3 = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
+    return render_template('/Report_generation/Transactions_report.html', name=current_user,current_month = month, data1 = [5,6,7,8,9,10], data2 = [5,6,7,8,9,10], data3 = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
 
 @app.route('/Report_generation/saved_reports')
 def Saved_report():
@@ -215,7 +219,7 @@ def Saved_report():
             "report_link": "http://example.com/report/event3"
         }
     ]
-    return render_template('/Report_generation/saved_reports.html', name="Sheldon", events = events)
+    return render_template('/Report_generation/saved_reports.html', name=current_user, events = events)
 
 
 @app.route('/Report_generation/event_list')
@@ -234,7 +238,7 @@ def Event_list():
             "report_link": "http://example.com/report/event3"
         }
     ]
-    return render_template('/Report_generation/event_list.html', name="Sheldon", events = events)
+    return render_template('/Report_generation/event_list.html', name=current_user, events = events)
 
 
 @app.route('/Report_generation/Event_details.html')
@@ -250,7 +254,7 @@ def Event_details():
     }
 
 
-    return render_template('/Report_generation/Event_details.html', name="Sheldon",details = details)
+    return render_template('/Report_generation/Event_details.html', name=current_user,details = details)
 
 @app.route('/Report_generation/update.html', methods = ['GET', 'POST'])
 def update():
@@ -299,7 +303,7 @@ def update():
     #     update_user_form.remarks.data = user.get_remarks()
     #
     #     return render_template('updateUser.html', form=update_user_form)
-    return render_template('/Report_generation/update.html', name="Sheldon", form=update_user_form,event=event_details)
+    return render_template('/Report_generation/update.html', name=current_user, form=update_user_form,event=event_details)
 
 #Transaction handling routes
 @app.route('/transaction_handling/MyProducts/<int:product_id>')
@@ -391,7 +395,7 @@ def MyProducts(product_id):
     ]
    # product = next((p for p in products if p['id'] == product_id), None)
     #if product:
-    return render_template('/transaction_handling/MyProducts.html', name="Sheldon")
+    return render_template('/transaction_handling/MyProducts.html', name=current_user)
     #return "Product not found"
 
 @app.route('/transaction_handling/marketplace')
@@ -481,7 +485,7 @@ def marketplace():
 
         # Add more product dictionaries here for other products
     ]
-    return render_template('/transaction_handling/marketplace.html', name="Sheldon", products=products)
+    return render_template('/transaction_handling/marketplace.html', name=current_user, products=products)
 
 
 
