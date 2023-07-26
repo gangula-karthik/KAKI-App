@@ -87,9 +87,15 @@
     <div class="seller-name">Seller: {{ product.seller }}</div>
     <div class="rating">Rating: {{ product.rating }}/5</div>
     <div class="item-condition">Condition: {{ product.condition }}</div>
+    <button onclick="startChat('{{ product.seller }}', '{{ product.product_id }}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
   </div>
   {% endfor %}
   </div>
+  <script>
+    function startChat(sellerName, productID) {
+      window.location.href = `/MyProducts.html?seller=${encodeURIComponent(sellerName)}&product=${encodeURIComponent(productID)}`;
+    }
+  </script>
 </body>
 </html>
 
