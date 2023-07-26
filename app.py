@@ -41,6 +41,11 @@ current_user = 'Leap'
 app.config['UPLOAD_FOLDER'] = "/uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+firebase = pyrebase.initialize_app(config)
+pyredb = firebase.database()
+pyreauth = firebase.auth()
+pyrestorage = firebase.storage()
+
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
     '%(log_color)s%(levelname)-8s%(reset)s %(message)s',
