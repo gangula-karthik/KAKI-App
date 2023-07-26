@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for
+from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify
 import colorlog
 from colorama import Fore
 import datetime
@@ -7,7 +7,7 @@ import pyrebase
 import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
-from customer_support.ticket import Ticket
+from customer_support.ticket import *
 from imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
@@ -143,6 +143,42 @@ def new_ticket():
     messages = get_flashed_messages()  # Get the flashed messages
     return redirect(url_for('customerOverview'))
 
+@app.route('/update_ticket/<ticket_id>', methods=['POST'])
+def update_ticket(ticket_id):
+    # Retrieve the existing ticket
+    ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id][0]
+    if not ticket:
+        flash('Ticket not found')
+        return redirect(url_for('customerOverview'))
+    
+    # Get the new data from the form
+    subject = request.form.get('subject')
+    description = request.form.get('description')
+    topic = request.form.get('topic')
+    file = request.files.get('file')
+
+    updateSubject(ticket_id, subject)
+    updateDescriptions(ticket_id, description)
+    updateTopic(ticket_id, topic)
+
+    if file:
+        # get the file name, this doesn't include the path
+        filename = secure_filename(file.filename)
+        
+        # upload the file to firebase storage
+        firebase_storage_client = FirebaseStorageClient(config, "ticket_images")
+        firebase_storage_client.upload(file, filename) # passing file object directly
+        url = firebase_storage_client.get_url(filename)
+        
+        # update ticket image url
+        ticket.updateImages(url)
+
+    flash('Ticket has been updated 🚀')
+    
+    messages = get_flashed_messages()  # Get the flashed messages
+    return redirect(url_for('customerOverview'))
+
+
 def ticketRetrieval():
     allTickets = pyredb.child("tickets").get()
     try:
@@ -151,10 +187,14 @@ def ticketRetrieval():
         tickets = []
     return tickets
 
+
 @app.route('/get_ticket/<ticket_id>', methods=['GET'])
 def get_ticket(ticket_id):
     ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id]
-    return ticket
+    if not ticket:
+        return jsonify({'error': 'Ticket not found'}), 404
+    return ticket[0]
+
 
 
 @app.route('/my_tickets', methods=['GET'])
@@ -166,8 +206,8 @@ def myTickets():
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
     tickets = ticketRetrieval()
-
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
+
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET'])
 def ticketComments(ticket_ID):

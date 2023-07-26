@@ -23,7 +23,8 @@
       </div>
       <div>
         {% if ticket.user_id == user_name %}
-        <button class="btn btn-info edit-button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
+        <button class="btn btn-info edit-button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+          data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
         <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}">Open
           Chat</button>
@@ -34,12 +35,35 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {
-      let buttons = document.querySelectorAll('.edit-button');
-      buttons.forEach((button) => {
-          button.addEventListener('click', function(){
-              let ticketId = this.getAttribute('data-id');
-              console.log(ticketId);
-          });
+    let buttons = document.querySelectorAll('.edit-button');
+    buttons.forEach((button) => {
+      button.addEventListener('click', function () {
+        let ticketId = this.getAttribute('data-id');
+        console.log(ticketId);
       });
+    });
   });
-  </script>
+
+  document.querySelectorAll('.edit-button').forEach(button => {
+    button.addEventListener('click', function () {
+      let ticketId = this.getAttribute('data-id');
+
+      // Fetch the ticket data
+      fetch(`/get_ticket/${ticketId}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('recipient-name').value = data.subject;
+          document.getElementById('message-text').value = data.descriptions;
+          document.getElementById('autoSizingSelect').value = data.topic;
+          document.querySelector('#exampleModal form').action = `/update_ticket/${ticketId}`;
+        });
+    });
+  });
+
+
+  // Set the form's action to the new ticket route when the modal is hidden
+  $('#exampleModal').on('hidden.bs.modal', function (event) {
+    document.querySelector('#exampleModal form').action = '/new_ticket';
+  });
+
+</script>

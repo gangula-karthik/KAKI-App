@@ -52,7 +52,13 @@ button.addEventListener('click', function(){
             document.getElementById('recipient-name').value = data.subject;
             document.getElementById('message-text').value = data.description;
             document.getElementById('autoSizingSelect').value = data.topic;
+            document.querySelector('#exampleModal form').action = `/update_ticket/${ticketId}`;
         });
 });
+
+    // Set the form's action to the new ticket route when the modal is hidden
+    $('#exampleModal').on('hidden.bs.modal', function (event) {
+        document.querySelector('#exampleModal form').action = '/new_ticket';
+    });
 
 </script>

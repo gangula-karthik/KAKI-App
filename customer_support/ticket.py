@@ -69,25 +69,7 @@ class Ticket:
     
     def addImages(self, image_url):
         self.images.append(image_url)
-        
-    def updateTopic(self, ticket_id, new_topic):
-        new_topic = new_topic.lower()
-        if new_topic in self.__class__.topic:
-            self.topic = new_topic
-            self.ticket_id = ticket_id
-            db.child(f'/tickets/{self.ticket_id}').update({"topic": self.topic})
-        else:
-            raise ValueError("Invalid topic")
-        
-    def updateSubject(self, ticket_id, new_subject):
-        self.ticket_id = ticket_id
-        self.subject = new_subject
-        db.child(f'/tickets/{self.ticket_id}').update({"subject": self.subject})
-
-    def updateDescriptions(self, ticket_id, new_descriptions):
-        self.ticket_id = ticket_id
-        self.descriptions = new_descriptions
-        db.child(f'/tickets/{self.ticket_id}').update({"descriptions": self.descriptions})
+    
         
     def deleteTicket(self):
         db.child(f'/tickets/{self.ticket_id}').remove()
@@ -149,6 +131,25 @@ class Ticket:
         }, indent=4)
 
 
+topicList = ['billing', 'technical', 'listing', 'other']
+
+def updateTopic(ticket_id, new_topic):
+    new_topic = new_topic.lower()
+    if new_topic in topicList:
+        topic = new_topic
+        ticket_id = ticket_id
+        db.child(f'/tickets/{ticket_id}').update({"topic": topic})
+    else:
+        raise ValueError("Invalid topic")
+    
+def updateSubject(ticket_id, new_subject):
+    subject = new_subject
+    db.child(f'/tickets/{ticket_id}').update({"subject": subject})
+
+def updateDescriptions(ticket_id, new_descriptions):
+    ticket_id = ticket_id
+    descriptions = new_descriptions
+    db.child(f'/tickets/{ticket_id}').update({"descriptions": descriptions})
 
 if __name__ == "__main__": 
     t2 = Ticket("user1", "subject1", "descriptions1", "billing")
