@@ -83,7 +83,8 @@ overflow-y:scroll;
 
 
 {% block js_chart %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
+<script src ="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
       var chrt = document.getElementById("Line").getContext("2d");
       var chartId = new Chart(chrt, {
@@ -94,7 +95,7 @@ overflow-y:scroll;
 
             datasets: [{
                label: "online tutorial subjects",
-               data: {{ data }},
+               data: {{ line_data }},
                backgroundColor: ['Green'],
                borderColor: ['black'],
                borderWidth: 2,
@@ -118,48 +119,79 @@ overflow-y:scroll;
    </script>
 
 <script>
-   const title = 'Activities participated:' + ' ' + {{number_of_activities}}
-   var chrt = document.getElementById("Pie").getContext("2d");
-      var chartId = new Chart(chrt, {
-         type: 'pie',
-         data: {
-
-            labels: {{pie_label}},
-
-            datasets: [{
-               label: "online tutorial subjects",
-               data: {{ pie_data }},
-               backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen'],
-               borderColor: ['black'],
-            }],
-         },
-         options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins:{
-               title:{
-                  display: true,
-                  text: title,
-                  color: '#FFFFFF',
-                  font:{
-                  size:20,},
-                  },
-                legend:{
-                display: true,
-                color: '#FFFFFF',
-                position:'right',
-                labels:{
+   const title = `Activities participated: {{number_of_activities}}`;
+   var cht_p = document.getElementById("Pie").getContext("2d");
+   var chartId = new Chart(cht_p, {
+      type: 'pie',
+      data: {
+         labels: {{ pie_label | tojson }},
+         datasets: [{
+            label: "online tutorial subjects",
+            data: {{ pie_data }},
+            backgroundColor: ['yellow', 'aqua', 'pink', 'red'],
+            borderColor: ['black'],
+         }],
+      },
+      options: {
+         maintainAspectRatio: false,
+         responsive: true,
+         plugins:{
+            title:{
+               display: true,
+               text: title,
+               color: '#FFFFFF',
+               font:{
+                  size: 20,
+               },
+            },
+            legend:{
+               display: true,
+               color: '#FFFFFF',
+               position: 'right',
+               labels:{
                   boxWidth: 30,
                   boxHeight: 10,
-
-                }
-
-                },
-            }
-         },
-      });
+               }
+            },
+         }
+      },
+   });
 
 
    
 </script>
+
+
+
 {% endblock %}
+{% block javascript3 %}
+    <script>
+        $(document).ready(function() {
+        $('#saveButton').on('click', function() {
+            var dataToSend = {
+                leaderboard: '{{ leaderboard | tojson }}',
+                current_month: '{{ current_month }}',
+                current_year: '{{ current_year }}',
+                listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string
+                line_data: {{ line_data | tojson }}, // safe filter to avoid escaping the JSON string
+                pie_data: {{ pie_data | tojson }}, // safe filter to avoid escaping the JSON string
+                most_contributed: '{{ most_contributed }}',
+                activities: '{{ activities }}',
+                pie_label: {{ pie_label | tojson  }}, // safe filter to avoid escaping the JSON string
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/save_data/com',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSend),
+                success: function(response) {
+                    console.log(response.message);
+                },
+
+            });
+        });
+    });
+    </script>
+
+ {% endblock %}

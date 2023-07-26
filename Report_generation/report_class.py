@@ -357,83 +357,31 @@ class Trans_Report:
 
 
 
-class events_report():
-    def __init__(self):
-        self.__event_name__ = None
-        self.__event_date__ = None
-        self.__venue__ = None
-        self.__event_description__ = None
-        self.__time__ = None
-        self.__overall_in_charge__ = None
-        self.__dateposted__ = None
-
-    # ... (getter and setter methods as before)
-
-    def save_to_firebase(self):
-        report_data = {
-            "event_name": self.__event_name__,
-            "event_date": self.__event_date__,
-            "venue": self.__venue__,
-            "event_description": self.__event_description__,
-            "time": self.__time__,
-            "overall_in_charge": self.__overall_in_charge__,
-            "date_posted": self.__dateposted__,
-        }
-
-        # Save the report data to Firebase Realtime Database
-        ref = db.reference("Users/Saved_report/events_reports")  # Replace "/events_reports" with the path where you want to store the data
-        new_report_ref = ref.push()
-        new_report_ref.set(report_data)
-
-    @classmethod
-    def load_from_firebase(cls, report_id):
-        # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("Users/Saved_report/events_reports")  # Replace "/events_reports" with the path where your data is stored
-        report_ref = ref.child(report_id).get()
-
-        if report_ref:
-            events_report_instance = cls()
-            events_report_instance.__event_name__ = report_ref.get("event_name")
-            events_report_instance.__event_date__ = report_ref.get("event_date")
-            events_report_instance.__venue__ = report_ref.get("venue")
-            events_report_instance.__event_description__ = report_ref.get("event_description")
-            events_report_instance.__time__ = report_ref.get("time")
-            events_report_instance.__overall_in_charge__ = report_ref.get("overall_in_charge")
-            events_report_instance.__dateposted__ = report_ref.get("date_posted")
-            return events_report_instance
-        else:
-            return None
-
-    def update_to_firebase(self, attribute_name, new_value):
-        # Update specific attribute of the report in Firebase Realtime Database
-        ref = db.reference("Users/Saved_report/events_reports")  # Replace "/events_reports" with the path where your data is stored
-        report_ref = ref.child(self.__report_id__)
-        report_ref.update({attribute_name: new_value})
 
 
 
-cred = credentials.Certificate('../Account_management/credentials.json')
-firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
-
-# Assuming you have already initialized the Firebase SDK and set up the database reference (db)
-
-indi_report = Indi_Report()
-indi_report.set_leaderboard({"user1": 100, "user2": 200})
-indi_report.set_current_month("July")
-indi_report.set_current_year(2023)
-indi_report.set_list_months(["January", "February", "March"])
-indi_report.set_line_data([10, 20, 30, 40])
-indi_report.set_pie_data({"data1": 50, "data2": 60})
-indi_report.set_neighbours_helped({"neighbor1": 5, "neighbor2": 10})
-indi_report.set_activities(["activity1", "activity2", "activity3"])
-indi_report.set_pie_label("label1")
-
-# Save the Indi_Report to Firebase
-indi_report.save_to_firebase()
-
-# Load the Indi_Report from Firebase using the report_id
-report_id_to_load = indi_report.get_report_id()
-loaded_report_data = Indi_Report.load_from_firebase(report_id_to_load)
-print(loaded_report_data)
+# cred = credentials.Certificate('../Account_management/credentials.json')
+# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+#
+# # Assuming you have already initialized the Firebase SDK and set up the database reference (db)
+#
+# indi_report = Indi_Report()
+# indi_report.set_leaderboard({"user1": 100, "user2": 200})
+# indi_report.set_current_month("July")
+# indi_report.set_current_year(2023)
+# indi_report.set_list_months(["January", "February", "March"])
+# indi_report.set_line_data([10, 20, 30, 40])
+# indi_report.set_pie_data({"data1": 50, "data2": 60})
+# indi_report.set_neighbours_helped({"neighbor1": 5, "neighbor2": 10})
+# indi_report.set_activities(["activity1", "activity2", "activity3"])
+# indi_report.set_pie_label("label1")
+#
+# # Save the Indi_Report to Firebase
+# indi_report.save_to_firebase()
+#
+# # Load the Indi_Report from Firebase using the report_id
+# report_id_to_load = indi_report.get_report_id()
+# loaded_report_data = Indi_Report.load_from_firebase(report_id_to_load)
+# print(loaded_report_data)
 
 
