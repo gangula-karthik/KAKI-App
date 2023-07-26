@@ -176,7 +176,7 @@ def update_ticket(ticket_id):
     flash('Ticket has been updated 🚀')
     
     messages = get_flashed_messages()  # Get the flashed messages
-    return redirect(url_for('customerOverview'))
+    return redirect(url_for('myTickets'))
 
 
 def ticketRetrieval():
