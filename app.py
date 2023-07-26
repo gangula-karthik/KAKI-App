@@ -128,6 +128,9 @@ def allowed_file(filename):
 
 @app.route('/new_ticket', methods=['POST'])
 def new_ticket():
+    """
+    FOR PS
+    """
     subject = request.form.get('subject')
     description = request.form.get('description')
     topic = request.form.get('topic')
@@ -155,6 +158,9 @@ def new_ticket():
 
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
 def update_ticket(ticket_id):
+    """
+    FOR PS
+    """
     # Retrieve the existing ticket
     ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id][0]
     if not ticket:
