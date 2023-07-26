@@ -34,6 +34,7 @@
 </div>
 
 <script>
+  
   document.addEventListener('DOMContentLoaded', (event) => {
     let buttons = document.querySelectorAll('.edit-button');
     buttons.forEach((button) => {
@@ -59,11 +60,4 @@
         });
     });
   });
-
-
-  // Set the form's action to the new ticket route when the modal is hidden
-  $('#exampleModal').on('hidden.bs.modal', function (event) {
-    document.querySelector('#exampleModal form').action = '/new_ticket';
-  });
-
 </script>

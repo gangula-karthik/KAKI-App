@@ -3,22 +3,9 @@
 {% extends "template.html" %}
 
 {% block content %}
-<div class="container">
-  <div class="row align-items-center">
-    <div class="col-md-8">
-      <div class="input-group" style="width:400px;">
-        <input type="text" class="custom-input form-control" style="color: rgba(255, 255, 255, 0.42); border: 1.5px solid #3F3F48; background: #1E1F23;" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-primary my-2 my-sm-0" style="border-radius: 0px 5px 5px 0px;border: 1.5px solid #3F3F48;" type="submit">Search</button>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 d-flex justify-content-end">
-      <button class="btn btn-primary my-2 my-sm-0" data-bs-toggle="modal" data-bs-target="#exampleModal"
-      data-bs-whatever="@mdo">Raise a ticket <i class="fa-solid fa-plus"></i></button>
-    </div>
-  </div>
-</div>
+
+{% include 'customer_support/searchBar.html' %}
+
 
 
 {% include 'customer_support/ticket_creation_modal.html' %}

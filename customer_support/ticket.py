@@ -151,6 +151,13 @@ def updateDescriptions(ticket_id, new_descriptions):
     descriptions = new_descriptions
     db.child(f'/tickets/{ticket_id}').update({"descriptions": descriptions})
 
+def deleteTicket(ticket_id):
+    allKeys = [i.key() for i in db.child("tickets").get().each()]
+    if ticket_id not in allKeys:
+        raise ValueError("Invalid ticket ID")
+    else:
+        db.child(f'/tickets/{ticket_id}').remove()
+
 if __name__ == "__main__": 
     t2 = Ticket("user1", "subject1", "descriptions1", "billing")
     print(t2)
