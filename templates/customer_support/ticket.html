@@ -23,7 +23,7 @@
       </div>
       <div>
         {% if ticket.user_id == user_name %}
-        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-gear"></i> Settings</button>
+        <button class="btn btn-info edit-button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
         <button class="btn btn-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}">Open
           Chat</button>
@@ -31,3 +31,15 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+      let buttons = document.querySelectorAll('.edit-button');
+      buttons.forEach((button) => {
+          button.addEventListener('click', function(){
+              let ticketId = this.getAttribute('data-id');
+              console.log(ticketId);
+          });
+      });
+  });
+  </script>
