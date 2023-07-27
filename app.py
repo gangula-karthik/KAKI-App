@@ -397,15 +397,16 @@ def view_report(report_type,Report_id):
 
         return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,neighbours_helped=neighbours_helped,activities=activities,pie_label=pie_label)
 
-    elif report_type == "Transactions":
+    elif report_type == "Transaction":
         current_month = data['current_month']
         current_year = data['current_year']
         list_month = data['listMonths']
-        Total_spent = data['Total_spent']
-        Total_received = data['Total_received']
-        Total_number = data['Total_number']
+        total_spent = data['Total_spent']
+        total_received = data['Total_received']
+        total_number = data['NoTransactionData']
 
-        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=Total_spent,Total_received=Total_received,Total_number=Total_number)
+        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number)
+
 @app.route('/Report_generation/event_list')
 def Event_list():
     events = [

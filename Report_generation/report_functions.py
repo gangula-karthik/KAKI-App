@@ -49,9 +49,10 @@ def retrieve_ByID(dictionary, target):
             return dictionary[i]
         else:
             continue
+    return 'error'
 
 
-
+# item = retrieve_ByID(get_all_reports(),'T5')
 
 
 
