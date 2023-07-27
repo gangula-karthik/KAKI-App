@@ -33,11 +33,10 @@ margin-top:2px;
 
 {% block content %}
 <h1>Saved Reports</h1>
-<p>{{reports}}</p>
 <div>
             {% for report in reports %}
             <div  class="saved_cards">
-                    <a class='link_report' href="/saved_reports/{{ report.Report_id }}">{{report}}</a>
+                    <a class='link_report' href="/Report_generation/saved_reports/{{report.report_type}}/{{ report.Report_id }}">{{report.name}}</a>
                 <button class = "delete_button">Delete</button>
             </div>
 

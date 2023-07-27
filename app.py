@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
-from Report_generation.report_functions import get_all_reports, retrieve_report_name
+from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -365,18 +365,47 @@ def Transactions_report():
 @app.route('/Report_generation/saved_reports')
 def Saved_report():
     reports = get_all_reports()
-    names = retrieve_report_name(reports)
-    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = names)
+    details = retrieve_report_name(reports)
+    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details)
 
-@app.route('/Report_generation/saved_reports/<report_id>')
-def view_report(report_id, report_type):
-    report_ref = db.reference(f'Saved_report/{report_type}/{report_id}')
-    report = report_ref.get()
+@app.route('/Report_generation/saved_reports/<string:report_type>/<string:Report_id>')
+def view_report(report_type,Report_id):
+    report = get_all_reports()
+    data = retrieve_ByID(report,Report_id)
+    if report_type == "Community":
+        leaderboard = data['leaderboard']
+        current_month = data['current_month']
+        current_year = data['current_year']
+        listMonths = data['listMonths']
+        line_data = data['line_data']
+        pie_data = data['pie_data']
+        most_contributed = data['most_contributed']
+        activities = data['activities']
+        pie_label = data['pie_label']
 
-    if report is None:
-        return "Report not found", 404
+        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,most_contributed=most_contributed,activities=activities,pie_label=pie_label)
+    elif report_type == "Individual":
+        leaderboard = data['leaderboard']
+        current_month = data['current_month']
+        current_year = data['current_year']
+        listMonths = data['list_months']
+        line_data = data['line_data']
+        pie_data = data['pie_data']
+        neighbours_helped = data['neighbours_helped']
+        activities = data['activities']
+        pie_label = data['pie_label']
 
-    return render_template('Community_report.html.html', report=report)
+        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,neighbours_helped=neighbours_helped,activities=activities,pie_label=pie_label)
+
+    elif report_type == "Transactions":
+        current_month = data['current_month']
+        current_year = data['current_year']
+        list_month = data['listMonths']
+        Total_spent = data['Total_spent']
+        Total_received = data['Total_received']
+        Total_number = data['Total_number']
+
+        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=Total_spent,Total_received=Total_received,Total_number=Total_number)
 @app.route('/Report_generation/event_list')
 def Event_list():
     events = [

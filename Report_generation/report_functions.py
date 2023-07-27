@@ -33,13 +33,25 @@ def get_all_reports():
 def retrieve_report_name(dictionary):
     names = []
     for i in dictionary:
+        Report_id = dictionary[i]["Report_id"]
         year = dictionary[i]["current_year"]
         month = dictionary[i]["current_month"]
         type_r = dictionary[i]["report_type"]
         name = type_r+ ' ' + year +' ' + month
-        names.append(name)
+        report_type = dictionary[i]["report_type"]
+        names.append({"name": name, "report_type": report_type, "Report_id": Report_id})
 
     return names
+
+def retrieve_ByID(dictionary, target):
+    for i in dictionary:
+        if dictionary[i]["Report_id"] == target:
+            return dictionary[i]
+        else:
+            continue
+
+
+
 
 
 
