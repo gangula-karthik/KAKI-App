@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request , session
+from flask import Flask, render_template, request , session ,redirect
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
 import pyrebase
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+app.secret_key = 'who420is420in12paris'
 
 cred = credentials.Certificate("Account_management/credentials.json")
 firebase_admin.initialize_app(cred)
@@ -34,14 +34,32 @@ def index():
         email = request.form['user_email']
         password = request.form['user_pwd']
         try:
-            user = pyreauth.sign_in_with_email_and_password(email,password)
-            return render_template('account_management/update_usercred.html')
+            user = pyreauth.sign_in_with_email_and_password(email, password)
+
+            # Save the email in the session
+            session['user_email'] = email
+
+            return redirect('/dashboard')
         except:
-             unsuccessful = 'Please check your credentials'
-             return render_template('account_management/login.html', umessage=unsuccessful)
+            unsuccessful = 'Please check your credentials'
+            return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
 
-from flask import session
+@app.route('/dashboard')
+def dashboard():
+    if 'user_email' in session:
+        username = session['user_email']  # We'll use the username from the session
+        user_data = pyredb.child("Users").child("Consumer").child(username).get().val()
+        return render_template('account_management/dashboard.html', user_data=user_data)
+    else:
+        return redirect('/')
+
+@app.route('/logout')
+def logout():
+    # Clear the session on logout
+    session.pop('user_email', None)
+    return redirect('/')
+
 
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
@@ -65,7 +83,6 @@ def create_account():
                 existing_account = "An account with this email already exists."
                 return render_template('account_management/login.html', exist_message=existing_account)
     return render_template('account_management/login.html')
-
 
 
 @app.route('/forget_password', methods=['GET', 'POST'])
@@ -103,6 +120,32 @@ def add_user_credentials():
 
         pyredb.child("Users").child("Consumer").child(username).set(data)
         return "Data added successfully to Firebase!"
+    
+
+@app.route('/update_user_credentials', methods=['GET', 'POST'])
+def update_user_credentials():
+    if request.method == 'POST':
+        name = request.form['name']
+        username = request.form['username']
+        birthdate = request.form['birthdate']
+        town = request.form['town']
+
+        # Retrieve the email from the session
+        email = session.get('user_email', None)
+
+        if email is None:
+            return "User email not found. Please create an account first."
+
+        data = {
+            "email": email,  # Include the email in the data to be stored
+            "name": name,
+            "username": username,
+            "birthdate": birthdate,
+            "town": town
+        }
+
+        pyredb.child("Users").child("Consumer").child(username).update(data)
+        return "Data updated successfully to Firebase!"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
