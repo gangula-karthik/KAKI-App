@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
+from Report_generation.report_functions import *
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -406,6 +407,29 @@ def view_report(report_type,Report_id):
         total_number = data['NoTransactionData']
 
         return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number)
+
+@app.route('/delete/data', methods=['POST'])
+def delete_report():
+    report_id = str(request.json)
+    report = get_all_reports()
+    details = retrieve_ByID(report, report_id)
+    report_type = details['report_type']
+
+
+    if report_type == "Community":
+        delete_Com_from_firebase(report_id)
+        return jsonify({"status": "success"})
+
+
+    elif report_type == "Individual":
+        delete_Indi_from_firebase(report_id)
+        return jsonify({"status": "success"})
+
+
+    elif report_type == "Transaction":
+        delete_Trans_from_firebase(report_id)
+        return jsonify({"status": "success"})
+
 
 @app.route('/Report_generation/event_list')
 def Event_list():

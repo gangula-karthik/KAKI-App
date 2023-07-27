@@ -37,10 +37,29 @@ margin-top:2px;
             {% for report in reports %}
             <div  class="saved_cards">
                     <a class='link_report' href="/Report_generation/saved_reports/{{report.report_type}}/{{ report.Report_id }}">{{report.name}}</a>
-                <button class = "delete_button">Delete</button>
+                <button class = "delete_button" onclick="deleteReport('{{ report.Report_id }}')">Delete</button>
             </div>
 
             {% endfor %}
 </div>
+{% endblock %}
+
+{% block javascript3 %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<<script>
+    function deleteReport(reportId) {
+        $.ajax({
+            type: 'POST',
+            url: '/delete/data',
+            contentType: 'application/json',
+            data: JSON.stringify(reportId),
+            success: function(response) {
+                console.log(response.message);
+                location.reload();
+            },
+        });
+    }
+</script>
 {% endblock %}
 

@@ -187,11 +187,13 @@ overflow-y:scroll;
                 data: JSON.stringify(dataToSend),
                 success: function(response) {
                     console.log(response.message);
+                    alert("Saved");
                 },
 
             });
         });
     });
+
     </script>
 
  {% endblock %}

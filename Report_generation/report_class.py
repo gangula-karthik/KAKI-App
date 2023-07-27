@@ -131,10 +131,14 @@ class Indi_Report:
     def delete_from_firebase(self):
         if self.__report_id__:
             ref = db.reference("/Users/Saved_report/Individual")
-            report_ref = ref.child(self.__report_id__)
-            report_ref.delete()
-        else:
-            print("No report ID found. Cannot delete from Firebase.")
+            report_data = ref.get()
+
+            for report_id, data in report_data.items():
+                if data.get('Report_id') == self.__report_id__:
+                    ref.child(report_id).delete()
+                    return True
+
+        return False
 
 
 
@@ -264,10 +268,14 @@ class Com_Report:
     def delete_from_firebase(self):
         if self.__report_id__:
             ref = db.reference("/Users/Saved_report/Community")
-            report_ref = ref.child(self.__report_id__)
-            report_ref.delete()
-        else:
-            print("No report ID found. Cannot delete from Firebase.")
+            report_data = ref.get()
+
+            for report_id, data in report_data.items():
+                if data.get('Report_id') == self.__report_id__:
+                    ref.child(report_id).delete()
+                    return True
+
+        return False
 
 
 class Trans_Report:
@@ -369,10 +377,14 @@ class Trans_Report:
     def delete_from_firebase(self):
         if self.__report_id__:
             ref = db.reference("/Users/Saved_report/Transactions")
-            report_ref = ref.child(self.__report_id__)
-            report_ref.delete()
-        else:
-            print("No report ID found. Cannot delete from Firebase.")
+            report_data = ref.get()
+
+            for report_id, data in report_data.items():
+                if data.get('Report_id') == self.__report_id__:
+                    ref.child(report_id).delete()
+                    return True
+
+        return False
 
 
 

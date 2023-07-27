@@ -10,20 +10,28 @@ def get_all_reports():
 
     categories = ["Transactions", "Individual", "Community"]
 
-    reports_ref_trans = db.reference("/Users/Saved_report/Transactions")
-    reports_snapshot_t = reports_ref_trans.get()
+    try:
+        reports_ref_trans = db.reference("/Users/Saved_report/Transactions")
+        reports_snapshot_t = reports_ref_trans.get()
+        reports.update(reports_snapshot_t)
+    except:
+        pass
 
-    reports_ref_indi = db.reference("/Users/Saved_report/Individual")
-    reports_snapshot_i = reports_ref_indi.get()
+    try:
 
-    reports_ref_com = db.reference("/Users/Saved_report/Community")
-    reports_snapshot_c = reports_ref_com.get()
+        reports_ref_indi = db.reference("/Users/Saved_report/Individual")
+        reports_snapshot_i = reports_ref_indi.get()
+        reports.update(reports_snapshot_i)
+    except:
+        pass
 
-    reports.update(reports_snapshot_c)
-    reports.update(reports_snapshot_i)
-    reports.update(reports_snapshot_t)
+    try:
+        reports_ref_com = db.reference("/Users/Saved_report/Community")
+        reports_snapshot_c = reports_ref_com.get()
+        reports.update(reports_snapshot_c)
 
-
+    except:
+        pass
 
     return reports
 
@@ -54,6 +62,38 @@ def retrieve_ByID(dictionary, target):
 
 # item = retrieve_ByID(get_all_reports(),'T5')
 
+def delete_Trans_from_firebase(report_id):
+    if report_id:
+        ref = db.reference("/Users/Saved_report/Transactions")
+        report_data = ref.get()
 
+        for report_key, data in report_data.items():
+            if data.get('Report_id') == report_id:
+                ref.child(report_key).delete()
+                return True
 
+    return False
 
+def delete_Indi_from_firebase(report_id):
+    if report_id:
+        ref = db.reference("/Users/Saved_report/Individual")
+        report_data = ref.get()
+
+        for report_key, data in report_data.items():
+            if data.get('Report_id') == report_id:
+                ref.child(report_key).delete()
+                return True
+
+    return False
+
+def delete_Com_from_firebase(report_id):
+    if report_id:
+        ref = db.reference("/Users/Saved_report/Community")
+        report_data = ref.get()
+
+        for report_key, data in report_data.items():
+            if data.get('Report_id') == report_id:
+                ref.child(report_key).delete()
+                return True
+
+    return False
