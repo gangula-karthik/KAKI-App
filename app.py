@@ -129,13 +129,15 @@ def allowed_file(filename):
 
 @app.route('/new_ticket', methods=['POST'])
 def new_ticket():
+    """
+    FOR PS
+    """
     subject = request.form.get('subject')
     description = request.form.get('description')
     topic = request.form.get('topic')
     file = request.files.get('file')
-    user_id = 'Leap'
 
-    ticket = Ticket(user_id, subject, description, topic)
+    ticket = Ticket(current_user, subject, description, topic)
 
     if file:
         # get the file name, this doesn't include the path
@@ -156,6 +158,9 @@ def new_ticket():
 
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
 def update_ticket(ticket_id):
+    """
+    FOR PS
+    """
     # Retrieve the existing ticket
     ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id][0]
     if not ticket:
@@ -190,6 +195,18 @@ def update_ticket(ticket_id):
     return redirect(url_for('myTickets'))
 
 
+# @app.route('/ticket_search')
+# def search():
+#     referrer = request.
+#     query = request.args.get('query')
+#     results = semanticSearch(query)
+#     return redirect(url_for(referrer, user_name=current_user, data=results))
+
+@app.route('/ticket_search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    return redirect(url_for('userTickets', query=query, user_name=current_user))
+
 def ticketRetrieval():
     allTickets = pyredb.child("tickets").get()
     try:
@@ -208,6 +225,9 @@ def get_ticket(ticket_id):
 
 @app.route('/delete_ticket/<ticket_id>', methods=['POST'])
 def delete_ticket(ticket_id):
+    AllowedIds = [i["ticket_id"] for i in ticketRetrieval() if i['user_id'] == current_user]
+    if ticket_id not in AllowedIds:
+        return jsonify({'error': 'System Error, Try again'}), 404
     deleteTicket(ticket_id)
     referrer_url = request.referrer
     return redirect(referrer_url)
@@ -221,7 +241,11 @@ def myTickets():
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
-    tickets = ticketRetrieval()
+    query = request.args.get('query')
+    if query:
+        tickets = semanticSearch(query)
+    else:
+        tickets = ticketRetrieval()
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 

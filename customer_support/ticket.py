@@ -5,6 +5,8 @@ import time
 import pyrebase
 # import fasttext
 from dotenv import load_dotenv
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 nltk.download('vader_lexicon')
 
@@ -157,6 +159,22 @@ def deleteTicket(ticket_id):
         raise ValueError("Invalid ticket ID")
     else:
         db.child(f'/tickets/{ticket_id}').remove()
+
+def semanticSearch(searchTerm):
+    documents = [i.val()['subject'] for i in db.child("tickets").get().each()]
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(documents)
+
+    query = vectorizer.transform([searchTerm])
+    cosine_similarities = cosine_similarity(query, X).flatten()
+
+    relevant_docs = [doc for doc, score in zip(documents, cosine_similarities) if score >= 0.5]
+    res = []
+    for i in db.child("tickets").get().each():
+        if i.val()['subject'] in relevant_docs:
+            res.append(i.val())
+
+    return res
 
 if __name__ == "__main__": 
     t2 = Ticket("user1", "subject1", "descriptions1", "billing")

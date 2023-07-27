@@ -11,9 +11,27 @@
 {% include 'customer_support/ticket_creation_modal.html' %}
 
 
+{% if data|length == 0 %}
+
+
+
+<div class="container d-flex align-items-center justify-content-center" style="height: 70vh;">
+    <div class="text-center">
+      <h1 style="font-size: 4rem;">💀</h1>
+      <h3 style="font-size: 3rem;">Well, this is awkward</h3>
+      <h6>Looks like there is nothing right now, check back later.</h6>
+      <br>
+      <a class="btn btn-primary" href="{{ url_for('customerOverview') }}">Back to Home</a>
+    </div>
+  </div>
+
+{% else %}
+
 {% for ticket in data %}
 {% include 'customer_support/ticket.html' %}
 {% endfor %}
 
+
+{% endif %}
 
 {% endblock %}

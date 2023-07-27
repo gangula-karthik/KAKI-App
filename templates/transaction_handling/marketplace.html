@@ -5,6 +5,7 @@
 {% block content %}
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Marketplace</title>
   <style>
@@ -12,11 +13,13 @@
       font-family: Arial, sans-serif;
       line-height: 1.6;
     }
+
     header {
       color: #f0ebeb;
       text-align: center;
       padding: 10px 0;
     }
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -25,12 +28,14 @@
       gap: 20px;
       padding: 20px;
     }
+
     .product {
       display: flex;
       flex-direction: column;
       border: 1px solid #ddd;
       padding: 10px;
     }
+
     .product img {
       width: 150px;
       height: 150px;
@@ -38,48 +43,81 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     .product-title {
       font-size: 20px;
       font-weight: bold;
       margin: 0 0 5px;
     }
+
     .product-description {
       margin: 0 0 5px;
     }
+
     .product-price {
       font-size: 18px;
       font-weight: bold;
       color: #f0ebeb;
       margin-bottom: 10px;
     }
+
     .product-info {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+
     .product-info div {
       margin-bottom: 5px;
     }
+
     .seller-name,
     .rating,
     .item-condition {
       font-size: 14px;
       color: #666;
     }
+
+    .text-muted-on-dark {
+      font-size: 14px;
+      color: #bdbdbd;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Marketplace</h1>
   </header>
   <div class="search-container">
-  <input type="text" class="search-input" id="searchInput" placeholder="Search for products..." style="padding: 5px 10px; ; border-radius:7px;">
-  <button onclick="searchProducts()" style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
-    <button onclick="sellProducts()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button>
-</div>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search for products..."
+      style="padding: 5px 10px; ; border-radius:7px;">
+    <button onclick="searchProducts()"
+      style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
+    <!-- <button onclick="showSellForm()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button> -->
+    <button class="btn btn-primary" style="padding: 6px 35px; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;">Sell</button>
+    <div id="sellFormContainer" style="display: none;">
+      <form id="sellForm" onsubmit="submitSellForm(event)">
+        <label for="productTitle">Product Title:</label>
+        <input type="text" id="productTitle" required><br>
+
+        <label for="productDescription">Product Description:</label>
+        <textarea id="productDescription" required></textarea><br>
+
+        <label for="productPrice">Product Price ($):</label>
+        <input type="number" id="productPrice" required><br>
+
+        <label for="productImage">Product Image URL:</label>
+        <input type="text" id="productImage" required><br>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+  </div>
   <div class="container">
     {% for product in products %}
-  <div class="product">
+    <!-- <div class="product">
     <img src="{{ product.image }}" alt="{{ product.title }}">
     <div class="product-title">{{ product.title }}</div>
     <div class="product-description">{{ product.description }}</div>
@@ -88,15 +126,104 @@
     <div class="rating">Rating: {{ product.rating }}/5</div>
     <div class="item-condition">Condition: {{ product.condition }}</div>
     <button onclick="startChat('{{ product.seller }}', '{{ product.product_id }}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
+    <button class="btn btn-primary">Chat Now</button>
+  </div> -->
+    <div class="card text-bg-dark position-relative py-5" style="width: 18rem;">
+      <img src="{{ product.image }}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">{{ product.title }}</h5>
+        <p class="card-text">{{ product.description }}</p>
+        <p class="card-text">${{ product.price }}</p>
+        <p class="card-text text-muted-on-dark"><strong>Rating:</strong> {{ product.rating }}/5</p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product.condition }}</p>
+        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product.seller }}</p>
+      </div>
+      <div class="card-footer text-body-secondary position-absolute bottom-0 w-100">
+        <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
+      </div>
+    </div>
+
+    {% endfor %}
   </div>
-  {% endfor %}
+
+  <!-- Modal -->
+<div class="modal fade" id="buyPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-bg-dark">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
   </div>
+</div>
+
+
   <script>
     function startChat(sellerName, productID) {
       window.location.href = `/MyProducts.html?seller=${encodeURIComponent(sellerName)}&product=${encodeURIComponent(productID)}`;
     }
+
+    function searchProducts() {
+      const searchInput = document.getElementById("searchInput");
+      const searchTerm = searchInput.value.trim().toLowerCase();
+
+      // Filter products based on the search term
+      const filteredProducts = products.filter((product) =>
+        product.title.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm)
+      );
+
+      // Update the display with filtered products
+      updateMarketplaceDisplay(filteredProducts);
+    }
+
+    function updateMarketplaceDisplay(productsToDisplay) {
+      const marketplaceContainer = document.querySelector(".container");
+
+      // Clear existing products from the display
+      while (marketplaceContainer.firstChild) {
+        marketplaceContainer.removeChild(marketplaceContainer.firstChild);
+      }
+
+      // Display products
+      if (productsToDisplay && productsToDisplay.length > 0) {
+        for (const product of productsToDisplay) {
+          const productDiv = document.createElement("div");
+          productDiv.classList.add("product");
+
+          productDiv.innerHTML = `
+          <img src="${product.image}" alt="${product.title}">
+          <div class="product-title">${product.title}</div>
+          <div class="product-description">${product.description}</div>
+          <div class="product-price">$${product.price}</div>
+          <div class="seller-name">Seller: ${product.seller}</div>
+          <div class="rating">Rating: ${product.rating}/5</div>
+          <div class="item-condition">Condition: ${product.condition}</div>
+          <button onclick="startChat('${product.seller}', '${product.product_id}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
+        `;
+
+          marketplaceContainer.appendChild(productDiv);
+        }
+      } else {
+        // Display a message when no products match the search
+        const noProductsDiv = document.createElement("div");
+        noProductsDiv.innerText = "No products found.";
+        marketplaceContainer.appendChild(noProductsDiv);
+      }
+    }
+
+  // ... (The rest of your code remains unchanged)
   </script>
 </body>
+
 </html>
 
 {% endblock %}
