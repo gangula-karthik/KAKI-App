@@ -33,10 +33,11 @@ margin-top:2px;
 
 {% block content %}
 <h1>Saved Reports</h1>
+<p>{{reports}}</p>
 <div>
-            {% for event in events %}
+            {% for report in reports %}
             <div  class="saved_cards">
-                <a class='link_report' href="{{ event.report_link }}">{{ event.name }}</a>
+                    <a class='link_report' href="/saved_reports/{{ report.Report_id }}">{{ report.report_type}}</a>
                 <button class = "delete_button">Delete</button>
             </div>
 
