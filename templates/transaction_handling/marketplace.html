@@ -97,6 +97,8 @@
       style="padding: 5px 10px; ; border-radius:7px;">
     <button onclick="searchProducts()"
       style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
+    <div id="searchResultsContainer">
+      </div>
     <!-- <button onclick="showSellForm()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button> -->
     <button class="btn btn-primary" style="padding: 6px 35px;color:#fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;">Sell</button>
     <div id="sellFormContainer" style="display: none;">
@@ -271,61 +273,34 @@ paymentMethodSelect.addEventListener("change", handlePaymentMethodChange);
 
 
   <script>
-    function startChat(sellerName, productID) {
-      window.location.href = `/MyProducts.html?seller=${encodeURIComponent(sellerName)}&product=${encodeURIComponent(productID)}`;
-    }
+  // Function to handle the search
+  function searchProducts() {
+    const searchInput = document.getElementById("searchInput");
+    const searchTerm = searchInput.value.toLowerCase();
+    const searchResultsContainer = document.getElementById("searchResultsContainer");
 
-    function searchProducts() {
-      const searchInput = document.getElementById("searchInput");
-      const searchTerm = searchInput.value.trim().toLowerCase();
+    // Perform your search logic here. For example, you can have an array of products:
+    const products = [
+      // Add more products as needed
+    ];
 
-      // Filter products based on the search term
-      const filteredProducts = products.filter((product) =>
-        product.title.toLowerCase().includes(searchTerm) ||
-        product.description.toLowerCase().includes(searchTerm)
-      );
+    // Filter products based on the search term
+    const filteredProducts = products.filter((product) =>
+      product.toLowerCase().includes(searchTerm)
+    );
 
-      // Update the display with filtered products
-      updateMarketplaceDisplay(filteredProducts);
-    }
+    // Display the search results
+    let searchResultsHtml = "";
+    filteredProducts.forEach((product) => {
+      searchResultsHtml += `<p>${product}</p>`;
+    });
+    searchResultsContainer.innerHTML = searchResultsHtml;
+  }
 
-    function updateMarketplaceDisplay(productsToDisplay) {
-      const marketplaceContainer = document.querySelector(".container");
-
-      // Clear existing products from the display
-      while (marketplaceContainer.firstChild) {
-        marketplaceContainer.removeChild(marketplaceContainer.firstChild);
-      }
-
-      // Display products
-      if (productsToDisplay && productsToDisplay.length > 0) {
-        for (const product of productsToDisplay) {
-          const productDiv = document.createElement("div");
-          productDiv.classList.add("product");
-
-          productDiv.innerHTML = `
-          <img src="${product.image}" alt="${product.title}">
-          <div class="product-title">${product.title}</div>
-          <div class="product-description">${product.description}</div>
-          <div class="product-price">$${product.price}</div>
-          <div class="seller-name">Seller: ${product.seller}</div>
-          <div class="rating">Rating: ${product.rating}/5</div>
-          <div class="item-condition">Condition: ${product.condition}</div>
-          <button onclick="startChat('${product.seller}', '${product.product_id}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
-        `;
-
-          marketplaceContainer.appendChild(productDiv);
-        }
-      } else {
-        // Display a message when no products match the search
-        const noProductsDiv = document.createElement("div");
-        noProductsDiv.innerText = "No products found.";
-        marketplaceContainer.appendChild(noProductsDiv);
-      }
-    }
-
-  // ... (The rest of your code remains unchanged)
-  </script>
+  // Attach an event listener to the search input to call the searchProducts function on each keyup
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("keyup", searchProducts);
+</script>
 </body>
 
 </html>
