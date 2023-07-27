@@ -35,9 +35,10 @@ def index():
         password = request.form['user_pwd']
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
-
-            # Save the email in the session
-            session['user_email'] = email
+            # Get the Firebase token ID
+            token_id = user['idToken']
+            # Save the token ID in the session
+            session['user_token'] = token_id
 
             return redirect('/dashboard')
         except:
@@ -47,9 +48,13 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    if 'user_email' in session:
-        username = session['user_email']  # We'll use the username from the session
-        user_data = pyredb.child("Users").child("Consumer").child(username).get().val()
+    if 'user_token' in session:
+        # Retrieve the token ID from the session
+        token_id = session['user_token']
+        
+        # Use the token ID as the child key in the database
+        user_data = pyredb.child("Users").child("Consumer").child(token_id).get().val()
+        
         return render_template('account_management/dashboard.html', user_data=user_data)
     else:
         return redirect('/')
@@ -73,9 +78,10 @@ def create_account():
                     email=email,
                     password=pwd0
                 )
-
-                # Save the email in the session
-                session['user_email'] = email
+                # Get the Firebase token ID (use user.uid instead of user['idToken'])
+                token_id = user.uid
+                # Save the token ID in the session
+                session['user_token'] = token_id
 
                 return render_template('account_management/user_cred.html')
 
@@ -106,6 +112,9 @@ def add_user_credentials():
 
         # Retrieve the email from the session
         email = session.get('user_email', None)
+        
+        # Retrieve the token ID from the session
+        token_id = session.get('user_token', None)
 
         if email is None:
             return "User email not found. Please create an account first."
@@ -118,34 +127,40 @@ def add_user_credentials():
             "town": town
         }
 
-        pyredb.child("Users").child("Consumer").child(username).set(data)
+        pyredb.child("Users").child("Consumer").child(token_id).set(data)
         return "Data added successfully to Firebase!"
     
 
-@app.route('/update_user_credentials', methods=['GET', 'POST'])
-def update_user_credentials():
-    if request.method == 'POST':
-        name = request.form['name']
-        username = request.form['username']
-        birthdate = request.form['birthdate']
-        town = request.form['town']
+# @app.route('/update_user_credentials', methods=['GET', 'POST'])
+# def update_user_credentials():
+#     if request.method == 'POST':
+#         name = request.form['name']
+#         username = request.form['username']
+#         birthdate = request.form['birthdate']
+#         town = request.form['town']
 
-        # Retrieve the email from the session
-        email = session.get('user_email', None)
+#         # Retrieve the email from the session
+#         email = session.get('user_email', None)
 
-        if email is None:
-            return "User email not found. Please create an account first."
+#         # Retrieve the token ID from the session
+#         token_id = session.get('user_token', None)
 
-        data = {
-            "email": email,  # Include the email in the data to be stored
-            "name": name,
-            "username": username,
-            "birthdate": birthdate,
-            "town": town
-        }
+#         if token_id is None:
+#             return "User token ID not found. Please log in first."
 
-        pyredb.child("Users").child("Consumer").child(username).update(data)
-        return "Data updated successfully to Firebase!"
+#         if email is None:
+#             return "User email not found. Please create an account first."
+
+#         data = {
+#             "email": email,  # Include the email in the data to be stored
+#             "name": name,
+#             "username": username,
+#             "birthdate": birthdate,
+#             "town": town
+#         }
+
+#         pyredb.child("Users").child("Consumer").child(token_id).set(data)
+#         return "Data updated successfully to Firebase!"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
