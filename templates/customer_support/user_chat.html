@@ -21,27 +21,6 @@
                 <ul class="friend-list">
                     <!-- List of friends will go here -->
                     <li><a href="#">Friend 1</a></li>
-                    <li><a href="#">Friend 2</a></li>
-                    <li><a href="#" class="selected">Friend 3</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					<li><a href="#">Friend 2</a></li>
-					
-
                     <!-- Add more as needed -->
                 </ul>
             </div>
@@ -57,21 +36,9 @@
                     </div>
                     <div class="chat-message sender">
                         I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
                         <div class="timestamp">10:16 AM</div>
                     </div>
                     <div class="chat-message sender">
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
-                        I need help with my account.
                         I need help with my account.
                         <div class="timestamp">10:16 AM</div>
                     </div>
@@ -85,51 +52,23 @@
         </div>
     </div>
 
-{% endblock %}
     <script>
-        // Get all friend links
-        var friends = document.querySelectorAll('.friend-list a');
-
-        // Add click event to each friend link
-        friends.forEach(function(friend) {
-            friend.addEventListener('click', function(event) {
-                // Prevent default action
-                event.preventDefault();
-
-                // Remove selected class from all friends
-                friends.forEach(function(f) {
-                    f.classList.remove('selected');
-                });
-
-                // Add selected class to clicked friend
-                this.classList.add('selected');
-
-                // Clear chat
-                document.getElementById('chat').innerHTML = '';
-
-                // Add a message to the chat
-                var message = document.createElement('p');
-                message.textContent = 'Now chatting with ' + this.textContent;
-                document.getElementById('chat').appendChild(message);
-            });
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        document.getElementById('sendButton').addEventListener('click', function(e){
+            e.preventDefault();
+            var message = document.getElementById('chatInput').value;
+            socket.emit('message', message);
+            document.getElementById('chatInput').value = '';
+            return false;
         });
-
-        // Add event listener to message input
-        document.getElementById('messageInput').addEventListener('keypress', function(event) {
-            // Check if enter key was pressed
-            if (event.key === 'Enter') {
-                // Prevent form submission
-                event.preventDefault();
-
-                // Add a message to the chat
-                var message = document.createElement('p');
-                message.textContent = this.value;
-                document.getElementById('chat').appendChild(message);
-
-                // Clear the input
-                this.value = '';
-            }
+        socket.on('message', function(msg){
+            var div = document.createElement('div');
+            div.className = 'chat-message sender';
+            div.textContent = msg;
+            document.getElementById('chatMessages').appendChild(div);
         });
     </script>
+
+{% endblock %}
 </body>
 </html>

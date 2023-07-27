@@ -1,7 +1,141 @@
 {% extends "template.html" %}
 {% block content %}
 
-<h1>Sheldon</h1>
+<style>
+  body {
+    margin-top: 20px;
+    color: #ffffff; /* Font color is white */
+    background: #1A233A;
+    font-family: Arial, sans-serif;
+  }
 
+  .account-settings .user-profile {
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
+    text-align: center;
+  }
+
+  .account-settings .user-profile .user-avatar {
+    margin: 0 0 1rem 0;
+  }
+
+  .account-settings .user-profile .user-avatar img {
+    width: 90px;
+    height: 90px;
+    border-radius: 100px;
+  }
+
+  .account-settings .user-profile h5.user-name {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .account-settings .user-profile h6.user-email {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+
+  .account-settings .about {
+    margin: 1rem 0 0 0;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .card {
+    background: #272E48;
+    border-radius: 5px;
+    border: 0;
+    margin-bottom: 1rem;
+  }
+
+  .form-control {
+    border: 1px solid #596280;
+    border-radius: 2px;
+    font-size: 0.825rem;
+    background: #1A233A;
+    color: #ffffff; /* Font color is white */
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .btn {
+    margin-right: 10px;
+  }
+</style>
+
+<div class="container">
+  <div class="row gutters">
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="account-settings">
+            <div class="user-profile">
+              <div class="user-avatar">
+                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Maxwell Admin">
+              </div>
+              <h5 class="user-name">Yuki Hayashi</h5>
+              <h6 class="user-email">yuki@Maxwell.com</h6>
+            </div>
+            <div class="about">
+              <h5 class="mb-2 text-primary">About</h5>
+              <p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="row gutters">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+              <h6 class="mb-3 text-primary">Personal Details</h6>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" class="form-control" id="fullName" value="User Name">
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="eMail">Email</label>
+                <input type="email" class="form-control" id="eMail" value="user_email@example.com">
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" value="username123">
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="birthdate">Birthdate</label>
+                <input type="date" class="form-control" id="birthdate" value="2000-01-01">
+              </div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+              <div class="form-group">
+                <label for="creditCard">Credit Card Number</label>
+                <input type="text" class="form-control" id="creditCard" value="**** **** **** 1234">
+              </div>
+            </div>
+          </div>
+          <div class="row gutters">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+              <div class="text-right">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="button" class="btn btn-primary">Update</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
