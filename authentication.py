@@ -5,6 +5,7 @@ from firebase_admin import auth
 import pyrebase
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 
 cred = credentials.Certificate("Account_management/credentials.json")
 firebase_admin.initialize_app(cred)
@@ -40,6 +41,8 @@ def index():
              return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
 
+from flask import session
+
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
@@ -52,14 +55,17 @@ def create_account():
                     email=email,
                     password=pwd0
                 )
-                # auth.generate_email_verification_link(user['idToken'])
-                # return render_template('account_management/veryify_email.html')
+
+                # Save the email in the session
+                session['user_email'] = email
+
                 return render_template('account_management/user_cred.html')
 
             except auth.EmailAlreadyExistsError:
                 existing_account = "An account with this email already exists."
                 return render_template('account_management/login.html', exist_message=existing_account)
     return render_template('account_management/login.html')
+
 
 
 @app.route('/forget_password', methods=['GET', 'POST'])
@@ -73,7 +79,7 @@ def forget_password():
         return render_template('account_management/forget_password.html', exist_message=r_email)
     
 
-@app.route('/add_user_credentials', methods=['GET','POST'])
+@app.route('/add_user_credentials', methods=['GET', 'POST'])
 def add_user_credentials():
     if request.method == 'POST':
         name = request.form['name']
@@ -81,7 +87,14 @@ def add_user_credentials():
         birthdate = request.form['birthdate']
         town = request.form['town']
 
+        # Retrieve the email from the session
+        email = session.get('user_email', None)
+
+        if email is None:
+            return "User email not found. Please create an account first."
+
         data = {
+            "email": email,  # Include the email in the data to be stored
             "name": name,
             "username": username,
             "birthdate": birthdate,
