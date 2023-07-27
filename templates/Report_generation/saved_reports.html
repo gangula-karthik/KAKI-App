@@ -37,7 +37,7 @@ margin-top:2px;
 <div>
             {% for report in reports %}
             <div  class="saved_cards">
-                    <a class='link_report' href="/saved_reports/{{ report.Report_id }}">{{ report.report_type}}</a>
+                    <a class='link_report' href="/saved_reports/{{ report.Report_id }}">{{report}}</a>
                 <button class = "delete_button">Delete</button>
             </div>
 

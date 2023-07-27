@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
-from Report_generation.report_functions import get_all_reports
+from Report_generation.report_functions import get_all_reports, retrieve_report_name
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -365,7 +365,8 @@ def Transactions_report():
 @app.route('/Report_generation/saved_reports')
 def Saved_report():
     reports = get_all_reports()
-    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = reports)
+    names = retrieve_report_name(reports)
+    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = names)
 
 @app.route('/Report_generation/saved_reports/<report_id>')
 def view_report(report_id, report_type):

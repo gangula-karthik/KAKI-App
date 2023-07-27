@@ -169,7 +169,7 @@ overflow-y:scroll;
         $(document).ready(function() {
         $('#saveButton').on('click', function() {
             var dataToSend = {
-                leaderboard: '{{ leaderboard | tojson }}',
+                leaderboard: {{ leaderboard | tojson }},
                 current_month: '{{ current_month }}',
                 current_year: '{{ current_year }}',
                 listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string

@@ -2,6 +2,8 @@ from flask import Flask, render_template
 import firebase_admin
 from firebase_admin import credentials, db
 
+# cred = credentials.Certificate('../Account_management/credentials.json')
+# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
 def get_all_reports():
     reports = {}
@@ -24,6 +26,20 @@ def get_all_reports():
 
 
     return reports
+
+
+
+
+def retrieve_report_name(dictionary):
+    names = []
+    for i in dictionary:
+        year = dictionary[i]["current_year"]
+        month = dictionary[i]["current_month"]
+        type_r = dictionary[i]["report_type"]
+        name = type_r+ ' ' + year +' ' + month
+        names.append(name)
+
+    return names
 
 
 
