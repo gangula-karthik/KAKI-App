@@ -162,37 +162,47 @@ overflow-y:scroll;
 </script>
 
 
-
 {% endblock %}
 {% block javascript3 %}
     <script>
         $(document).ready(function() {
-        $('#saveButton').on('click', function() {
-            var dataToSend = {
-                leaderboard: {{ leaderboard | tojson }},
-                current_month: '{{ current_month }}',
-                current_year: '{{ current_year }}',
-                listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string
-                line_data: {{ line_data | tojson }}, // safe filter to avoid escaping the JSON string
-                pie_data: {{ pie_data | tojson }}, // safe filter to avoid escaping the JSON string
-                most_contributed: '{{ most_contributed }}',
-                activities: '{{ activities }}',
-                pie_label: {{ pie_label | tojson  }}, // safe filter to avoid escaping the JSON string
-            };
+    $('#saveButton').off('click').on('click', function() {
+        $(this).prop('disabled', true); // Disable the button after the first click
 
-            $.ajax({
-                type: 'POST',
-                url: '/save_data/com',
-                contentType: 'application/json',
-                data: JSON.stringify(dataToSend),
-                success: function(response) {
-                    console.log(response.message);
-                    alert("Saved");
-                },
+        var dataToSend = {
+            leaderboard: {{ leaderboard | tojson }},
+            current_month: '{{ current_month }}',
+            current_year: '{{ current_year }}',
+            listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string
+            line_data: {{ line_data | tojson }}, // safe filter to avoid escaping the JSON string
+            pie_data: {{ pie_data | tojson }}, // safe filter to avoid escaping the JSON string
+            most_contributed: '{{ most_contributed }}',
+            activities: '{{ activities }}',
+            pie_label: {{ pie_label | tojson  }}, // safe filter to avoid escaping the JSON string
+        };
 
-            });
+        $.ajax({
+            type: 'POST',
+            url: '/save_data/com',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            success: function(response) {
+                console.log(response.message);
+                if (response.message === 'Report already saved') {
+                    alert("Report is already saved");
+                } else {
+                    alert("Report saved and is in saved report page");
+                    location.reload(); // Refresh the page after successful save
+                }
+                $('#saveButton').prop('disabled', false); // Enable the button after AJAX success or failure
+            },
+            error: function() {
+                alert("An error occurred while saving the report");
+                $('#saveButton').prop('disabled', false); // Enable the button after AJAX error
+            }
         });
     });
+});
 
     </script>
 

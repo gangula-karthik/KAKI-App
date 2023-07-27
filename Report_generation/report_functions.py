@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 import firebase_admin
 from firebase_admin import credentials, db
+from flask import Flask, request, jsonify
+
 
 # cred = credentials.Certificate('../Account_management/credentials.json')
 # firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
@@ -35,8 +37,57 @@ def get_all_reports():
 
     return reports
 
+def get_trans():
+    reports = {}
+    reports_ref_trans = db.reference("/Users/Saved_report/Transactions")
+    reports_snapshot_t = reports_ref_trans.get()
 
+    if reports_snapshot_t:
+        # Merge the data from reports_snapshot_t into the reports dictionary
+        for key, value in reports_snapshot_t.items():
+            reports[key] = value
 
+    return reports
+
+# data ={'NoTransactionData': [5, 6, 7, 8, 9, 10], 'Report_id': 'T1', 'Total_received': [5, 6, 7, 8, 9, 10], 'Total_spent': [5, 6, 7, 8, 9, 10], 'current_month': 'July', 'current_year': '2023', 'listMonths': ['Jan', 'Feb', 'March', 'April', 'May', 'June'], 'report_type': 'Transaction'}
+# list1 =get_trans()
+# for i in list1:
+#     if data['current_year']  == list1[i]['current_year'] and data['current_month'] == list1[i]['current_month']:
+#         print('True')
+# Use combination of cuurent moneth and year along with record type
+def get_indi():
+    reports = {}
+    reports_ref_trans = db.reference("/Users/Saved_report/Individual")
+    reports_snapshot_t = reports_ref_trans.get()
+
+    if reports_snapshot_t:
+        # Merge the data from reports_snapshot_t into the reports dictionary
+        for key, value in reports_snapshot_t.items():
+            reports[key] = value
+
+    return reports
+
+def get_com():
+    reports = {}
+    reports_ref_trans = db.reference("/Users/Saved_report/Community")
+    reports_snapshot_t = reports_ref_trans.get()
+
+    if reports_snapshot_t:
+        # Merge the data from reports_snapshot_t into the reports dictionary
+        for key, value in reports_snapshot_t.items():
+            reports[key] = value
+
+    return reports
+
+def check_existing(report,data):
+    if len(report) == 0:
+        return False
+
+    for item in report.values():
+        if data['current_year'] == item['current_year'] and data['current_month'] == item['current_month']:
+            return True
+
+    return False
 
 def retrieve_report_name(dictionary):
     names = []
