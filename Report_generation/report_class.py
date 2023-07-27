@@ -22,10 +22,14 @@ class Indi_Report:
         self.__neighboursHelped__ = None
         self.__activities__ = None
         self.__pieLabel__ = None
+        self.__type__ =  'Individual'
 
     # Getter and setter methods for Indi_Report attributes
     def get_report_id(self):
         return self.__report_id__
+
+    def get_type(self):
+        return 'Individual'
 
     def set_report_id(self, report_id):
         self.__report_id__ = report_id
@@ -99,16 +103,18 @@ class Indi_Report:
             "neighbours_helped": self.__neighboursHelped__,
             "activities": self.__activities__,
             "pie_label": self.__pieLabel__,
+            "report_type": 'Individual',
+
         }
 
-        ref = db.reference("Users/Saved_report/Indi_report/")
+        ref = db.reference("Users/Saved_report/Individual/")
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     # Method to load Indi_Report from Firebase using report_id
     @classmethod
     def load_from_firebase(cls, target_report_id):
-        ref = db.reference("/Users/Saved_report/Indi_report")
+        ref = db.reference("/Users/Saved_report/Individual")
         report_data = ref.get()
         for report_id, data in report_data.items():
             if data.get('Report_id') == target_report_id:
@@ -118,13 +124,13 @@ class Indi_Report:
 
     # Method to update specific attribute of the report in Firebase
     def update_to_firebase(self, attribute_name, new_value):
-        ref = db.reference("/Users/Saved_report/Indi_report")
+        ref = db.reference("/Users/Saved_report/Individual")
         report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
 
     def delete_from_firebase(self):
         if self.__report_id__:
-            ref = db.reference("/Users/Saved_report/Indi_report")
+            ref = db.reference("/Users/Saved_report/Individual")
             report_ref = ref.child(self.__report_id__)
             report_ref.delete()
         else:
@@ -149,10 +155,14 @@ class Com_Report:
         self.__MostContributed__ = None
         self.__activities__ = None
         self.__pieLabel__ = None
+        self.__type__ =  'Community'
 
     # Getter and setter methods for Com_Report attributes
     def get_report_id(self):
         return self.__report_id__
+
+    def get_type(self):
+        return 'Community'
 
     def set_report_id(self, report_id):
         self.__report_id__ = report_id
@@ -226,16 +236,17 @@ class Com_Report:
             "most_contributed": self.__MostContributed__,
             "activities": self.__activities__,
             "pie_label": self.__pieLabel__,
+            "report_type": 'Community',
         }
 
-        ref = db.reference("/Users/Saved_report/Com_report")
+        ref = db.reference("/Users/Saved_report/Community")
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     # Method to load Com_Report from Firebase using report_id
     @classmethod
     def load_from_firebase(cls, target_report_id):
-        ref = db.reference("/Users/Saved_report/Com_report")
+        ref = db.reference("/Users/Saved_report/Community")
         report_data = ref.get()
         for report_id, data in report_data.items():
             if data.get('Report_id') == target_report_id:
@@ -245,14 +256,14 @@ class Com_Report:
 
     # Method to update specific attribute of the report in Firebase
     def update_to_firebase(self, attribute_name, new_value):
-        ref = db.reference("/Users/Saved_report/Com_report")
+        ref = db.reference("/Users/Saved_report/Community")
         report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
 
 
     def delete_from_firebase(self):
         if self.__report_id__:
-            ref = db.reference("/Users/Saved_report/Com_report")
+            ref = db.reference("/Users/Saved_report/Community")
             report_ref = ref.child(self.__report_id__)
             report_ref.delete()
         else:
@@ -273,10 +284,14 @@ class Trans_Report:
         self.__current_month__ = None
         self.__current_year__ = None
         self.__listMonths__ = None
+        self.__type__ = 'Transactions'
 
     # Getter and setter methods for Trans_Report attributes
     def get_report_id(self):
         return self.__report_id__
+
+    def get_type(self):
+        return 'Transactions'
 
     def set_report_id(self, report_id):
         self.__report_id__ = report_id
@@ -327,16 +342,17 @@ class Trans_Report:
             "current_month": self.__current_month__,
             "current_year": self.__current_year__,
             "listMonths": self.__listMonths__,
+            "report_type": 'Transaction',
         }
 
-        ref = db.reference("/Users/Saved_report/Trans_report")
+        ref = db.reference("/Users/Saved_report/Transactions")
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     # Method to load Trans_Report from Firebase using report_id
     @classmethod
     def load_from_firebase(cls, target_report_id):
-        ref = db.reference("/Users/Saved_report/Trans_report")
+        ref = db.reference("/Users/Saved_report/Transactions")
         report_data = ref.get()
         for report_id, data in report_data.items():
             if data.get('Report_id') == target_report_id:
@@ -346,13 +362,13 @@ class Trans_Report:
 
     # Method to update specific attribute of the report in Firebase
     def update_to_firebase(self, attribute_name, new_value):
-        ref = db.reference("/Users/Saved_report/Trans_report")
+        ref = db.reference("/Users/Saved_report/Transactions")
         report_ref = ref.child(self.__report_id__)
         report_ref.update({attribute_name: new_value})
 
     def delete_from_firebase(self):
         if self.__report_id__:
-            ref = db.reference("/Users/Saved_report/Transaction_report")
+            ref = db.reference("/Users/Saved_report/Transactions")
             report_ref = ref.child(self.__report_id__)
             report_ref.delete()
         else:

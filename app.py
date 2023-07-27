@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
+from Report_generation.report_functions import get_all_reports
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -339,23 +340,18 @@ def Transactions_report():
 
 @app.route('/Report_generation/saved_reports')
 def Saved_report():
-    events = [
-        {
-            "name": "Event 1",
-            "report_link": "http://example.com/report/event1"
-        },
-        {
-            "name": "Event 2",
-            "report_link": "http://example.com/report/event2"
-        },
-        {
-            "name": "Event 3",
-            "report_link": "http://example.com/report/event3"
-        }
-    ]
-    return render_template('/Report_generation/saved_reports.html', user_name=current_user, events = events)
+    reports = get_all_reports()
+    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = reports)
 
+@app.route('/Report_generation/saved_reports/<report_id>')
+def view_report(report_id, report_type):
+    report_ref = db.reference(f'Saved_report/{report_type}/{report_id}')
+    report = report_ref.get()
 
+    if report is None:
+        return "Report not found", 404
+
+    return render_template('Community_report.html.html', report=report)
 @app.route('/Report_generation/event_list')
 def Event_list():
     events = [
