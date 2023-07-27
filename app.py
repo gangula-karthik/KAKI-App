@@ -19,6 +19,7 @@ from Report_generation.report_functions import *
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+from flask_socketio import SocketIO, send
 
 
 
@@ -37,7 +38,9 @@ firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-
 
 app = Flask(__name__)
 app.secret_key = 'karthik123'
+socketio = SocketIO(app)
 current_user = 'Leap'
+
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -253,6 +256,12 @@ def userTickets():
 @app.route('/user_tickets/<ticket_ID>', methods=['GET'])
 def ticketComments(ticket_ID):
     return render_template('customer_support/ticket_comments.html', user_name=current_user, ticket_ID=ticket_ID)
+
+
+@socketio.on('message')
+def handleMessage(msg):
+    print('Message: ' + msg)
+    send(msg, broadcast=True)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
@@ -699,4 +708,4 @@ def marketplace():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    socketio.run(app, debug=True, port=5000)
