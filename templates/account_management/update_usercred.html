@@ -5,7 +5,7 @@
   body {
     margin-top: 20px;
     color: #ffffff; /* Font color is white */
-    background: #1A233A;
+    background: #27282F;
     font-family: Arial, sans-serif;
   }
 
@@ -42,7 +42,7 @@
   }
 
   .card {
-    background: #272E48;
+    background: #373741;
     border-radius: 5px;
     border: 0;
     margin-bottom: 1rem;
@@ -52,7 +52,7 @@
     border: 1px solid #596280;
     border-radius: 2px;
     font-size: 0.825rem;
-    background: #1A233A;
+    background:  #27282F;
     color: #ffffff; /* Font color is white */
   }
 
@@ -63,29 +63,17 @@
   .btn {
     margin-right: 10px;
   }
+
+  /* Center the content in the middle of the page */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 </style>
 
 <div class="container">
-  <div class="row gutters">
-    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="account-settings">
-            <div class="user-profile">
-              <div class="user-avatar">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Maxwell Admin">
-              </div>
-              <h5 class="user-name">Yuki Hayashi</h5>
-              <h6 class="user-email">yuki@Maxwell.com</h6>
-            </div>
-            <div class="about">
-              <h5 class="mb-2 text-primary">About</h5>
-              <p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
       <div class="card h-100">
         <div class="card-body">
@@ -95,7 +83,7 @@
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
               <div class="form-group">
-                <label for="fullName">Full Name</label>
+                <label for="fullName">Name</label>
                 <input type="text" class="form-control" id="fullName" value="User Name">
               </div>
             </div>
@@ -117,10 +105,29 @@
                 <input type="date" class="form-control" id="birthdate" value="2000-01-01">
               </div>
             </div>
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
               <div class="form-group">
-                <label for="creditCard">Credit Card Number</label>
-                <input type="text" class="form-control" id="creditCard" value="**** **** **** 1234">
+                <label for="town">Town</label>
+                <select name="town" id="town" class="form-control" required>
+                  <option value="" disabled selected>Select a Town Council</option>
+                  <option value="aljunied_hougang">Aljunied-Hougang</option>
+                  <option value="ang_mo_kio">Ang Mo Kio</option>
+                  <option value="bishan_toa_payoh">Bishan-Toa Payoh</option>
+                  <option value="chua_chu_kang">Chua Chu Kang</option>
+                  <option value="east_coast">East Coast</option>
+                  <option value="holland_bukit_timah">Holland-Bukit Timah</option>
+                  <option value="jalan_besar">Jalan Besar</option>
+                  <option value="jurong_clementi">Jurong-Clementi</option>
+                  <option value="marine_parade">Marine Parade</option>
+                  <option value="marsiling_yew_tee">Marsiling-Yew Tee</option>
+                  <option value="nee_soon">Nee Soon</option>
+                  <option value="pasir_ris_punggol">Pasir Ris-Punggol</option>
+                  <option value="sembawang">Sembawang</option>
+                  <option value="sengkang">Sengkang</option>
+                  <option value="tampines">Tampines</option>
+                  <option value="tanjong_pagar">Tanjong Pagar</option>
+                  <option value="west_coast">West Coast</option>
+                </select>
               </div>
             </div>
           </div>
