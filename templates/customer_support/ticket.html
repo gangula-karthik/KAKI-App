@@ -36,7 +36,18 @@
       <p class="card-text"><small class="text-white-50">ID: {{ ticket.ticket_id}}</small></p>
       <p class="card-text"><small class="text-white-50">{{ ticket.opened_at }}</small></p>
     </div>
-    <h5 class="card-title">{{ ticket.subject }}</h5>
+    <h5 class="card-title">
+      {{ ticket.subject }}
+      <span class="badge rounded-pill 
+    {% if ticket.status == 'open' %}
+        bg-danger
+    {% elif ticket.status == 'in progress' %}
+        bg-warning
+    {% elif ticket.status == 'resolved' %}
+        bg-success
+    {% endif %}
+">{{ ticket.status }}</span>
+    </h5>
     <p class="card-text">{{ ticket.descriptions }}</p>
     <div class="d-flex justify-content-between align-items-end">
       <div>
@@ -45,11 +56,13 @@
       </div>
       <div class="d-flex align-items-center">
         {% if ticket.user_id == user_name %}
-        <button class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-solid fa-trash-can"></i> Delete Ticket</button>
+        <button class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal"><i
+            class="fa-solid fa-trash-can"></i> Delete Ticket</button>
         <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
           data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
-        <button class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i class="fa-solid fa-comments"></i> Open
+        <button class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i
+            class="fa-solid fa-comments"></i> Open
           Chat</button>
       </div>
     </div>
