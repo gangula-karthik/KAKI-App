@@ -181,7 +181,11 @@ html2pdf().set(options).from(content).save();
                 data: JSON.stringify(dataToSend),
                 success: function(response) {
                     console.log(response.message);
-                    alert("Saved");
+                    if (response.message === 'Report already saved') {
+                    alert("Report is already saved");
+                    } else {
+                    alert("Report saved and is in saved report page");
+        }
                 },
 
             });
