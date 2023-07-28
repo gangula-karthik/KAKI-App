@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KAKI - Welcome to your neighbourhood</title>
-  <link rel="stylesheet" href="../static/navbar.css" />
+  <link rel="stylesheet" href="{{url_for('static', filename='navbar.css')}}"/>
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100;200;300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
@@ -146,7 +146,8 @@
       KAKI
     </div>
   </nav>
-  <script src="../static/navbar.js"></script>
+  <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+
 </body>
 
 </html>

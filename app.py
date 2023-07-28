@@ -432,7 +432,7 @@ def Saved_report():
     details = retrieve_report_name(reports)
     return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details)
 
-@app.route('/Report_generation/saved_reports/<string:report_type>/<string:Report_id>')
+@app.route('/Report_generation/<string:report_type>/<string:Report_id>')
 def view_report(report_type,Report_id):
     report = get_all_reports()
     data = retrieve_ByID(report,Report_id)
