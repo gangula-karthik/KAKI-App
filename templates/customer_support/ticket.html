@@ -63,10 +63,10 @@
       });
     });
   });
-  
+
   document.querySelectorAll('.delete-button').forEach(button => {
   button.addEventListener('click', function (event) {
-    let confirmation = confirm("Are you sure you want to delete this ticket?");
+    let confirmation = confirm("Are you sure you want to delete this ticket? Once deleted, it cannot be recovered");
     if (!confirmation) {
       // If the user clicked "Cancel", prevent the form submission
       event.preventDefault();
