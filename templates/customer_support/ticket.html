@@ -37,11 +37,11 @@
       <div class="d-flex align-items-center">
         {% if ticket.user_id == user_name %}
         <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2 delete-form">
-          <button type="submit" class="btn btn-danger delete-button" data-id="{{ ticket.ticket_id }}">Delete Ticket</button>
+          <button type="submit" class="btn btn-outline-danger delete-button" data-id="{{ ticket.ticket_id }}"><i class="fa-solid fa-trash-can"></i> Delete Ticket</button>
         </form>
         
         <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
-          data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
+          data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-pen-nib"></i> Update</button>
         {% endif %}
         <a class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i
             class="fa-solid fa-comments"></i> Open
