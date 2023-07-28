@@ -8,26 +8,6 @@
   }
 </style>
 
-<!-- modal for deletion confirmation -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to delete this ticket? Once deleted, it cannot be recovered
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2">
-          <button type="submit" class="btn btn-danger">Delete Ticket</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <div class="card mt-4 mx-auto" id="ticket-card">
@@ -56,14 +36,16 @@
       </div>
       <div class="d-flex align-items-center">
         {% if ticket.user_id == user_name %}
-        <button class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal"><i
-            class="fa-solid fa-trash-can"></i> Delete Ticket</button>
+        <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2 delete-form">
+          <button type="submit" class="btn btn-danger delete-button" data-id="{{ ticket.ticket_id }}">Delete Ticket</button>
+        </form>
+        
         <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
           data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
-        <button class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i
+        <a class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i
             class="fa-solid fa-comments"></i> Open
-          Chat</button>
+          Chat</a>
       </div>
     </div>
   </div>
@@ -81,6 +63,17 @@
       });
     });
   });
+
+  document.querySelectorAll('.delete-button').forEach(button => {
+  button.addEventListener('click', function (event) {
+    let confirmation = confirm("Are you sure you want to delete this ticket? Once deleted, it cannot be recovered");
+    if (!confirmation) {
+      // If the user clicked "Cancel", prevent the form submission
+      event.preventDefault();
+    }
+  });
+});
+
 
   document.querySelectorAll('.edit-button').forEach(button => {
     button.addEventListener('click', function () {
