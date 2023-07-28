@@ -190,14 +190,6 @@ def update_ticket(ticket_id):
     messages = get_flashed_messages()  # Get the flashed messages
     return redirect(url_for('myTickets'))
 
-
-# @app.route('/ticket_search')
-# def search():
-#     referrer = request.
-#     query = request.args.get('query')
-#     results = semanticSearch(query)
-#     return redirect(url_for(referrer, user_name=current_user, data=results))
-
 @app.route('/ticket_search', methods=['GET'])
 def search():
     query = request.args.get('query')
@@ -254,6 +246,12 @@ def ticketComments(ticket_ID):
 def handleMessage(msg):
     print('Message: ' + msg)
     send(msg, broadcast=True)
+
+# customer support staff routes
+
+@app.route('/supportStaffOverview', methods=['GET'])
+def staffSupportOverview():
+    return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
