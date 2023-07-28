@@ -71,77 +71,98 @@
     align-items: center;
     height: 100vh;
   }
+
+  #town {
+    border: 1px solid #596280;
+    border-radius: 2px;
+    font-size: 0.825rem;
+    background:  #27282F;
+    color: #ffffff;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    height: calc(2.25rem + 2px);
+    line-height: 1.5;
+    display: block;
+    background-image: none;
+    margin: 0;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  #town option {
+    color: #ffffff;
+    background: #373741;
+  }
 </style>
 
 <div class="container">
-    <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+  <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
       <div class="card h-100">
-        <div class="card-body">
-          <div class="row gutters">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <h6 class="mb-3 text-primary">Personal Details</h6>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="fullName">Name</label>
-                <input type="text" class="form-control" id="fullName" value="User Name">
+          <div class="card-body">
+              <div class="row gutters">
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                      <h6 class="mb-3 text-primary">Personal Details</h6>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                          <label for="fullName">Name</label>
+                          <input type="text" class="form-control" id="fullName" value="{{ user_data.get('name', '') }}">
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                          <label for="eMail">Email</label>
+                          <input type="email" class="form-control" id="eMail" value="{{ user_data.get('email', '') }}">
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                          <label for="username">Username</label>
+                          <input type="text" class="form-control" id="username" value="{{ user_data.get('username', '') }}">
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                          <label for="birthdate">Birthdate</label>
+                          <input type="date" class="form-control" id="birthdate" value="{{ user_data.get('birthdate', '') }}">
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                          <label for="town">Town</label>
+                          <select name="town" id="town" required>
+                              <option value="" disabled>Select a Town Council</option>
+                              <option value="aljunied_hougang" {% if user_data.get('town', '') == 'aljunied_hougang' %} selected {% endif %}>Aljunied-Hougang</option>
+                              <option value="ang_mo_kio" {% if user_data.get('town', '') == 'ang_mo_kio' %} selected {% endif %}>Ang Mo Kio</option>
+                              <option value="bishan_toa_payoh" {% if user_data.get('town', '') == 'bishan_toa_payoh' %} selected {% endif %}>Bishan-Toa Payoh</option>
+                              <option value="chua_chu_kang" {% if user_data.get('town', '') == 'chua_chu_kang' %} selected {% endif %}>Chua Chu Kang</option>
+                              <option value="east_coast" {% if user_data.get('town', '') == 'east_coast' %} selected {% endif %}>East Coast</option>
+                              <!-- Add similar options for other towns -->
+                              <option value="holland_bukit_timah" {% if user_data.get('town', '') == 'holland_bukit_timah' %} selected {% endif %}>Holland-Bukit Timah</option>
+                              <option value="jalan_besar" {% if user_data.get('town', '') == 'jalan_besar' %} selected {% endif %}>Jalan Besar</option>
+                              <option value="jurong_clementi" {% if user_data.get('town', '') == 'jurong_clementi' %} selected {% endif %}>Jurong-Clementi</option>
+                              <option value="marine_parade" {% if user_data.get('town', '') == 'marine_parade' %} selected {% endif %}>Marine Parade</option>
+                              <option value="marsiling_yew_tee" {% if user_data.get('town', '') == 'marsiling_yew_tee' %} selected {% endif %}>Marsiling-Yew Tee</option>
+                              <option value="nee_soon" {% if user_data.get('town', '') == 'nee_soon' %} selected {% endif %}>Nee Soon</option>
+                              <option value="pasir_ris_punggol" {% if user_data.get('town', '') == 'pasir_ris_punggol' %} selected {% endif %}>Pasir Ris-Punggol</option>
+                              <option value="sembawang" {% if user_data.get('town', '') == 'sembawang' %} selected {% endif %}>Sembawang</option>
+                              <option value="sengkang" {% if user_data.get('town', '') == 'sengkang' %} selected {% endif %}>Sengkang</option>
+                              <option value="tampines" {% if user_data.get('town', '') == 'tampines' %} selected {% endif %}>Tampines</option>
+                              <option value="tanjong_pagar" {% if user_data.get('town', '') == 'tanjong_pagar' %} selected {% endif %}>Tanjong Pagar</option>
+                              <option value="west_coast" {% if user_data.get('town', '') == 'west_coast' %} selected {% endif %}>West Coast</option>
+                          </select>
+                      </div>
+                  </div>
               </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="eMail">Email</label>
-                <input type="email" class="form-control" id="eMail" value="user_email@example.com">
+              <div class="row gutters">
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                      <div class="text-right">
+                          <a href="/logout" class="btn btn-secondary">Logout</a>
+                          <button type="button" class="btn btn-primary">Update</button>
+                      </div>
+                  </div>
               </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" value="username123">
-              </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="birthdate">Birthdate</label>
-                <input type="date" class="form-control" id="birthdate" value="2000-01-01">
-              </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="town">Town</label>
-                <select name="town" id="town" class="form-control" required>
-                  <option value="" disabled selected>Select a Town Council</option>
-                  <option value="aljunied_hougang">Aljunied-Hougang</option>
-                  <option value="ang_mo_kio">Ang Mo Kio</option>
-                  <option value="bishan_toa_payoh">Bishan-Toa Payoh</option>
-                  <option value="chua_chu_kang">Chua Chu Kang</option>
-                  <option value="east_coast">East Coast</option>
-                  <option value="holland_bukit_timah">Holland-Bukit Timah</option>
-                  <option value="jalan_besar">Jalan Besar</option>
-                  <option value="jurong_clementi">Jurong-Clementi</option>
-                  <option value="marine_parade">Marine Parade</option>
-                  <option value="marsiling_yew_tee">Marsiling-Yew Tee</option>
-                  <option value="nee_soon">Nee Soon</option>
-                  <option value="pasir_ris_punggol">Pasir Ris-Punggol</option>
-                  <option value="sembawang">Sembawang</option>
-                  <option value="sengkang">Sengkang</option>
-                  <option value="tampines">Tampines</option>
-                  <option value="tanjong_pagar">Tanjong Pagar</option>
-                  <option value="west_coast">West Coast</option>
-                </select>
-              </div>
-            </div>
           </div>
-          <div class="row gutters">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div class="text-right">
-                <button type="button" class="btn btn-secondary">Cancel</button>
-                <button type="button" class="btn btn-primary">Update</button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
   </div>
 </div>
 
