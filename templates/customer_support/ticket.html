@@ -43,9 +43,9 @@
         <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
           data-id='{{ ticket.ticket_id }}'><i class="fa-solid fa-gear"></i> Settings</button>
         {% endif %}
-        <button class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i
+        <a class="btn btn-outline-primary" href="{{ url_for('ticketComments', ticket_ID=ticket.ticket_id) }}"><i
             class="fa-solid fa-comments"></i> Open
-          Chat</button>
+          Chat</a>
       </div>
     </div>
   </div>
