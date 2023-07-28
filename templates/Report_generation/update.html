@@ -7,32 +7,71 @@
 {% block content %}
 {% from "_formHelper.html" import render_field %}
 
-<h1 class="display-4">Update User</h1>
+<h1 class="display-4">Update Event</h1>
 
 <form method="post" action="/update">
         <label for="venue">Venue:</label>
-        <input type="text" id="venue" name="venue" value="{{ event.venue }}" required><br>
+        <input class="form-control" type="text" id="venue" name="venue" value="{{ event.venue }}" required><br>
 
         <label for="event_date">Event Date:</label>
-        <input type="date" id="event_date" name="event_date" value="{{ event.event_date }}" required><br>
+        <input class="form-control" type="date" id="event_date" name="event_date" value="{{ event.event_date }}" required><br>
 
         <label for="time">Time:</label>
-        <input type="text" id="time" name="time" value="{{ event.time }}" required><br>
+        <input class="form-control" type="text" id="time" name="time" value="{{ event.time }}" required><br>
 
         <label for="overall_in_charge">Overall in Charge:</label>
-        <input type="text" id="overall_in_charge" name="overall_in_charge" value="{{ event.overall_in_charge }}" required><br>
+        <input class="form-control" type="text" id="overall_in_charge" name="overall_in_charge" value="{{ event.overall_in_charge }}" required><br>
 
         <label for="dateposted">Date Posted:</label>
-        <input type="date" id="dateposted" name="dateposted" value="{{ event.dateposted }}" required><br>
+        <input class="form-control" type="date" id="dateposted" name="dateposted" value="{{ event.dateposted }}" required><br>
 
         <label for="event_location">Event Location:</label>
-        <input type="text" id="event_location" name="event_location" value="{{ event.event_location }}" required><br>
+        <input class="form-control" type="text" id="event_location" name="event_location" value="{{ event.event_location }}" required><br>
 
          <label for="event_description">Event Description:</label><br>
-        <textarea id="event_description" name="event_description" rows="4" cols="50" required>{{ event.event_description }}</textarea><br>
+        <textarea class="form-control" id="event_description" name="event_description" rows="4" cols="50" required>{{ event.event_description }}</textarea><br>
 
 
-        <input type="submit" value="Submit">
+        <button class="btn btn-primary" type="submit" id="saveButton">Submit</button>
+
     </form>
 
 {% endblock %}
+
+{}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var saveButton = document.getElementById('saveButton');
+        saveButton.addEventListener('click', function() {
+            this.disabled = true; // Disable the button after the first click
+
+            var dataToSend = {
+                venue: document.getElementById('venue').value,
+                event_date: document.getElementById('event_date').value,
+                time: document.getElementById('time').value,
+                overall_in_charge: document.getElementById('overall_in_charge').value,
+                dateposted: document.getElementById('dateposted').value,
+                event_location: document.getElementById('event_location').value,
+                event_description: document.getElementById('event_description').value
+            };
+
+        $.ajax({
+            type: 'POST',
+            url: '/update/event',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            success: function(response) {
+                console.log(response.message);
+                if (response.message === 'Updated) {
+                    alert("Updated");
+                } else {
+                    alert("error");
+                    location.reload(); // Refresh the page after successful save
+                }
+                $('#saveButton').prop('disabled', false); // Enable the button after AJAX success or failure
+            },
+        });
+    });
+});
+</script>
+{}

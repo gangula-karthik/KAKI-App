@@ -20,12 +20,13 @@ font-size:30px;
 {% endblock %}
 
 {% block content %}
-<h1>Saved Reports</h1>
+
 <div>
-            {% for event in events %}
+            {% for report in events %}
             <div  class="saved_cards">
-                <a class='link_report' href="{{ event.report_link }}">{{ event.name }}</a>
+                    <a class='link_report' href="/Report_generation/Event_details.html/{{ report }}">{{report}}</a>
             </div>
+
             {% endfor %}
 </div>
 {% endblock %}

@@ -148,3 +148,28 @@ def delete_Com_from_firebase(report_id):
                 return True
 
     return False
+def retreive_data_event():
+    reports = {}
+    reports_ref_trans = db.reference("/Events")
+    reports_snapshot_t = reports_ref_trans.get()
+
+    if reports_snapshot_t:
+        # Merge the data from reports_snapshot_t into the reports dictionary
+        for key, value in reports_snapshot_t.items():
+            reports[key] = value
+
+    return reports
+
+def retreive_event_name(dictionary):
+    names = []
+    for event_data in dictionary.values():
+        names.append(event_data['event_name'])
+    return names
+
+def retrieve_event_from_name(dictionary, target):
+    for i in dictionary:
+        if dictionary[i]["event_name"] == target:
+            return dictionary[i]
+        else:
+            continue
+    return 'error'

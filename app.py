@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
+from Report_generation.Admin_classes import *
 from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
 from Report_generation.report_functions import *
 import firebase_admin
@@ -79,18 +80,9 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 @app.route('/', methods=['GET'])
 def index():
-    details = {
-        'event_name': 'Sample Event',
-        'event_date': '2023-07-30',
-        'event_description': 'This is a sample event description.',
-        'venue': 'Sample Venue',
-        'time': '12:00 PM',
-        'overall_in_charge': 'John Doe',
-        'dateposted': '2023-07-23',
-    }
-
-
-    return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details)
+    events = retreive_data_event()
+    names = retreive_event_name(events)
+    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
 # Changed the template to my own so that i can see the layout
 
 @app.route('/home', methods=['GET'])
@@ -415,7 +407,59 @@ def save_data_trans():
     #     # Return a response to indicate success (you can customize this based on your needs)
     #     return jsonify({"message": "Data saved successfully!"})
 
+@app.route('/event_lists', methods=['GET'])
+def event_list():
+    events = retreive_data_event()
+    names = retreive_event_name(events)
+    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
 
+@app.route('/Report_generation/Event_details.html/<report>')
+def Event_details(report):
+    events = retreive_data_event()
+    details = retrieve_event_from_name(events, report)
+
+
+    return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details)
+
+@app.route('/Report_generation/update.html/<event_name>', methods = ['GET', 'POST'])
+def update(event_name):
+    events = retreive_data_event()
+    event_details = retrieve_event_from_name(events, event_name)
+    update_user_form = CreateUserForm(request.form)
+    return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details)
+
+@app.route('/update/event', methods=['POST'])
+def update_event():
+
+
+    data = request.get_json()
+
+    # Get the report_id from the data received in the request
+    event_name = data.get('event_name')
+    uid = retrieve_event_from_name(data,event_name)
+
+    if not uid:
+        return jsonify({'message': 'Invalid report ID'})
+
+    # Load the report data from Firebase using the report_id
+
+    events_report_instance = uid.load_from_firebase(event_name)
+
+    if not events_report_instance:
+        return jsonify({'message': 'Report not found'})
+
+    # Update specific attributes of the report instance using the data from the request
+    for attribute, value in data.items():
+        if attribute == 'report_id':
+            continue  # Skip updating the report_id attribute
+        setattr(events_report_instance, attribute, value)
+
+    # Save the updated report data to Firebase
+
+
+    events_report_instance.update_to_firebase()
+
+    return jsonify({'message': 'Report attributes updated'})
 
     
 @app.route('/Report_generation/Transactions_report')
@@ -494,88 +538,6 @@ def delete_report():
         return jsonify({"status": "success"})
 
 
-@app.route('/Report_generation/event_list')
-def Event_list():
-    events = [
-        {
-            "name": "Event 1",
-            "report_link": "http://example.com/report/event1"
-        },
-        {
-            "name": "Event 2",
-            "report_link": "http://example.com/report/event2"
-        },
-        {
-            "name": "Event 3",
-            "report_link": "http://example.com/report/event3"
-        }
-    ]
-    return render_template('/Report_generation/event_list.html', user_name=current_user, events = events)
-
-
-@app.route('/Report_generation/Event_details.html')
-def Event_details():
-    details = {
-        'event_name': 'Sample Event',
-        'event_date': '2023-07-30',
-        'event_description': 'This is a sample event description.',
-        'venue': 'Sample Venue',
-        'time': '12:00 PM',
-        'overall_in_charge': 'John Doe',
-        'dateposted': '2023-07-23',
-    }
-
-
-    return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details)
-
-@app.route('/Report_generation/update.html', methods = ['GET', 'POST'])
-def update():
-    event_details = {
-        'event_name': 'Sample Event',
-        'event_date': '2023-07-30',
-        'event_location': 'Sample City',
-        'event_description': 'This is a sample event description.',
-        'venue': 'Sample Venue',
-        'time': '12:00 PM',
-        'overall_in_charge': 'John Doe',
-        'dateposted': '2023-07-23',
-    }
-    update_user_form = CreateUserForm(request.form)
-    # if request.method == 'POST' and update_user_form.validate():
-
-        # firebase portion
-        # users_dict = {}
-        # db = shelve.open('storage.db', 'w')
-        # users_dict = db['Users']
-
-
-        # class portion
-        # user = users_dict.get(id)
-        # user.set_first_name(update_user_form.first_name.data)
-        # user.set_last_name(update_user_form.last_name.data)
-        # user.set_gender(update_user_form.gender.data)
-        # user.set_membership(update_user_form.membership.data)
-        # user.set_remarks(update_user_form.remarks.data)
-
-        # db['Users'] = users_dict
-        # db.close()
-
-        # return redirect(url_for('retrieve_users'))
-    # else:
-    #     users_dict = {}
-    #     db = shelve.open('storage.db', 'r')
-    #     users_dict = db['Users']
-    #     db.close()
-    #
-    #     user = users_dict.get(id)
-    #     update_user_form.first_name.data = user.get_first_name()
-    #     update_user_form.last_name.data = user.get_last_name()
-    #     update_user_form.gender.data = user.get_gender()
-    #     update_user_form.membership.data = user.get_membership()
-    #     update_user_form.remarks.data = user.get_remarks()
-    #
-    #     return render_template('updateUser.html', form=update_user_form)
-    return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details)
 
 #Transaction handling routes
 @app.route('/transaction_handling/MyProducts/<int:product_id>')
