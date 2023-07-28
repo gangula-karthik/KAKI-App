@@ -364,6 +364,7 @@ def save_data_indi():
 @app.route('/save_data/trans', methods=['POST'])
 def save_data_trans():
 
+
     data = request.json
     report = get_trans()
     check = check_existing(report,data)
@@ -413,6 +414,10 @@ def save_data_trans():
     #
     #     # Return a response to indicate success (you can customize this based on your needs)
     #     return jsonify({"message": "Data saved successfully!"})
+
+
+
+    
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
     now = datetime.datetime.now()
