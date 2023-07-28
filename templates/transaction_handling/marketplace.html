@@ -227,6 +227,16 @@
 </div>
 
 <script>
+//   document.getElementById('proceedButton').forEach(button => {
+//   button.addEventListener('click', function (event) {
+//     let confirmation = confirm("Transaction Confirmed! \n Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+//     if (!confirmation) {
+//       // If the user clicked "Cancel", prevent the form submission
+//       event.preventDefault();
+//     }
+//   });
+// });
+
   const proceedButton = document.getElementById("proceedButton");
   const confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
   const confirmationModalLabel = document.getElementById("confirmationModalLabel");
