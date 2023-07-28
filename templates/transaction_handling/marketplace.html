@@ -202,11 +202,16 @@
 </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="proceedButton" data-bs-toggle="modal" data-bs-target="#confirmationModal">Proceed</button>
+        <button type="button" class="btn btn-primary" id="proceedButton" data-bs-toggle="modal" data-bs-target="#confirmationModal" onclick="myFunction()">Proceed</button>
       </div>
     </div>
   </div>
 </div>
+  <script>
+    function myFunction(){
+    alert("Transaction Confirmed! \nThank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+    }
+  </script>
   <!-- First modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -227,15 +232,15 @@
 </div>
 
 <script>
-//   document.getElementById('proceedButton').forEach(button => {
-//   button.addEventListener('click', function (event) {
-//     let confirmation = confirm("Transaction Confirmed! \n Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
-//     if (!confirmation) {
+   document.getElementById('proceedButton').forEach(button => {
+   button.addEventListener('click', function (event) {
+    let confirmation = confirm("Transaction Confirmed! \n Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+     if (!confirmation) {
 //       // If the user clicked "Cancel", prevent the form submission
-//       event.preventDefault();
-//     }
-//   });
-// });
+       event.preventDefault();
+    }
+   });
+ });
 
   const proceedButton = document.getElementById("proceedButton");
   const confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
