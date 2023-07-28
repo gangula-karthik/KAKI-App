@@ -1,5 +1,6 @@
 import firebase_admin
 from firebase_admin import credentials, db , storage
+import pyrebase
 cred = credentials.Certificate('../Account_management/credentials.json')
 firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/%22%7D"})
 class Product:
@@ -137,6 +138,8 @@ def calculate_total_price():
     except Exception as e:
         print("Error reading data from Firebase:", e)
         return None
+
+
 
 def main():
     try:
