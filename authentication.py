@@ -64,7 +64,7 @@ def dashboard():
         # Use the UID as the key in the database to get the user data
         user_data = pyredb.child("Users").child("Consumer").child(uid).get().val()
         print(user_data)
-        return render_template('account_management/dashboard.html', user_data=user_data)
+        return render_template('account_management/update_usercred.html', user_data=user_data)
     else:
         return redirect('/')
 
