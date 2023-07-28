@@ -253,6 +253,10 @@ def handleMessage(msg):
 def staffSupportOverview():
     return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
 
+@app.route('/ticketDashboard', methods=['GET'])
+def staffTicketDashboard():
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user)
+
 # report generation routes
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
