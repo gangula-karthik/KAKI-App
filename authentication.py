@@ -4,6 +4,7 @@ from firebase_admin import credentials
 from firebase_admin import auth
 import pyrebase
 
+
 app = Flask(__name__)
 app.secret_key = 'who420is420in12paris'
 
@@ -51,13 +52,22 @@ def dashboard():
     if 'user_token' in session:
         # Retrieve the token ID from the session
         token_id = session['user_token']
+
+        # Use the token ID to get the user's UID from Firebase authentication
+        user = pyreauth.get_account_info(token_id)
+
+        uid = user['users'][0]['localId']
         
-        # Use the token ID as the child key in the database
-        user_data = pyredb.child("Users").child("Consumer").child(token_id).get().val()
-        
+        print(f'user: {user}')
+        print(uid)
+
+        # Use the UID as the key in the database to get the user data
+        user_data = pyredb.child("Users").child("Consumer").child(uid).get().val()
+        print(user_data)
         return render_template('account_management/dashboard.html', user_data=user_data)
     else:
         return redirect('/')
+
 
 @app.route('/logout')
 def logout():
@@ -78,6 +88,9 @@ def create_account():
                     email=email,
                     password=pwd0
                 )
+                # Save the email in the session
+                session['user_email'] = email
+
                 # Get the Firebase token ID (use user.uid instead of user['idToken'])
                 token_id = user.uid
                 # Save the token ID in the session
@@ -102,6 +115,7 @@ def forget_password():
         return render_template('account_management/forget_password.html', exist_message=r_email)
     
 
+
 @app.route('/add_user_credentials', methods=['GET', 'POST'])
 def add_user_credentials():
     if request.method == 'POST':
@@ -112,12 +126,15 @@ def add_user_credentials():
 
         # Retrieve the email from the session
         email = session.get('user_email', None)
-        
+
         # Retrieve the token ID from the session
         token_id = session.get('user_token', None)
 
         if email is None:
             return "User email not found. Please create an account first."
+
+        if token_id is None:
+            return "User token ID not found. Please log in first."
 
         data = {
             "email": email,  # Include the email in the data to be stored
@@ -127,10 +144,10 @@ def add_user_credentials():
             "town": town
         }
 
+        # Use the token ID as the key in the database
         pyredb.child("Users").child("Consumer").child(token_id).set(data)
         return "Data added successfully to Firebase!"
-    
-
+        
 # @app.route('/update_user_credentials', methods=['GET', 'POST'])
 # def update_user_credentials():
 #     if request.method == 'POST':

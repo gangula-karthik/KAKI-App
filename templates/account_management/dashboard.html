@@ -5,12 +5,15 @@
 </head>
 <body>
     <h1>Welcome to Dashboard</h1>
-    <p>Name: {{ user_data.name }}</p>
-    <p>Email: {{ user_data.email }}</p>
-    <p>Username: {{ user_data.username }}</p>
-    <p>Birthdate: {{ user_data.birthdate }}</p>
-    <p>Town: {{ user_data.town }}</p>
-    <!-- Add other fields as needed -->
+    {% if user_data %}
+        <p>Name: {{ user_data.get('name', '') }}</p>
+        <p>Email: {{ user_data.get('email', '') }}</p>
+        <p>Username: {{ user_data.get('username', '') }}</p>
+        <p>Birthdate: {{ user_data.get('birthdate', '') }}</p>
+        <p>Town: {{ user_data.get('town', '') }}</p>
+    {% else %}
+        <p>No user data found.</p>
+    {% endif %}
     <a href="/logout">Logout</a>
 </body>
 </html>
