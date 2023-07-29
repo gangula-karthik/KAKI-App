@@ -98,34 +98,35 @@
   <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
       <div class="card h-100">
           <div class="card-body">
+            <form action="/update_user_cred" method="POST">
               <div class="row gutters">
                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                       <h6 class="mb-3 text-primary">Personal Details</h6>
                   </div>
                   <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                      <div class="form-group">
-                          <label for="fullName">Name</label>
-                          <input type="text" class="form-control" id="fullName" value="{{ user_data.get('name', '') }}">
-                      </div>
+                    <div class="form-group">
+                        <label for="fullName">Name</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName" value="{{ user_data.get('name', '') }}">
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                  <div class="form-group">
+                      <label for="eMail">Email</label>
+                      <input type="email" class="form-control" id="eMail" name="eMail" value="{{ user_data.get('email', '') }}" readonly>
                   </div>
+              </div>
                   <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                      <div class="form-group">
-                          <label for="eMail">Email</label>
-                          <input type="email" class="form-control" id="eMail" value="{{ user_data.get('email', '') }}">
-                      </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user_data.get('username', '') }}">
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                  <div class="form-group">
+                      <label for="birthdate">Birthdate</label>
+                      <input type="date" class="form-control" id="birthdate" name="birthdate" value="{{ user_data.get('birthdate', '') }}">
                   </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                      <div class="form-group">
-                          <label for="username">Username</label>
-                          <input type="text" class="form-control" id="username" value="{{ user_data.get('username', '') }}">
-                      </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                      <div class="form-group">
-                          <label for="birthdate">Birthdate</label>
-                          <input type="date" class="form-control" id="birthdate" value="{{ user_data.get('birthdate', '') }}">
-                      </div>
-                  </div>
+              </div>
                   <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div class="form-group">
                           <label for="town">Town</label>
@@ -157,10 +158,11 @@
                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                       <div class="text-right">
                           <a href="/logout" class="btn btn-secondary">Logout</a>
-                          <button type="button" class="btn btn-primary">Update</button>
+                          <button type="submit" class="btn btn-primary">Update</button>
                       </div>
                   </div>
               </div>
+            </form>
           </div>
       </div>
   </div>
