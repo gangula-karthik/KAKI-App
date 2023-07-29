@@ -159,6 +159,7 @@
                       <div class="text-right">
                           <a href="/logout" class="btn btn-secondary">Logout</a>
                           <button type="submit" class="btn btn-primary">Update</button>
+                          <button type="button" class="btn btn-danger" id="deleteAccountBtn">Delete Account</button>
                       </div>
                   </div>
               </div>
@@ -167,5 +168,29 @@
       </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+      
+      deleteAccountBtn.addEventListener('click', function () {
+          // Perform a POST request to the Flask route for deleting the account
+          fetch('/delete_account', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  // Optionally, you can send some data along with the request if needed
+              })
+          }).then(function (response) {
+              // Handle the response from the server (if needed)
+          }).catch(function (error) {
+              // Handle errors (if any)
+              console.error('Error:', error);
+          });
+      });
+  });
+  </script>
 
 {% endblock %}

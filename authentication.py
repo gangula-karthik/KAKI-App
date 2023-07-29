@@ -184,6 +184,33 @@ def update_user_credentials():
         return "User token ID not found. Please log in first."
 
 
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    try:
+        # Get the user's token ID from the session
+        token_id = session.get('user_token', None)
+        
+        if token_id:
+            session.pop('user_email', None)            
+            # Delete the user from Firebase Authentication
+            decoded_token = pyreauth.get_account_info(token_id)
+            user_id = decoded_token['users'][0]['localId']
+            auth.delete_user(user_id)
+
+            # Delete user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
+            pyredb.child("Users").child("Consumer").child(user_id).remove()
+            
+            # After deleting the account and data, redirect the user to the login page
+            return redirect('/')
+        else:
+            # Handle the case where the token_id is not available in the session
+            return redirect('/error-page')
+    except Exception as e:
+        # Handle any errors that may occur during account deletion
+        print('Error deleting account:', str(e))
+        # You can choose to show an error message or redirect the user to an error page
+        return redirect('/error-page')
+
 
 
 if __name__ == '__main__':
