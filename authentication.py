@@ -41,7 +41,7 @@ def index():
             # Save the token ID in the session
             session['user_token'] = token_id
 
-            return redirect('/dashboard')
+            return redirect('/staff/users')
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
@@ -208,6 +208,20 @@ def delete_account():
     except Exception as e:
         # Handle any errors that may occur during account deletion
         print('Error deleting account:', str(e))
+        # You can choose to show an error message or redirect the user to an error page
+        return redirect('/error-page')
+
+
+@app.route('/staff/users')
+def show_all_users():
+    try:
+        # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
+        all_users_data = pyredb.child("Users").child("Consumer").get().val()
+
+        return render_template('account_management/show_all_users.html', all_users_data=all_users_data)
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error:', str(e))
         # You can choose to show an error message or redirect the user to an error page
         return redirect('/error-page')
 

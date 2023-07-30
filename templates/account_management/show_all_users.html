@@ -1,0 +1,78 @@
+{% extends "template.html" %}
+{% block content %}
+
+<style>
+  body {
+    margin-top: 20px;
+    color: #ffffff; /* Font color is white */
+    background: #27282F;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .card {
+    background: #373741;
+    border-radius: 5px;
+    border: 0;
+    margin-bottom: 20px;
+  }
+
+  .user-avatar img {
+    width: 90px;
+    height: 90px;
+    border-radius: 100px;
+  }
+
+  .user-profile h5.user-name {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .user-profile h6.user-email {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+
+  .about p {
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+</style>
+
+<div class="container">
+  <h3 class="text-center">All Users</h3>
+  <div class="row">
+    {% for user_id, user_data in all_users_data.items() %}
+    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="user-profile">
+            <div class="user-avatar">
+              <!-- If you have a user avatar, you can display it here -->
+              <!-- For example: -->
+              <!-- <img src="{{ user_data.get('avatar_url', '/path/to/default_avatar.png') }}" alt="User Avatar"> -->
+            </div>
+            <h5 class="user-name">{{ user_data.get('name', '') }}</h5>
+            <h6 class="user-email">{{ user_data.get('email', '') }}</h6>
+          </div>
+          <div class="about">
+            <!-- Display additional user details here -->
+            <p>Username: {{ user_data.get('username', '') }}</p>
+            <p>Birthdate: {{ user_data.get('birthdate', '') }}</p>
+            <p>Town: {{ user_data.get('town', '') }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
