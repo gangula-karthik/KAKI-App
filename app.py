@@ -211,6 +211,8 @@ def get_ticket(ticket_id):
         return jsonify({'error': 'Ticket not found'}), 404
     return ticket[0]
 
+
+
 @app.route('/delete_ticket/<ticket_id>', methods=['POST'])
 def delete_ticket(ticket_id):
     AllowedIds = [i["ticket_id"] for i in ticketRetrieval() if i['user_id'] == current_user]
