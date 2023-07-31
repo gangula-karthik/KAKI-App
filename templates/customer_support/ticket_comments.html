@@ -11,148 +11,38 @@
 <div class="card  mt-4 mx-auto text-bg-dark mb-3">
     <div class="card-header">
         <img src="path_to_profile_pic.jpg" alt="profile pic" class="rounded-circle" style="width: 30px; height: 30px;">
-        <small class="text-info">  Username</small>
+        <small class="text-info">{{ data.user_id }}</small>
     </div>
     <div class="card-body">
-      <h5 class="card-title">Special title treatment</h5>
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <h5 class="card-title">{{ data.subject }}</h5>
+      <p class="card-text">{{ data.descriptions }}</p>
     </div>
 </div>
 
 
-
-<div class="card  mt-4 mx-auto  text-bg-dark mb-3">
-
-  <div class="col-md-12 bootstrap snippets">
-    <div class="panel">
-      <div class="panel-body">
-        <textarea class="form-control" rows="2" placeholder="What are you thinking?"></textarea>
-        <div class="mar-top clearfix">
-          <button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
-          <a class="btn btn-trans btn-icon fa fa-video-camera add-tooltip" href="#"></a>
-          <a class="btn btn-trans btn-icon fa fa-camera add-tooltip" href="#"></a>
-          <a class="btn btn-trans btn-icon fa fa-file add-tooltip" href="#"></a>
-        </div>
-      </div>
-
-  <div class="panel">
-      <div class="panel-body">
-      <!-- Newsfeed Content -->
-      <!--===================================================-->
-      <div class="media-block">
-        <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
-        <div class="media-body">
-          <div class="mar-btm">
-            <a href="#" class="btn-link text-semibold media-heading box-inline">Lisa D.</a>
-            <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i> - From Mobile - 11 min ago</p>
-          </div>
-          <p>consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
-          <div class="pad-ver">
-            <div class="btn-group">
-              <a class="btn btn-sm btn-default btn-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
-              <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comments Section</title>
+</head>
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Comments Section</h1>
+        {% for comment in comments %}
+            <div class="card bg-secondary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.user }}</h5>
+                    <p class="card-text">{{ comment.text }}</p>
+                    {% if current_user == comment.user %}
+                        <a href="{{ url_for('edit_comment', comment_id=comment.id) }}" class="btn btn-light">Edit</a>
+                        <a href="{{ url_for('delete_comment', comment_id=comment.id) }}" class="btn btn-danger">Delete</a>
+                    {% endif %}
+                </div>
             </div>
-            <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-          </div>
-          <hr>
-  
-          <!-- Comments -->
-          <div>
-            <div class="media-block">
-              <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar2.png"></a>
-              <div class="media-body">
-                <div class="mar-btm">
-                  <a href="#" class="btn-link text-semibold media-heading box-inline">Bobby Marz</a>
-                  <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i> - From Mobile - 7 min ago</p>
-                </div>
-                <p>Sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
-                <div class="pad-ver">
-                  <div class="btn-group">
-                    <a class="btn btn-sm btn-default btn-hover-success active" href="#"><i class="fa fa-thumbs-up"></i> You Like it</a>
-                    <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
-                  </div>
-                  <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-                </div>
-                <hr>
-              </div>
-            </div>
-  
-            <div class="media-block">
-              <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar3.png">
-              </a>
-              <div class="media-body">
-                <div class="mar-btm">
-                  <a href="#" class="btn-link text-semibold media-heading box-inline">Lucy Moon</a>
-                  <p class="text-muted text-sm"><i class="fa fa-globe fa-lg"></i> - From Web - 2 min ago</p>
-                </div>
-                <p>Duis autem vel eum iriure dolor in hendrerit in vulputate ?</p>
-                <div class="pad-ver">
-                  <div class="btn-group">
-                    <a class="btn btn-sm btn-default btn-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
-                    <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
-                  </div>
-                  <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-                </div>
-                <hr>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--===================================================-->
-      <!-- End Newsfeed Content -->
-  
-  
-      <!-- Newsfeed Content -->
-      <!--===================================================-->
-      <div class="media-block pad-all">
-        <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
-        <div class="media-body">
-          <div class="mar-btm">
-            <a href="#" class="btn-link text-semibold media-heading box-inline">John Doe</a>
-            <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i> - From Mobile - 11 min ago</p>
-          </div>
-          <p>Lorem ipsum dolor sit amet.</p>
-          <img class="img-responsive thumbnail" src="https://www.bootdey.com/image/400x300" alt="Image">
-          <div class="pad-ver">
-            <span class="tag tag-sm"><i class="fa fa-heart text-danger"></i> 250 Likes</span>
-            <div class="btn-group">
-              <a class="btn btn-sm btn-default btn-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
-              <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
-            </div>
-            <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-          </div>
-          <hr>
-  
-          <!-- Comments -->
-          <div>
-            <div class="media-block pad-all">
-              <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar2.png"></a>
-              <div class="media-body">
-                <div class="mar-btm">
-                  <a href="#" class="btn-link text-semibold media-heading box-inline">Maria Leanz</a>
-                  <p class="text-muted text-sm"><i class="fa fa-globe fa-lg"></i> - From Web - 2 min ago</p>
-                </div>
-                <p>Duis autem vel eum iriure dolor in hendrerit in vulputate ?</p>
-                <div>
-                  <div class="btn-group">
-                    <a class="btn btn-sm btn-default btn-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
-                    <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
-                  </div>
-                  <a class="btn btn-sm btn-default btn-hover-primary" href="#">Comment</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--===================================================-->
-      <!-- End Newsfeed Content -->
+        {% endfor %}
     </div>
-  </div>
-  </div>
-  </div>
+</html>
 
-</div>
 
 {% endblock %}

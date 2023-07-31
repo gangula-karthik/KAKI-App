@@ -241,7 +241,9 @@ def userTickets():
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET'])
 def ticketComments(ticket_ID):
-    return render_template('customer_support/ticket_comments.html', user_name=current_user, ticket_ID=ticket_ID)
+    tickets  = ticketRetrieval()
+    ticket = [i for i in tickets if i['ticket_id'] == ticket_ID][0]
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket)
 
 
 @socketio.on('message')
