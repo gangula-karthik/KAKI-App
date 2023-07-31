@@ -226,6 +226,39 @@ def show_all_users():
         return redirect('/error-page')
 
 
+@app.route('/update_user', methods=['POST'])
+def update_user():
+    try:
+        data = request.get_json()
+        user_id = data['user_id']
+        user_data = data['user_data']
+
+        # Update the user data in the database
+        pyredb.child("Users").child("Consumer").child(user_id).update(user_data)
+        
+        return "User data updated successfully!"
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error updating user data:', str(e))
+        return "Error updating user data."
+
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    try:
+        data = request.get_json()
+        user_id = data['user_id']
+
+        # Delete the user data from the database
+        auth.delete_user(user_id)
+        pyredb.child("Users").child("Consumer").child(user_id).remove()
+
+        return "User data deleted successfully!"
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error deleting user data:', str(e))
+        return "Error deleting user data."
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
