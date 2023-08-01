@@ -1,15 +1,14 @@
-from ticket import Ticket, db
+from ticket import db
 
 
-
-class Comment(Ticket):
+class Comment():
     def __init__(self): 
-        super().__init__()
         self.comment = None
         self.comment_id = None
         self.comment_date = None
         self.comment_by = None
-        db.child(f'/tickets/{self.ticket_id}/comments').set(self.comments)
+        self.ticket_id = None
+        db.child(f'/tickets/{self.ticket_id}/comments').set(self.comment)
 
     def add_comment(self, ticket_id, comment, comment_id, comment_date, comment_by):
         """
@@ -32,3 +31,10 @@ class Comment(Ticket):
     
     def get_comment_id(ticket_id, self):
         return self.comment_id
+    
+
+
+if __name__ == "__main__": 
+    c = Comment()
+    c.add_comment('-NaKM7Bmys6kBmFdC0l0', 'this is a comment', '123', '2020-01-01', '123')
+    print(c.get_comment())

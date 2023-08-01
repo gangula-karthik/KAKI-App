@@ -154,9 +154,6 @@ def new_ticket():
 
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
 def update_ticket(ticket_id):
-    """
-    FOR PS
-    """
     # Retrieve the existing ticket
     ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id][0]
     if not ticket:
@@ -239,26 +236,41 @@ def userTickets():
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
-@app.route('/user_tickets/<ticket_ID>', methods=['GET'])
+def getComments(): 
+    comment = pyredb.child("comments").get()
+    return comment
+
+@app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
 def ticketComments(ticket_ID):
     tickets  = ticketRetrieval()
     ticket = [i for i in tickets if i['ticket_id'] == ticket_ID][0]
-    comments = [
-    {
-        "name": "First Comment",
-        "id": 1,
-        "date": "2023-08-01",
-        "comment_by": "This is the first comment."
-    },
-    {
-        "name": "Second Comment",
-        "id": 2,
-        "date": "2023-08-02",
-        "comment_by": "This is the second comment."
-    }
-    ]
-    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=comments)
+    comms = getComments()
+    if comms is None:
+        comments = []
+    else:
+        comments = [i for i in comms if i['ticket_id'] == ticket_ID]
 
+    if request.method == "POST": 
+        comment = request.form.get('commentText')
+        comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        comment_by = current_user
+        comment_data = {
+            "name": comment,
+            "ticket_id": ticket_ID,
+            "date": comment_date,
+            "comment_by": comment_by
+        }
+        pyredb.child("comments").push(comment_data)
+        flash('Comment has been added 🚀')
+
+        # After adding the comment, refresh the comments list
+        comms = getComments()
+        if comms is None:
+            comments = []
+        else:
+            comments = [i for i in comms if i['ticket_id'] == ticket_ID]
+
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=comments)
 
 @socketio.on('message')
 def handleMessage(msg):
