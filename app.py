@@ -243,7 +243,21 @@ def userTickets():
 def ticketComments(ticket_ID):
     tickets  = ticketRetrieval()
     ticket = [i for i in tickets if i['ticket_id'] == ticket_ID][0]
-    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket)
+    comments = [
+    {
+        "name": "First Comment",
+        "id": 1,
+        "date": "2023-08-01",
+        "comment_by": "This is the first comment."
+    },
+    {
+        "name": "Second Comment",
+        "id": 2,
+        "date": "2023-08-02",
+        "comment_by": "This is the second comment."
+    }
+    ]
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=comments)
 
 
 @socketio.on('message')
