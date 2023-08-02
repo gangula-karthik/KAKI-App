@@ -9,6 +9,17 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <style>
     .comment-container {
         color: #ffffff;
@@ -53,7 +64,8 @@
         <h4 class="mb-3">Add a comment</h4>
         <div class="mb-3">
             <label for="commentText" class="form-label">Comment</label>
-            <textarea class="form-control" id="commentText" name="commentText" rows="3" placeholder="Your comment"></textarea>
+            <textarea class="form-control" id="commentText" name="commentText" rows="3"
+                placeholder="Your comment"></textarea>
         </div>
         <button type="submit" class="btn btn-outline-light">Submit</button>
     </form>
@@ -64,15 +76,15 @@
 <div class="container comment-container">
     <h2 class="mb-4">Comments</h2>
     {% if comments is none or comments|length == 0 %}
-    <div class="text-bg-light" role="alert">
-        No comments yet
+    <div class="text-light" role="alert">
+        No comments yet, check back later!
     </div>
     {% else %}
     {% for comment in comments %}
     <div class="card text-bg-dark comment-card">
         <div class="card-header comment-card-header d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="text-light">#{{ comment.comment_by }}</h5>
+                <h5 class="text-light">@{{ comment.comment_by }}</h5>
             </div>
             <div>
                 <small class="text-light">{{ comment.date }}</small>
@@ -87,7 +99,16 @@
     {% endif %}
 </div>
 
-
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            var alerts = document.getElementsByClassName('alert');
+            for (var i = 0; i < alerts.length; i++) {
+                alerts[i].style.display = 'none';
+            }
+        }, 5000);
+    };
+</script>
 
 
 

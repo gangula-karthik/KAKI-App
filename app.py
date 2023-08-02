@@ -275,7 +275,7 @@ def set_comment(ticket_ID):
         "comment_by": comment_by
     }
     pyredb.child("comments").push(comment_data)
-    flash('Comment has been added 🚀')
+    flash('Comment has been added 🚀', 'success')
 
     return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
 
