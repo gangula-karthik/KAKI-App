@@ -22,6 +22,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
+from customer_support.comments import Comment
 
 
 
@@ -274,8 +275,9 @@ def set_comment(ticket_ID):
         "date": comment_date,
         "comment_by": comment_by
     }
-    pyredb.child("comments").push(comment_data)
-    flash('Comment has been added 🚀', 'success')
+    comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
+    if comment_req == 200: 
+        flash('Comment has been added 🚀', 'success')
 
     return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
 

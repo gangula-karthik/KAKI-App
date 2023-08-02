@@ -92,6 +92,8 @@
         </div>
         <div class="card-body">
             <p class="card-text">{{ comment.comment }}</p>
+            <form action="/user_tickets/delete_comments/" method="post"></form>
+                <button class="btn btn-outline-danger" id="{{ comment }}"><i class="fa-solid fa-trash-can"></i> Delete </button>
         </div>
     </div>
     {% endfor %}

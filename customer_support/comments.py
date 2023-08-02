@@ -1,4 +1,4 @@
-from ticket import db
+from customer_support.ticket import db
 
 
 class Comment():
@@ -8,17 +8,17 @@ class Comment():
         self.comment_date = None
         self.comment_by = None
         self.ticket_id = None
-        db.child(f'/tickets/{self.ticket_id}/comments').set(self.comment)
 
-    def add_comment(self, ticket_id, comment, comment_id, comment_date, comment_by):
+    def add_comment(self, ticket_id, comment, comment_date, comment_by):
         """
         can be used to add and updated a comment to a ticket
         """
         self.ticket_id = ticket_id
         self.comment = comment
-        self.comment_id = comment_id
         self.comment_date = comment_date
         self.comment_by = comment_by
+        db.child("comments").push(self.__dict__)
+        return 200
 
     def delete_comment(self, ticket_id, comment_id):
         """
