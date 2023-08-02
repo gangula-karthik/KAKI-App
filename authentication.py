@@ -41,8 +41,8 @@ def index():
             # Save the token ID in the session
             session['user_token'] = token_id
 
-            # return redirect('/staff/users')
-            return redirect('/dashboard')
+            return redirect('/staff/users')
+            # return redirect('/dashboard')
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
