@@ -42,18 +42,18 @@
     </div>
 </div>
 
-<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#uploadCollapse" aria-expanded="false" aria-controls="uploadCollapse">
+<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#uploadCollapse" aria-expanded="false"
+    aria-controls="uploadCollapse">
     <i class="fa-solid fa-plus"></i> Add a Comment
 </button>
 
 
-<!-- Add comment form -->
 <div class="collapse" id="uploadCollapse">
-    <form class="mt-4">
+    <form class="mt-4" method="POST" action="{{ url_for('set_comment', ticket_ID=data.ticket_id) }}">
         <h4 class="mb-3">Add a comment</h4>
         <div class="mb-3">
             <label for="commentText" class="form-label">Comment</label>
-            <textarea class="form-control" id="commentText" rows="3" placeholder="Your comment"></textarea>
+            <textarea class="form-control" id="commentText" name="commentText" rows="3" placeholder="Your comment"></textarea>
         </div>
         <button type="submit" class="btn btn-outline-light">Submit</button>
     </form>
@@ -63,12 +63,11 @@
 
 <div class="container comment-container">
     <h2 class="mb-4">Comments</h2>
-    {% if comments|length == 0 %}
-    <div class="alert alert-info" role="alert">
+    {% if comments is none or comments|length == 0 %}
+    <div class="text-bg-light" role="alert">
         No comments yet
     </div>
-    {% endif %}
-    
+    {% else %}
     {% for comment in comments %}
     <div class="card text-bg-dark comment-card">
         <div class="card-header comment-card-header d-flex justify-content-between align-items-center">
@@ -85,7 +84,10 @@
         </div>
     </div>
     {% endfor %}
+
+    {% endif %}
 </div>
+
 
 
 

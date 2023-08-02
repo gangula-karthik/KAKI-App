@@ -40,7 +40,7 @@ firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-
 app = Flask(__name__)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Leap'
+current_user = 'leap'
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -84,6 +84,8 @@ def index():
     names = retreive_event_name(events)
     return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
 # Changed the template to my own so that i can see the layout
+
+
 
 @app.route('/home', methods=['GET'])
 def home():
@@ -242,35 +244,41 @@ def getComments():
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
 def ticketComments(ticket_ID):
-    tickets  = ticketRetrieval()
-    ticket = [i for i in tickets if i['ticket_id'] == ticket_ID][0]
+    tickets = ticketRetrieval()
+    if tickets is None:
+        return "Error: tickets could not be retrieved."
+
+    ticket = next((i for i in tickets if i['ticket_id'] == ticket_ID), None)
+    if ticket is None:
+        return f"Error: No ticket with ID {ticket_ID} could be found."
+
+    commList = []
+
     comms = getComments()
-    if comms is None:
-        comments = []
-    else:
-        comments = [i for i in comms if i['ticket_id'] == ticket_ID]
+    if comms is not None:
+        commList = [i for i in tickets if i['ticket_id'] == ticket_ID]
 
-    if request.method == "POST": 
-        comment = request.form.get('commentText')
-        comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        comment_by = current_user
-        comment_data = {
-            "name": comment,
-            "ticket_id": ticket_ID,
-            "date": comment_date,
-            "comment_by": comment_by
-        }
-        pyredb.child("comments").push(comment_data)
-        flash('Comment has been added 🚀')
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
 
-        # After adding the comment, refresh the comments list
-        comms = getComments()
-        if comms is None:
-            comments = []
-        else:
-            comments = [i for i in comms if i['ticket_id'] == ticket_ID]
 
-    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=comments)
+@app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
+def set_comment(ticket_ID):
+    comment = request.form.get('commentText')
+    comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    comment_by = current_user
+    comment_data = {
+        "comment": comment,
+        "ticket_id": ticket_ID,
+        "date": comment_date,
+        "comment_by": comment_by
+    }
+    pyredb.child("comments").push(comment_data)
+    flash('Comment has been added 🚀')
+
+    return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
+
+
+
 
 @socketio.on('message')
 def handleMessage(msg):
@@ -752,6 +760,8 @@ def marketplace():
         # Add more product dictionaries here for other products
     ]
     return render_template('/transaction_handling/marketplace.html', user_name=current_user, products=products)
+
+
 
 
 
