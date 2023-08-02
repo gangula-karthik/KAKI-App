@@ -21,6 +21,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from flask_socketio import SocketIO, send
+from collections import OrderedDict
 
 
 
@@ -239,7 +240,8 @@ def userTickets():
 
 
 def getComments(): 
-    comment = pyredb.child("comments").get()
+    comment = pyredb.child("comments").get().val().values()
+    print(list(comment))
     return comment
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
@@ -256,7 +258,7 @@ def ticketComments(ticket_ID):
 
     comms = getComments()
     if comms is not None:
-        commList = [i for i in tickets if i['ticket_id'] == ticket_ID]
+        commList = [i for i in comms if i['ticket_id'] == ticket_ID]
 
     return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
 
