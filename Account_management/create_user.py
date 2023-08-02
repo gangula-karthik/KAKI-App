@@ -30,9 +30,8 @@ pyrestorage = firebase.storage()
 # email = input('Enter email: ')
 # password = input('Enter password: ')
 
-username = input('Enter username: ')
-user_data = pyredb.child("Users").child("Consumer").child(username).get().val()
-
+# username = input('Enter username: ')
+user_data = pyredb.child("Users").child("Consumer").child('6W9Z3kRoBRWAEMNskqpjfLnGCUk2').get().val()
 
 print(user_data)
 
