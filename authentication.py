@@ -41,7 +41,8 @@ def index():
             # Save the token ID in the session
             session['user_token'] = token_id
 
-            return redirect('/staff/users')
+            # return redirect('/staff/users')
+            return redirect('/dashboard')
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
@@ -59,7 +60,6 @@ def dashboard():
         uid = user['users'][0]['localId']
         
         print(f'user: {user}')
-        print(uid)
 
         # Use the UID as the key in the database to get the user data
         user_data = pyredb.child("Users").child("Consumer").child(uid).get().val()
@@ -95,7 +95,6 @@ def create_account():
                 token_id = user.uid
                 # Save the token ID in the session
                 session['user_token'] = token_id
-
                 return render_template('account_management/user_cred.html')
 
             except auth.EmailAlreadyExistsError:
@@ -124,11 +123,16 @@ def add_user_credentials():
         birthdate = request.form['birthdate']
         town = request.form['town']
 
+        # Save the username in the session
+        session['username'] = username
+
         # Retrieve the email from the session
         email = session.get('user_email', None)
 
+
+
         # Retrieve the token ID from the session
-        token_id = session.get('user_token', None)
+        token_id = session.get('user_token', None)  
 
         if email is None:
             return "User email not found. Please create an account first."
@@ -229,18 +233,21 @@ def show_all_users():
 @app.route('/update_user', methods=['POST'])
 def update_user():
     try:
-        data = request.get_json()
-        user_id = data['user_id']
-        user_data = data['user_data']
+        # Get the user_id and user_data from the request's JSON payload
+        request_data = request.get_json()
+        user_id = request_data.get('user_id')
+        user_data = request_data.get('user_data')
 
-        # Update the user data in the database
+        # Update the user data in Firebase
         pyredb.child("Users").child("Consumer").child(user_id).update(user_data)
-        
-        return "User data updated successfully!"
+
+        # Return a success message (if needed)
+        return "User data updated successfully"
     except Exception as e:
-        # Handle any errors that may occur
+        # Handle any errors that may occur during the update process
         print('Error updating user data:', str(e))
-        return "Error updating user data."
+        # You can choose to show an error message or return an error response
+        return "Error updating user data", 500
 
 
 @app.route('/delete_user', methods=['POST'])

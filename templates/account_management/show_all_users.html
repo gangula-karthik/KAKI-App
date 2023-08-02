@@ -44,8 +44,30 @@
   .text-center {
     text-align: center;
   }
-</style>
 
+  .about p[data-field] {
+    position: relative;
+  }
+
+  .about input {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-top: 5px;
+    color: #fff;
+    background-color: #373741;
+  }
+
+  .edit-mode input {
+    display: block;
+  }
+
+  .edit-btn.edit-mode {
+    display: none;
+  }
+</style>
 <div class="container">
   <h3 class="text-center">All Users</h3>
   <div class="row">
@@ -59,9 +81,13 @@
           </div>
           <div class="about">
             <!-- Display additional user details here -->
-            <p>Username: {{ user_data.get('username', '') }}</p>
-            <p>Birthdate: {{ user_data.get('birthdate', '') }}</p>
-            <p>Town: {{ user_data.get('town', '') }}</p>
+            <p data-field="username">Username: {{ user_data.get('username', '') }}</p>
+            <p data-field="birthdate">Birthdate: {{ user_data.get('birthdate', '') }}</p>
+            <p data-field="town">Town: {{ user_data.get('town', '') }}</p>
+            <!-- Edit mode placeholders -->
+            <p class="edit-mode" data-field="username-placeholder" style="display: none;">Username</p>
+            <p class="edit-mode" data-field="birthdate-placeholder" style="display: none;">Birthdate</p>
+            <p class="edit-mode" data-field="town-placeholder" style="display: none;">Town</p>
           </div>
           <div class="text-right">
             <button class="btn btn-primary edit-btn" data-user-id="{{ user_id }}">Update Profile</button>
@@ -82,7 +108,7 @@
     editBtns.forEach(btn => {
       btn.addEventListener('click', function () {
         const cardBody = this.closest('.card-body');
-        const userFields = cardBody.querySelectorAll('.about p');
+        const userFields = cardBody.querySelectorAll('.about p[data-field]');
 
         if (this.classList.contains('confirm-btn')) {
           // If the button is in "Confirm" mode, update the user data
@@ -122,12 +148,21 @@
           this.classList.remove('btn-success');
           this.classList.add('btn-primary');
           this.classList.remove('confirm-btn');
+
+          // Exit edit mode and hide input fields
+          cardBody.classList.remove('edit-mode');
+          userFields.forEach(field => {
+            const input = field.querySelector('input');
+            input.style.display = 'none';
+          });
         } else {
           // If the button is in "Update Profile" mode, make fields editable
+          cardBody.classList.add('edit-mode');
           userFields.forEach(field => {
             const value = field.textContent.trim();
             const input = document.createElement('input');
             input.value = value;
+            input.setAttribute('placeholder', field.textContent);
             field.innerHTML = '';
             field.appendChild(input);
           });
