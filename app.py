@@ -237,6 +237,8 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
+
+        
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
@@ -281,6 +283,12 @@ def set_comment(ticket_ID):
 
     return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
 
+@app.route('/user_tickets/delete_comment/<comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    # delete the comment from your database
+    pyredb.child("comments").child(comment_id).remove()
+    flash('Comment has been deleted 🗑️', 'success')
+    return redirect(request.referrer)
 
 
 
