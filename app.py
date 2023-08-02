@@ -22,6 +22,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
+from customer_support.comments import Comment
 
 
 
@@ -236,6 +237,8 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
+
+        
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
@@ -274,11 +277,18 @@ def set_comment(ticket_ID):
         "date": comment_date,
         "comment_by": comment_by
     }
-    pyredb.child("comments").push(comment_data)
-    flash('Comment has been added 🚀')
+    comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
+    if comment_req == 200: 
+        flash('Comment has been added 🚀', 'success')
 
     return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
 
+@app.route('/user_tickets/delete_comment/<comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    # delete the comment from your database
+    pyredb.child("comments").child(comment_id).remove()
+    flash('Comment has been deleted 🗑️', 'success')
+    return redirect(request.referrer)
 
 
 
