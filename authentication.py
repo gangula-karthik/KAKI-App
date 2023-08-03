@@ -77,8 +77,6 @@ def index():
             return render_template('account_management/login.html', umessage=unsuccessful, form=form)
 
     return render_template('account_management/login.html', form=form)
-
-
 @app.route('/logout')
 def logout():
     # Clear the session on logout
@@ -90,7 +88,7 @@ def logout():
 def create_account():
     if request.method == 'POST':
         pwd0 = request.form['user_pwd0']
-        pwd1 = request.form['user_pwd1']
+        pwd1 = request.form['user_pwd1']        
         if pwd0 == pwd1:
             email = request.form['user_email']
             try:
