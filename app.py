@@ -284,11 +284,23 @@ def set_comment(ticket_ID):
 
 @app.route('/user_tickets/delete_comment/<comment_id>', methods=['POST'])
 def delete_comment(comment_id):
-    # delete the comment from your database
     pyredb.child("comments").child(comment_id).remove()
     flash('Comment has been deleted 🗑️', 'success')
     return redirect(request.referrer)
 
+@app.route('/update_comment', methods=['POST'])
+def update_comment():
+    comment_id = request.form.get('comment_id') 
+    new_comment_text = request.form.get('commentText') 
+    comment = Comment.query.get(comment_id)
+    if comment is None:
+        flash('Comment not found!', 'error')
+        return redirect(request.referrer)
+    
+    comment.text = new_comment_text
+    db.session.commit() 
+    flash('Comment has been updated!', 'success')
+    return redirect(request.referrer)
 
 
 @socketio.on('message')
