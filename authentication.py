@@ -1,19 +1,13 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request , session ,redirect
+import requests
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
 import pyrebase
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired
-from flask_wtf.recaptcha import RecaptchaField
-import requests  # Add the import for the 'requests' library
+
 
 app = Flask(__name__)
 app.secret_key = 'who420is420in12paris'
-
-app.config["RECAPTCHA_PUBLIC_KEY"] = "6LcVAHgnAAAAAKKcvmcGOeW_IFed7ZEjwdTcOeJL"
-app.config["RECAPTCHA_PRIVATE_KEY"] = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"
 
 cred = credentials.Certificate("Account_management/credentials.json")
 firebase_admin.initialize_app(cred)
@@ -34,49 +28,64 @@ pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
 
-
-class LoginForm(FlaskForm):
-    user_email = StringField('Email', validators=[DataRequired()])
-    user_pwd = PasswordField('Password', validators=[DataRequired()])
-    recaptcha = RecaptchaField()
-
-
+@app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    form = LoginForm()  # Create an instance of the LoginForm
-    if request.method == 'POST' and form.validate_on_submit():
-        email = form.user_email.data
-        password = form.user_pwd.data
-        recaptcha_response = form.recaptcha.data  # Get the reCAPTCHA response
+    if request.method == 'POST':
+        # Validate reCAPTCHA response
+        recaptcha_response = request.form['g-recaptcha-response']
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  # Replace with your reCAPTCHA Secret Key
+        captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
-        # Verify the reCAPTCHA response
-        recaptcha_secret = 'YOUR_RECAPTCHA_SECRET_KEY'  # Replace with your actual reCAPTCHA secret key
-        recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify'
-        recaptcha_data = {
-            'secret': recaptcha_secret,
+        data = {
+            'secret': secret_key,
             'response': recaptcha_response
         }
-        recaptcha_verification = requests.post(recaptcha_url, data=recaptcha_data)
-        recaptcha_result = recaptcha_verification.json()
 
-        if recaptcha_result['success']:
-            try:
-                user = pyreauth.sign_in_with_email_and_password(email, password)
-                # Get the Firebase token ID
-                token_id = user['idToken']
-                # Save the token ID in the session
-                session['user_token'] = token_id
+        response = requests.post(captcha_url, data=data)
+        result = response.json()
 
-                return redirect('/staff/users')
-                # return redirect('/dashboard')
-            except:
-                unsuccessful = 'Please check your credentials'
-                return render_template('account_management/login.html', umessage=unsuccessful, form=form)
-        else:
-            unsuccessful = 'Please complete the reCAPTCHA.'
-            return render_template('account_management/login.html', umessage=unsuccessful, form=form)
+        if not result['success']:
+            unsuccessful = 'Please complete the reCAPTCHA verification.'
+            return render_template('account_management/login.html', umessage=unsuccessful)
 
-    return render_template('account_management/login.html', form=form)
+        # Rest of your login logic (similar to your existing code)
+        email = request.form['user_email']
+        password = request.form['user_pwd']
+        try:
+            user = pyreauth.sign_in_with_email_and_password(email, password)
+            # Get the Firebase token ID
+            token_id = user['idToken']
+            # Save the token ID in the session
+            session['user_token'] = token_id
+
+            return redirect('/staff/users')
+            # return redirect('/dashboard')
+        except:
+            unsuccessful = 'Please check your credentials'
+            return render_template('account_management/login.html', umessage=unsuccessful)
+
+    return render_template('account_management/login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_token' in session:
+        # Retrieve the token ID from the session
+        token_id = session['user_token']
+
+        # Use the token ID to get the user's UID from Firebase authentication
+        user = pyreauth.get_account_info(token_id)
+
+        uid = user['users'][0]['localId']
+        
+        print(f'user: {user}')
+
+        # Use the UID as the key in the database to get the user data
+        user_data = pyredb.child("Users").child("Consumer").child(uid).get().val()
+        print(user_data)
+        return render_template('account_management/update_usercred.html', user_data=user_data)
+    else:
+        return redirect('/')
 
 
 @app.route('/logout')
