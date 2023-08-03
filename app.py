@@ -475,7 +475,7 @@ def event_list():
     names = retreive_event_name(events)
     return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
 
-@app.route('/Report_generation/Event_details.html/<report>')
+@app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
     events = retreive_data_event()
     details = retrieve_event_from_name(events, report)
@@ -517,7 +517,7 @@ def update_event():
 
 
     
-@app.route('/Report_generation/Transactions_report')
+@app.route('/Report_generation/Transactions_report', methods=['GET'])
 def Transactions_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
@@ -525,13 +525,13 @@ def Transactions_report():
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
     return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [5,6,7,8,9,10], Total_received = [5,6,7,8,9,10], Total_number = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
 
-@app.route('/Report_generation/saved_reports')
+@app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
     reports = get_all_reports()
     details = retrieve_report_name(reports)
     return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details)
 
-@app.route('/Report_generation/<string:report_type>/<string:Report_id>')
+@app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
     report = get_all_reports()
     data = retrieve_ByID(report,Report_id)
