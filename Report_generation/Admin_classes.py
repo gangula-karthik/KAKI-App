@@ -77,10 +77,10 @@ class events_report():
         new_report_ref.set(report_data)
 
     @classmethod
-    def load_from_firebase(cls, report_id):
+    def load_from_firebase(cls, UID):
         # Load report data from Firebase Realtime Database using the report_id
         ref = db.reference("Events")  # Replace "/events_reports" with the path where your data is stored
-        report_ref = ref.child(report_id).get()
+        report_ref = ref.child(UID).get()
 
         if report_ref:
             events_report_instance = cls()

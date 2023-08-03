@@ -426,39 +426,25 @@ def update(event_name):
     update_user_form = CreateUserForm(request.form)
     return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details)
 
-@app.route('/update/event', methods=['POST'])
+@app.route('/updateEvent', methods=['POST'])
 def update_event():
-
-
     data = request.get_json()
 
-    # Get the report_id from the data received in the request
     event_name = data.get('event_name')
-    uid = retrieve_event_from_name(data,event_name)
+    event_details = retrieve_event_from_name(data, event_name)
 
-    if not uid:
-        return jsonify({'message': 'Invalid report ID'})
+    try:
+        for key, value in data.items():
+            if key in event_details and event_details[key] != value:
+                event_details[key] = value
+            else:
+                continue
 
-    # Load the report data from Firebase using the report_id
+        event_details.update_to_firebase()
 
-    events_report_instance = uid.load_from_firebase(event_name)
-
-    if not events_report_instance:
-        return jsonify({'message': 'Report not found'})
-
-    # Update specific attributes of the report instance using the data from the request
-    for attribute, value in data.items():
-        if attribute == 'report_id':
-            continue  # Skip updating the report_id attribute
-        setattr(events_report_instance, attribute, value)
-
-    # Save the updated report data to Firebase
-
-
-    events_report_instance.update_to_firebase()
-
-    return jsonify({'message': 'Report attributes updated'})
-
+        return jsonify({'message': 'Updated'})
+    except:
+        return jsonify({'message': 'error'})
     
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():

@@ -7,9 +7,13 @@
 {% block content %}
 {% from "_formHelper.html" import render_field %}
 
+
 <h1 class="display-4">Update Event</h1>
 
-<form method="post" action="/update">
+<form id="eventForm" >
+        <label for="event_name">Venue:</label>
+        <input class="form-control" type="text" id="event_name" name="event_name" value="{{ event.event_name }}" required><br>
+
         <label for="venue">Venue:</label>
         <input class="form-control" type="text" id="venue" name="venue" value="{{ event.venue }}" required><br>
 
@@ -32,46 +36,68 @@
         <textarea class="form-control" id="event_description" name="event_description" rows="4" cols="50" required>{{ event.event_description }}</textarea><br>
 
 
-        <button class="btn btn-primary" type="submit" id="saveButton">Submit</button>
+        <button class="btn btn-primary" id="UpdateBtn">Submit</button>
 
     </form>
 
 {% endblock %}
 
-{}
+{% block javascript3 %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var saveButton = document.getElementById('saveButton');
-        saveButton.addEventListener('click', function() {
-            this.disabled = true; // Disable the button after the first click
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add an event listener to the form submission
+    document.getElementById("eventForm").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent the default form submission
 
-            var dataToSend = {
-                venue: document.getElementById('venue').value,
-                event_date: document.getElementById('event_date').value,
-                time: document.getElementById('time').value,
-                overall_in_charge: document.getElementById('overall_in_charge').value,
-                dateposted: document.getElementById('dateposted').value,
-                event_location: document.getElementById('event_location').value,
-                event_description: document.getElementById('event_description').value
-            };
+      // Get form values
+      const event_name = document.getElementById("event_name").value;
+      const venue = document.getElementById("venue").value;
+      const event_date = document.getElementById("event_date").value;
+      const time = document.getElementById("time").value;
+      const overall_in_charge = document.getElementById("overall_in_charge").value;
+      const dateposted = document.getElementById("dateposted").value;
+      const event_location = document.getElementById("event_location").value;
+      const event_description = document.getElementById("event_description").value;
 
-        $.ajax({
-            type: 'POST',
-            url: '/update/event',
-            contentType: 'application/json',
-            data: JSON.stringify(dataToSend),
-            success: function(response) {
-                console.log(response.message);
-                if (response.message === 'Updated) {
-                    alert("Updated");
-                } else {
-                    alert("error");
-                    location.reload(); // Refresh the page after successful save
-                }
-                $('#saveButton').prop('disabled', false); // Enable the button after AJAX success or failure
-            },
-        });
+      // Create a dictionary to store the form data
+      const dataToSend = {
+        event_name: event_name,
+        venue: venue,
+        event_date: event_date,
+        time: time,
+        overall_in_charge: overall_in_charge,
+        dateposted: dateposted,
+        event_location: event_location,
+        event_description: event_description,
+      };
+
+      // Do something with the form data (you can update this part as needed)
+      console.log(dataToSend);
+
+      $.ajax({
+        type: 'POST',
+        url: '/updateEvent',
+        contentType: 'application/json',
+        data: JSON.stringify(dataToSend),
+        success: function (response) {
+          console.log(response.message);
+          if (response.message === 'Updated') {
+            alert("Updated");
+          } else {
+            alert("Error");
+            location.reload(); // Refresh the page after successful save
+          }
+          // Re-enable the submit button after AJAX success or failure
+          document.getElementById("UpdateBtn").disabled = false;
+        },
+        error: function () {
+          alert("An error occurred while saving the report");
+          // Re-enable the submit button after AJAX error
+          document.getElementById("UpdateBtn").disabled = false;
+        }
+      });
     });
-});
+  });
 </script>
-{}
+{% endblock %}

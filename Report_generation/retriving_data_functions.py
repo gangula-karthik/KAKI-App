@@ -5,21 +5,21 @@ from calendar import month_abbr
 import pyrebase
 
 
-config = {
-    "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
-    "authDomain": "kaki-db097.firebaseapp.com",
-    "projectId": "kaki-db097",
-    "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    "storageBucket": "kaki-db097.appspot.com",
-    "messagingSenderId": "521940680838",
-    "appId": "1:521940680838:web:96e15f16f11bb306c91107",
-    "measurementId": "G-QMBGXFXJET"
-}
-
-firebase = pyrebase.initialize_app(config)
-pyredb = firebase.database()
-pyreauth = firebase.auth()
-pyrestorage = firebase.storage()
+# config = {
+#     "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
+#     "authDomain": "kaki-db097.firebaseapp.com",
+#     "projectId": "kaki-db097",
+#     "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
+#     "storageBucket": "kaki-db097.appspot.com",
+#     "messagingSenderId": "521940680838",
+#     "appId": "1:521940680838:web:96e15f16f11bb306c91107",
+#     "measurementId": "G-QMBGXFXJET"
+# }
+#
+# firebase = pyrebase.initialize_app(config)
+# pyredb = firebase.database()
+# pyreauth = firebase.auth()
+# pyrestorage = firebase.storage()
 
 def initialize_firebase():
     # Replace 'path/to/your/serviceAccountKey.json' with the path to your Firebase Admin SDK credentials

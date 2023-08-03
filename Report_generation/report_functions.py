@@ -173,3 +173,21 @@ def retrieve_event_from_name(dictionary, target):
         else:
             continue
     return 'error'
+
+def update_event(event_obj, new_values):
+    attributes_to_update = [
+        'venue',
+        'event_date',
+        'time',
+        'overall_in_charge',
+        'dateposted',
+        'event_location',
+        'event_description'
+    ]
+
+    for attribute in attributes_to_update:
+        if attribute in new_values:
+            setattr(event_obj, attribute, new_values[attribute])
+
+    # Assuming you have a method to update the event in the database (e.g., update_to_database)
+    event_obj.update_to_database()
