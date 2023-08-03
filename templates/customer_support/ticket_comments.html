@@ -87,7 +87,7 @@
                 <h5 class="text-light">@{{ comment[1]['comment_by'] }}</h5>
             </div>
             <div>
-                <small class="text-light">{{ comment[1]['date'] }}</small>
+                <small class="text-light">{{ comment[1]['comment_date'] }}</small>
             </div>
         </div>
         <div class="card-body">
@@ -97,6 +97,9 @@
                     <i class="fa-solid fa-trash-can"></i> Delete
                 </button>
             </form>
+            <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#updateTicketModal">
+                Update
+              </button>
             
         </div>
     </div>
