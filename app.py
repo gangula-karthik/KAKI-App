@@ -243,8 +243,7 @@ def userTickets():
 
 
 def getComments(): 
-    comment = pyredb.child("comments").get().val().values()
-    print(list(comment))
+    comment = pyredb.child("comments").get().val()
     return comment
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
@@ -261,8 +260,8 @@ def ticketComments(ticket_ID):
 
     comms = getComments()
     if comms is not None:
-        commList = [i for i in comms if i['ticket_id'] == ticket_ID]
-
+        commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
+        print(commList)
     return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
 
 
