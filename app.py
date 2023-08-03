@@ -786,12 +786,8 @@ def handle_modal_submission():
     product_price = request.form.get('productPrice')
     product_condition = request.form.get('productCondition')
 
-    # Print the selected condition
-    print(product_condition)
-
-    print(product_name)
-    print(product_description)
-    print(product_price)
+    data = {"product_name": product_name, "product_description": product_description, "product_price": product_price, "product_condition": product_condition}
+    pyredb.child("products").push(data)
 
     # Redirect to a page or return a response
     return redirect(url_for('index'))
