@@ -86,9 +86,9 @@
             <p data-field="birthdate">Birthdate: {{ user_data.get('birthdate', '') }}</p>
             <p data-field="town">Town: {{ user_data.get('town', '') }}</p>
             <!-- Edit mode placeholders -->
-            <p class="edit-mode" data-field="username-placeholder" style="display: none;">Username</p>
-            <p class="edit-mode" data-field="birthdate-placeholder" style="display: none;">Birthdate</p>
-            <p class="edit-mode" data-field="town-placeholder" style="display: none;">Town</p>
+            <p class="edit-mode" data-field="username-placeholder" style="display: none;"></p>
+            <p class="edit-mode" data-field="birthdate-placeholder" style="display: none;"></p>
+            <p class="edit-mode" data-field="town-placeholder" style="display: none;"></p>
           </div>
           <div class="text-right">
             <button class="btn btn-primary edit-btn" data-user-id="{{ user_id }}">Update Profile</button>
@@ -120,8 +120,14 @@
             const fieldName = field.getAttribute('data-field');
             const input = field.querySelector('input');
             const value = input.value.trim();
-            userData[fieldName] = value;
-            field.innerHTML = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ': ' + value;
+            if (value) {
+              userData[fieldName] = value;
+              field.innerHTML = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ': ' + value;
+            } else {
+              // Remove placeholder field from user data if input is empty
+              delete userData[fieldName];
+              field.innerHTML = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ': ';
+            }
           });
 
           // Perform a POST request to update the user data in the database
