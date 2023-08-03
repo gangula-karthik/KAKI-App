@@ -288,17 +288,17 @@ def delete_comment(comment_id):
     flash('Comment has been deleted 🗑️', 'success')
     return redirect(request.referrer)
 
-@app.route('/update_comment', methods=['POST'])
-def update_comment():
-    comment_id = request.form.get('comment_id') 
+@app.route('/update_comment/<comment_id>', methods=['POST'])
+def update_comment(comment_id):
     new_comment_text = request.form.get('commentText') 
-    comment = Comment.query.get(comment_id)
-    if comment is None:
+
+    comment = pyredb.child("comments").child(comment_id).get()
+    if not comment.val():
         flash('Comment not found!', 'error')
         return redirect(request.referrer)
+
+    pyredb.child("comments").child(comment_id).update({"comment": new_comment_text})
     
-    comment.text = new_comment_text
-    db.session.commit() 
     flash('Comment has been updated!', 'success')
     return redirect(request.referrer)
 
