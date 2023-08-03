@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request , session ,redirect
+import requests
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
@@ -31,6 +32,24 @@ pyrestorage = firebase.storage()
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
+        # Validate reCAPTCHA response
+        recaptcha_response = request.form['g-recaptcha-response']
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  # Replace with your reCAPTCHA Secret Key
+        captcha_url = "https://www.google.com/recaptcha/api/siteverify"
+
+        data = {
+            'secret': secret_key,
+            'response': recaptcha_response
+        }
+
+        response = requests.post(captcha_url, data=data)
+        result = response.json()
+
+        if not result['success']:
+            unsuccessful = 'Please complete the reCAPTCHA verification.'
+            return render_template('account_management/login.html', umessage=unsuccessful)
+
+        # Rest of your login logic (similar to your existing code)
         email = request.form['user_email']
         password = request.form['user_pwd']
         try:
@@ -45,6 +64,7 @@ def index():
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
+
     return render_template('account_management/login.html')
 
 @app.route('/dashboard')

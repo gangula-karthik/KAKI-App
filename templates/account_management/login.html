@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- css stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <div class="container" id="container">
@@ -47,7 +48,8 @@
                 <input type="email" name="user_email" placeholder="Email" />
                 <input type="password" name="user_pwd" placeholder="Password" />
                 <a href="/forget_password" target="_blank">Forgot your password?</a>
-                <button type="submit">Sign In</button>
+                <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+                <button type="submit" onclick="validateForm()">Sign In</button>
             </form>
         </div>
         <div class="overlay-container">
