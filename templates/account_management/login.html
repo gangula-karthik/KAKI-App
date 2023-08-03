@@ -37,6 +37,7 @@
             <div class="alert alert-danger"> <center style="color:red">{{ umessage }}</center>  </div>
             {% endif %}
             <form action="/index" method="POST">
+                {{ form.csrf_token }}
                 <h1>Sign in</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -46,6 +47,7 @@
                 <span>or use your account</span>
                 <input type="email" name="user_email" placeholder="Email" />
                 <input type="password" name="user_pwd" placeholder="Password" />
+                {{ form.recaptcha }}  <!-- Add the reCAPTCHA widget here -->
                 <a href="/forget_password" target="_blank">Forgot your password?</a>
                 <button type="submit">Sign In</button>
             </form>

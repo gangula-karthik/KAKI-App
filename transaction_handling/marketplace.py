@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, db , storage
 import pyrebase
-cred = credentials.Certificate('../Account_management/credentials.json')
+cred = credentials.Certificate(r'C:\Users\seahp\Downloads\KAKI-App\Account_management\credentials.json')
 firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/%22%7D"})
 class Product:
     def __init__(self, image, title, description, price, seller_name, rating, condition):
@@ -33,6 +33,16 @@ class Product:
 
     def get_condition(self):
         return self.__condition__
+
+    def create_data_in_firebase(document_id, data_to_create):
+        try:
+            ref = db.reference(f'products/{document_id}')  # Reference to the RTDB location
+            ref.set(data_to_create)
+            print(f"Document '{document_id}' successfully created in the database.")
+            return True
+        except Exception as e:
+            print("Error creating data in Firebase:", e)
+            return False
 
     def read_data_from_firebase(document_id):
         try:
@@ -141,6 +151,68 @@ def calculate_total_price():
 
 
 
+def test_crud_operations():
+    # Test data for product
+    product_data = {
+        "image": "product_image.jpg",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 99.99,
+        "seller_name": "Test Seller",
+        "rating": 4.2,
+        "condition": "New"
+    }
+
+    # Test document_id
+    document_id = "test_product"
+
+    # Test Create
+    success_create = Product.create_data_in_firebase(document_id, product_data)
+    if success_create:
+        print("Data creation test successful!")
+    else:
+        print("Data creation test failed.")
+
+    # Test Read
+    print("\nReading data from Firebase:")
+    data = Product.read_data_from_firebase(document_id)
+    if data:
+        print("Data read from Firebase:", data)
+
+    # Test Update
+    updated_data = {
+        "price": 79.99,
+        "rating": 4.5,
+        "condition": "Used"
+    }
+
+    success_update = Product.update_data_in_firebase(document_id, updated_data)
+    if success_update:
+        print("\nData update test successful!")
+        # Read the data again to check if it was updated
+        updated_data_read = Product.read_data_from_firebase(document_id)
+        if updated_data_read:
+            print("Updated data read from Firebase:", updated_data_read)
+    else:
+        print("Data update test failed.")
+
+    # Test Delete
+    success_delete = Product.delete_data_from_firebase(document_id)
+    if success_delete:
+        print("\nData deletion test successful!")
+        # Try to read the deleted data to check if it still exists
+        deleted_data_read = Product.read_data_from_firebase(document_id)
+        if deleted_data_read is None:
+            print(f"Document '{document_id}' successfully deleted from the database.")
+        else:
+            print(f"Document '{document_id}' still exists in the database after deletion!")
+    else:
+        print("Data deletion test failed.")
+
+if __name__ == "__main__":
+    test_crud_operations()
+
+
 def main():
     try:
         # Add sample products to the database
@@ -154,6 +226,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
 

@@ -1,5 +1,130 @@
 {% extends "template.html" %}
 
 {% block content %}
+<style>
+    .custom-card {
+        width: 370px;
+        padding: 30px;
+        /* increase the padding */
+        margin: 0 auto;
+        /* center the card */
+    }
+</style>
+
+<div class="container mt-2">
+    <h1>Ticket Dashboard</h1>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card bg-dark text-white custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Ticket Backlog</h5>
+                    <p class="card-text">500 Tickets</p> <!-- Replace with actual data -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark text-white custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Satisfaction</h5>
+                    <p class="card-text">85%</p> <!-- Replace with actual data -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark text-white custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Average Response Time</h5>
+                    <p class="card-text">2 Hours</p> <!-- Replace with actual data -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group mb-3">
+                <span class="input-group-text bg-dark text-white" id="search-addon">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Search" aria-label="Search"
+                    aria-describedby="search-addon">
+            </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="filterButton" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Filter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="filterButton">
+                <li>
+                    <h6 class="dropdown-header">Filter by Status:</h6>
+                </li>
+                <li><a class="dropdown-item" href="#">Open</a></li>
+                <li><a class="dropdown-item" href="#">In Progress</a></li>
+                <li><a class="dropdown-item" href="#">Resolved</a></li>
+                <li>
+                    <div class="dropdown-divider"></div>
+                </li>
+                <li>
+                    <h6 class="dropdown-header">Filter by Assigned:</h6>
+                </li>
+                <li><a class="dropdown-item" href="#">John Doe</a></li>
+                <li><a class="dropdown-item" href="#">Jane Smith</a></li>
+                <!-- Add more staff names as needed -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <table class="table table-dark table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Ticket ID</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Status</th>
+                <th scope="col">Time Opened</th>
+                <th scope="col">Time Closed</th>
+                <th scope="col">Assigned</th>
+                <th scope="col">Raised By</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Replace with actual data -->
+            <tr>
+                <td>1</td>
+                <td contenteditable="true">Subject 1</td>
+                <td>
+                    <select class="form-select form-select-sm bg-dark text-white status-select">
+                        <option selected>Open</option>
+                        <option>In Progress</option>
+                        <option>Resolved</option>
+                    </select>
+                </td>
+                <td contenteditable="true">2023-07-30 10:00</td>
+                <td contenteditable="true">null</td>
+                <td>
+                    <select class="form-select form-select-sm bg-dark text-white assigned-select">
+                        <option selected>John Doe</option>
+                        <option>Jane Smith</option>
+                        <!-- Add more staff names as needed -->
+                    </select>
+                </td>
+                <td contenteditable="true">Jane Smith</td>
+                <td contenteditable="true">High</td>
+                <td><button class="btn btn-primary">Message</button></td>
+            </tr>
+            <!-- More rows as needed -->
+        </tbody>
+    </table>
+</div>
+
+
+
 
 {% endblock %}

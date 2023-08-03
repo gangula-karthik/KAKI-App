@@ -21,6 +21,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from flask_socketio import SocketIO, send
+from collections import OrderedDict
+from customer_support.comments import Comment
 
 
 
@@ -40,7 +42,7 @@ firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-
 app = Flask(__name__)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Leap'
+current_user = 'leap'
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -84,6 +86,8 @@ def index():
     names = retreive_event_name(events)
     return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
 # Changed the template to my own so that i can see the layout
+
+
 
 @app.route('/home', methods=['GET'])
 def home():
@@ -154,9 +158,6 @@ def new_ticket():
 
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
 def update_ticket(ticket_id):
-    """
-    FOR PS
-    """
     # Retrieve the existing ticket
     ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id][0]
     if not ticket:
@@ -211,6 +212,8 @@ def get_ticket(ticket_id):
         return jsonify({'error': 'Ticket not found'}), 404
     return ticket[0]
 
+
+
 @app.route('/delete_ticket/<ticket_id>', methods=['POST'])
 def delete_ticket(ticket_id):
     AllowedIds = [i["ticket_id"] for i in ticketRetrieval() if i['user_id'] == current_user]
@@ -234,12 +237,58 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
+
+        
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
-@app.route('/user_tickets/<ticket_ID>', methods=['GET'])
+def getComments(): 
+    comment = pyredb.child("comments").get().val()
+    return comment
+
+@app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
 def ticketComments(ticket_ID):
-    return render_template('customer_support/ticket_comments.html', user_name=current_user, ticket_ID=ticket_ID)
+    tickets = ticketRetrieval()
+    if tickets is None:
+        return "Error: tickets could not be retrieved."
+
+    ticket = next((i for i in tickets if i['ticket_id'] == ticket_ID), None)
+    if ticket is None:
+        return f"Error: No ticket with ID {ticket_ID} could be found."
+
+    commList = []
+
+    comms = getComments()
+    if comms is not None:
+        commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
+        print(commList)
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
+
+
+@app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
+def set_comment(ticket_ID):
+    comment = request.form.get('commentText')
+    comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    comment_by = current_user
+    comment_data = {
+        "comment": comment,
+        "ticket_id": ticket_ID,
+        "date": comment_date,
+        "comment_by": comment_by
+    }
+    comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
+    if comment_req == 200: 
+        flash('Comment has been added 🚀', 'success')
+
+    return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
+
+@app.route('/user_tickets/delete_comment/<comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    # delete the comment from your database
+    pyredb.child("comments").child(comment_id).remove()
+    flash('Comment has been deleted 🗑️', 'success')
+    return redirect(request.referrer)
+
 
 
 @socketio.on('message')
@@ -252,6 +301,10 @@ def handleMessage(msg):
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
     return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
+
+@app.route('/ticketDashboard', methods=['GET'])
+def staffTicketDashboard():
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
@@ -704,6 +757,8 @@ def marketplace():
         # Add more product dictionaries here for other products
     ]
     return render_template('/transaction_handling/marketplace.html', user_name=current_user, products=products)
+
+
 
 
 

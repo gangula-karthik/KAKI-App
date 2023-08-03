@@ -1,0 +1,212 @@
+{% extends "template.html" %}
+{% block content %}
+
+<style>
+  body {
+    margin-top: 20px;
+    color: #ffffff; /* Font color is white */
+    background: #27282F;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .card {
+    background: #373741;
+    border-radius: 5px;
+    border: 0;
+    margin-bottom: 20px;
+  }
+
+  .user-avatar img {
+    width: 90px;
+    height: 90px;
+    border-radius: 100px;
+  }
+
+  .user-profile h5.user-name {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .user-profile h6.user-email {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+
+  .about p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #ffffff; /* Text color is white */
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .about p[data-field] {
+    position: relative;
+  }
+
+  .about input {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-top: 5px;
+    color: #ffffff; /* Text color is white */
+    background-color: #373741;
+  }
+
+  .edit-mode input {
+    display: block;
+  }
+
+  .edit-btn.edit-mode {
+    display: none;
+  }
+</style>
+<div class="container">
+  <h3 class="text-center">All Users</h3>
+  <div class="row">
+    {% for user_id, user_data in all_users_data.items() %}
+    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="user-profile">
+            <h5 class="user-name">{{ user_data.get('name', '') }}</h5>
+            <h6 class="user-email">{{ user_data.get('email', '') }}</h6>
+          </div>
+          <div class="about">
+            <!-- Display additional user details here -->
+            <p data-field="username">Username: {{ user_data.get('username', '') }}</p>
+            <p data-field="birthdate">Birthdate: {{ user_data.get('birthdate', '') }}</p>
+            <p data-field="town">Town: {{ user_data.get('town', '') }}</p>
+            <!-- Edit mode placeholders -->
+            <p class="edit-mode" data-field="username-placeholder" style="display: none;"></p>
+            <p class="edit-mode" data-field="birthdate-placeholder" style="display: none;"></p>
+            <p class="edit-mode" data-field="town-placeholder" style="display: none;"></p>
+          </div>
+          <div class="text-right">
+            <button class="btn btn-primary edit-btn" data-user-id="{{ user_id }}">Update Profile</button>
+            <button class="btn btn-danger delete-btn" data-user-id="{{ user_id }}">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const editBtns = document.querySelectorAll('.edit-btn');
+    const deleteBtns = document.querySelectorAll('.delete-btn');
+
+    editBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        const cardBody = this.closest('.card-body');
+        const userFields = cardBody.querySelectorAll('.about p[data-field]');
+
+        if (this.classList.contains('confirm-btn')) {
+          // If the button is in "Confirm" mode, update the user data
+          const userId = this.dataset.userId;
+          const userData = {};
+
+          userFields.forEach(field => {
+            const fieldName = field.getAttribute('data-field');
+            const input = field.querySelector('input');
+            const value = input.value.trim();
+            if (value) {
+              userData[fieldName] = value;
+              field.innerHTML = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ': ' + value;
+            } else {
+              // Remove placeholder field from user data if input is empty
+              delete userData[fieldName];
+              field.innerHTML = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ': ';
+            }
+          });
+
+          // Perform a POST request to update the user data in the database
+          fetch('/update_user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              user_data: userData
+            })
+          }).then(function (response) {
+            // Handle the response from the server (if needed)
+            console.log('User data updated successfully');
+            // Optionally, you can reload the page or show a success message
+            window.location.reload();
+          }).catch(function (error) {
+            // Handle errors (if any)
+            console.error('Error:', error);
+          });
+
+          // Switch back to "Update Profile" mode
+          this.textContent = 'Update Profile';
+          this.classList.remove('btn-success');
+          this.classList.add('btn-primary');
+          this.classList.remove('confirm-btn');
+
+          // Exit edit mode and hide input fields
+          cardBody.classList.remove('edit-mode');
+          userFields.forEach(field => {
+            const input = field.querySelector('input');
+            input.style.display = 'none';
+          });
+        } else {
+          // If the button is in "Update Profile" mode, make fields editable
+          cardBody.classList.add('edit-mode');
+          userFields.forEach(field => {
+            const value = field.textContent.trim().split(': ')[1];
+            const input = document.createElement('input');
+            input.value = value;
+            input.setAttribute('placeholder', field.textContent.split(': ')[1]);
+            field.innerHTML = field.textContent.split(': ')[0] + ': ';
+            field.appendChild(input);
+          });
+
+          this.textContent = 'Confirm';
+          this.classList.remove('btn-primary');
+          this.classList.add('btn-success');
+          this.classList.add('confirm-btn');
+        }
+      });
+    });
+
+    deleteBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        const userId = this.dataset.userId;
+
+        // Perform a POST request to delete the user data from the database
+        fetch('/delete_user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: userId
+          })
+        }).then(function (response) {
+          // Handle the response from the server (if needed)
+          console.log('User data deleted successfully');
+          // Optionally, you can reload the page or show a success message
+          window.location.reload();
+        }).catch(function (error) {
+          // Handle errors (if any)
+          console.error('Error:', error);
+        });
+      });
+    });
+  });
+</script>
+
+{% endblock %}
