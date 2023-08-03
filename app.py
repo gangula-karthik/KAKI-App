@@ -261,7 +261,6 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-        print(commList)
     return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
 
 
@@ -770,6 +769,25 @@ def marketplace():
     ]
     return render_template('/transaction_handling/marketplace.html', user_name=current_user, products=products)
 
+
+@app.route('/handle_modal_submission', methods=['POST'])
+def handle_modal_submission():
+    # Access the form data from the request object
+    product_name = request.form.get('productName')
+    # product_image = request.files['productImage']
+    product_description = request.form.get('productDescription')
+    product_price = request.form.get('productPrice')
+    product_condition = request.form.get('productCondition')
+
+    # Print the selected condition
+    print(product_condition)
+
+    print(product_name)
+    print(product_description)
+    print(product_price)
+
+    # Redirect to a page or return a response
+    return redirect(url_for('index'))
 
 
 
