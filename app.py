@@ -496,20 +496,27 @@ def update_event():
     data = request.get_json()
 
     event_name = data.get('event_name')
-    event_details = retrieve_event_from_name(data, event_name)
+    original = extract_event_by_name(event_name)
 
     try:
-        for key, value in data.items():
-            if key in event_details and event_details[key] != value:
-                event_details[key] = value
-            else:
-                continue
+        if original is None:
+            return jsonify({'message': 'Event not found'})
 
-        event_details.update_to_firebase()
+        for key, value in data.items():
+            if key in original and original[key] != value:
+                original[key] = value
+
+        # Get a reference to the "Events" location in the database
+        ref = db.reference("Events")
+
+        # Update the existing data with the new data
+        ref.child(event_name).update(original)
 
         return jsonify({'message': 'Updated'})
-    except:
-        return jsonify({'message': 'error'})
+    except Exception as e:
+        return jsonify({'message': 'Error during update'})
+
+
     
 @app.route('/Report_generation/Transactions_report')
 def Transactions_report():
