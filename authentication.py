@@ -109,7 +109,6 @@ def create_account():
                 )
                 # Save the email in the session
                 session['user_email'] = email
-
                 # Get the Firebase token ID (use user.uid instead of user['idToken'])
                 token_id = user.uid
                 # Save the token ID in the session
@@ -278,6 +277,9 @@ def delete_user():
         # Delete the user data from the database
         auth.delete_user(user_id)
         pyredb.child("Users").child("Consumer").child(user_id).remove()
+        pyrebase.child("Users").child("Consumer").child(user_id).child('birthdate-placeholder').remove()
+        pyrebase.child("Users").child("Consumer").child(user_id).child('town-placeholder').remove()
+        pyrebase.child("Users").child("Consumer").child(user_id).child('username-placeholder').remove()
 
         return "User data deleted successfully!"
     except Exception as e:
