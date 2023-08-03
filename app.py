@@ -689,92 +689,14 @@ def MyProducts(product_id):
 
 @app.route('/transaction_handling/marketplace')
 def marketplace():
-    products = [
-        {
-            'title': 'Fantastic Book',
-            'description': ' This is a fantastic book that will take you on an unforgettable journey through its captivating plot,keeping you turning the pages until the very end.',
-            'price': 14.99,
-            'seller': 'Jane Doe',
-            'rating': 4.7,
-            'condition': 'Like New',
-            'image': 'book.jpg',
-        },
-        {
-            'title': 'Vintage Bicycle',
-            'description': ' This vintage bicycle is a true gem for bike enthusiasts. Its classic design and sturdy build make it perfect for leisurely rides in the neighborhood.',
-            'price': 199.99,
-            'seller': 'John Smith',
-            'rating': 4.5,
-            'condition': 'Used',
-            'image': 'bicycle.jpg',
-        },
-        {
-            'title': 'Garden Tools',
-            'description': 'This garden tools set is perfect for anyone with a green thumb. It includes everything you need to tend to your garden and grow beautiful plants.',
-            'price': 49.99,
-            'seller': 'Mary Johnson',
-            'rating': 4.8,
-            'condition': 'New',
-            'image': 'gardentools.jpg',
-        },
-        {
-            'title': 'Digital Camera',
-            'description': 'This digital camera is perfect for capturing all your special moments. Its high-resolution sensor and advanced features ensure stunning photos and videos.',
-            'price': 299.99,
-            'seller': 'Michael Brown',
-            'rating': 4.6,
-            'condition': 'Used',
-            'image': 'digitalcamera.jpg',
-        },
-        {
-            'title': 'Skateboard',
-            'description': 'This skateboard is perfect for beginners and experienced riders alike. Its durable construction and smooth wheels ensure a fun and safe ride.',
-            'price': 49.99,
-            'seller': 'Robert Johnson',
-            'rating': 4.4,
-            'condition': 'Used',
-            'image': 'skateboard.jpg',
-        },
-        {
-            'title': 'Cookware Set',
-            'description': 'This cookware set is a must-have for any aspiring chef. It includes high-quality pots, pans, and utensils to help you create delicious meals.',
-            'price': 79.99,
-            'seller': 'Emily Lee',
-            'rating': 4.9,
-            'condition': 'Like New',
-            'image': 'Cookware.jpg',
-        },
-        {
-            'title': 'Acoustic Guitar',
-            'description': 'This acoustic guitar is perfect for music enthusiasts and aspiring musicians. Its rich tones and comfortable playability make it a joy to play.',
-            'price': 199.99,
-            'seller': 'Sarah Brown',
-            'rating': 4.3,
-            'condition': 'Used',
-            'image': 'acousticguitar.jpg',
-        },
-        {
-            'title': 'Original Painting',
-            'description': 'This original painting is a masterpiece that will add beauty and elegance to any home. Its stunning colors and intricate details are truly captivating.',
-            'price': 499.99,
-            'seller': 'William Doe',
-            'rating': 4.2,
-            'condition': 'Like New',
-            'image': 'Paining.jpg',
-        },
-        {
-            'title': 'Headphones',
-            'description': 'These wireless headphones deliver an immersive audio experience. With noise-canceling technology and long battery life, they are perfect for music lovers on the go.',
-            'price': 99.99,
-            'seller': 'Lisa Johnson',
-            'rating': 4.7,
-            'condition': 'Used',
-            'image': 'wirelessheadphones.jpg',
-        },
+    allProducts = pyredb.child("products").get()
+    res = []
 
-        # Add more product dictionaries here for other products
-    ]
-    return render_template('/transaction_handling/marketplace.html', user_name=current_user, products=products)
+    for i in allProducts.each():
+        res.append(i.val())
+    
+    return render_template('/transaction_handling/marketplace.html', products = res, user_name = current_user)
+
 
 
 @app.route('/handle_modal_submission', methods=['POST'])
@@ -786,7 +708,7 @@ def handle_modal_submission():
     product_price = request.form.get('productPrice')
     product_condition = request.form.get('productCondition')
 
-    data = {"product_name": product_name, "product_description": product_description, "product_price": product_price, "product_condition": product_condition}
+    data = {"product_name": product_name, "product_description": product_description, "product_price": product_price, "product_condition": product_condition, "seller": current_user}
     pyredb.child("products").push(data)
 
     # Redirect to a page or return a response

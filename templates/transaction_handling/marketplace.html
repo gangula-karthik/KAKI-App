@@ -174,28 +174,16 @@
   </div>
   <div class="container">
     {% for product in products %}
-    <!-- <div class="product">
-    <img src="{{ product.image }}" alt="{{ product.title }}">
-    <div class="product-title">{{ product.title }}</div>
-    <div class="product-description">{{ product.description }}</div>
-    <div class="product-price">${{ product.price }}</div>
-    <div class="seller-name">Seller: {{ product.seller }}</div>
-    <div class="rating">Rating: {{ product.rating }}/5</div>
-    <div class="item-condition">Condition: {{ product.condition }}</div>
-    <button onclick="startChat('{{ product.seller }}', '{{ product.product_id }}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
-    <button class="btn btn-primary">Chat Now</button>
-  </div> -->
-    <div class="card text-bg-dark position-relative py-5" style="width: 23rem;">
-      <img src="{{ product.image }}" class="card-img-top" alt="...">
+    <div class="card text-bg-dark position-relative " style="width: 23rem;">
+      <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
-        <h5 class="card-title"><strong>{{ product.title }}</strong></h5>
-        <p class="card-text">{{ product.description }}</p>
-        <p class="card-text"><strong>${{ product.price }}</strong></p>
-        <p class="card-text text-muted-on-dark"><strong>Rating:</strong> {{ product.rating }}/5</p>
-        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product.condition }}</p>
+        <h5 class="card-title"><strong>{{ product.product_name }}</strong></h5>
+        <p class="card-text">{{ product.product_description }}</p>
+        <p class="card-text"><strong>${{ product.product_price }}</strong></p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product.product_condition }}</p>
         <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product.seller }}</p>
       </div>
-      <div class="card-footer text-body-secondary position-absolute bottom-0 w-100">
+      <div class="card-footer w-100">
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
         <button onclick="deleteProduct('{{ product.product_id }}')" class="btn btn-danger w-100 mt-2">Delete</button>
       </div>
