@@ -1,9 +1,9 @@
 {% extends "template.html" %}
 {% block css %}
 <link rel="stylesheet" type="text/css" href="/static/marketplace.html" />
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 {% endblock %}
 {% block content %}
 <!DOCTYPE html>
@@ -98,9 +98,61 @@
     <button onclick="searchProducts()"
       style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
     <div id="searchResultsContainer">
-      </div>
+    </div>
     <!-- <button onclick="showSellForm()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button> -->
-    <button class="btn btn-primary" style="padding: 6px 35px;color:#fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;">Sell</button>
+    <button type="button" class="btn btn-primary"
+      style="padding: 6px 35px;color:#fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;"
+      data-bs-toggle="modal" data-bs-target="#sellProducts">
+      Launch demo modal
+    </button>
+
+    <!-- selling products modal -->
+    <!-- paste the chatgpt code over here  -->
+    <div class="modal fade" id="sellProducts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="POST" action="{{ url_for('handle_modal_submission') }}">
+            <div class="modal-body">
+            <label for="productName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="productName" name="productName">
+
+    <label for="productDescription" class="form-label">Product Description</label>
+    <input type="text" class="form-control" id="productDescription" name="productDescription">
+    <label for="productDescription" class="form-label">Product Price</label>
+    <div class="input-group mb-3">
+      <span class="input-group-text">$</span>
+      <input type="text" name="productPrice" class="form-control">
+    </div>
+
+
+    <div>
+      <label for="productCondition" class="form-label">Product Condition</label> <br>
+      <input type="radio" class="form-check-input" id="productConditionNew" name="productCondition" value="new" {{ 'checked' if product_condition == 'new' }}>
+      <label class="form-check-label" for="productConditionNew">New</label><br>
+      <input type="radio" class="form-check-input" id="productConditionLikeNew" name="productCondition" value="like new" {{ 'checked' if product_condition == 'like new' }}>
+      <label class="form-check-label" for="productConditionLikeNew">Like New</label><br>
+      <input type="radio" class="form-check-input" id="productConditionUsed" name="productCondition" value="used" {{ 'checked' if product_condition == 'used' }}>
+      <label class="form-check-label" for="productConditionUsed">Used</label>
+    </div>
+    
+
+
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
     <div id="sellFormContainer" style="display: none;">
       <form id="sellForm" onsubmit="submitSellForm(event)">
         <label for="productTitle">Product Title:</label>
@@ -122,28 +174,16 @@
   </div>
   <div class="container">
     {% for product in products %}
-    <!-- <div class="product">
-    <img src="{{ product.image }}" alt="{{ product.title }}">
-    <div class="product-title">{{ product.title }}</div>
-    <div class="product-description">{{ product.description }}</div>
-    <div class="product-price">${{ product.price }}</div>
-    <div class="seller-name">Seller: {{ product.seller }}</div>
-    <div class="rating">Rating: {{ product.rating }}/5</div>
-    <div class="item-condition">Condition: {{ product.condition }}</div>
-    <button onclick="startChat('{{ product.seller }}', '{{ product.product_id }}')" style="padding: 6px 14px; background-color: #ff0019; color: #fff; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Chat Now</button>
-    <button class="btn btn-primary">Chat Now</button>
-  </div> -->
-    <div class="card text-bg-dark position-relative py-5" style="width: 23rem;">
-      <img src="{{ product.image }}" class="card-img-top" alt="...">
+    <div class="card text-bg-dark position-relative " style="width: 23rem;">
+      <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
-        <h5 class="card-title"><strong>{{ product.title }}</strong></h5>
-        <p class="card-text">{{ product.description }}</p>
-        <p class="card-text"><strong>${{ product.price }}</strong></p>
-        <p class="card-text text-muted-on-dark"><strong>Rating:</strong> {{ product.rating }}/5</p>
-        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product.condition }}</p>
+        <h5 class="card-title"><strong>{{ product.product_name }}</strong></h5>
+        <p class="card-text">{{ product.product_description }}</p>
+        <p class="card-text"><strong>${{ product.product_price }}</strong></p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product.product_condition }}</p>
         <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product.seller }}</p>
       </div>
-      <div class="card-footer text-body-secondary position-absolute bottom-0 w-100">
+      <div class="card-footer w-100">
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
         <button onclick="deleteProduct('{{ product.product_id }}')" class="btn btn-danger w-100 mt-2">Delete</button>
       </div>
@@ -153,170 +193,176 @@
   </div>
 
   <!-- Modal -->
-<div class="modal fade" id="buyPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content text-bg-dark">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Transaction</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="transactionForm">
-          <!-- Additional form fields -->
-         <div class="mb-3">
-  <label for="name" class="form-label">Name:</label>
-  <input type="text" class="form-control" id="name" name="name" required placeholder="John Doe">
-</div>
+  <div class="modal fade" id="buyPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content text-bg-dark">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Transaction</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="transactionForm">
+            <!-- Additional form fields -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Name:</label>
+              <input type="text" class="form-control" id="name" name="name" required placeholder="John Doe">
+            </div>
 
-<div class="mb-3">
-  <label for="contactNumber" class="form-label">Contact Number:</label>
-  <input type="tel" class="form-control" id="contactNumber" name="contactNumber" required placeholder="+6593212323">
-</div>
+            <div class="mb-3">
+              <label for="contactNumber" class="form-label">Contact Number:</label>
+              <input type="tel" class="form-control" id="contactNumber" name="contactNumber" required
+                placeholder="+6593212323">
+            </div>
 
-<div class="mb-3">
-  <label for="email" class="form-label">Email:</label>
-  <input type="email" class="form-control" id="email" name="email" required placeholder="john@example.com">
-</div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" class="form-control" id="email" name="email" required placeholder="john@example.com">
+            </div>
 
-<div class="mb-3">
-  <label for="paymentMethod" class="form-label">Payment Method:</label>
-  <select class="form-control" id="paymentMethod" name="paymentMethod" required>
-    <option value="">Select Payment Method</option>
-    <option value="cash">Cash (Meet-up Only)</option>
-    <option value="creditCard">Credit Card</option>
-    <option value="debitCard">Debit Card</option>
-    <option value="paypal">PayPal</option>
-    <option value="paynow">PayNow</option>
-    <option value="paylah">PayLah</option>
-    <!-- Add more options as needed -->
-  </select>
-</div>
+            <div class="mb-3">
+              <label for="paymentMethod" class="form-label">Payment Method:</label>
+              <select class="form-control" id="paymentMethod" name="paymentMethod" required>
+                <option value="">Select Payment Method</option>
+                <option value="cash">Cash (Meet-up Only)</option>
+                <option value="creditCard">Credit Card</option>
+                <option value="debitCard">Debit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="paynow">PayNow</option>
+                <option value="paylah">PayLah</option>
+                <!-- Add more options as needed -->
+              </select>
+            </div>
 
-<div class="mb-3" id="meetupDetailsDiv" style="display: none;">
-  <label for="meetupDetails" class="form-label">Meet-up Details (Optional - Put NIL if not applicable):</label>
-  <textarea class="form-control" id="meetupDetails" name="meetupDetails" rows="3" placeholder="NIL"></textarea>
-</div>
+            <div class="mb-3" id="meetupDetailsDiv" style="display: none;">
+              <label for="meetupDetails" class="form-label">Meet-up Details (Optional - Put NIL if not
+                applicable):</label>
+              <textarea class="form-control" id="meetupDetails" name="meetupDetails" rows="3"
+                placeholder="NIL"></textarea>
+            </div>
 
-<div class="mb-3" id="shippingAddressDiv">
-  <label for="shippingAddress" class="form-label">Shipping Address:</label>
-  <textarea class="form-control" id="shippingAddress" name="shippingAddress" rows="3" required placeholder="240 Macpherson Road #03-01A Pines Industrial Building"></textarea>
-</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="proceedButton" data-bs-toggle="modal" data-bs-target="#confirmationModal" onclick="myFunction()">Proceed</button>
-      </div>
-    </div>
-  </div>
-</div>
-  <script>
-    function myFunction(){
-    alert("Transaction Confirmed! \nThank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
-    }
-  </script>
-  <!-- First modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmationModalLabel">Transaction Confirmed!</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="confirmationModalBody">
-        <!-- Modal content will be dynamically updated here -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <!-- You can add any buttons or actions specific to the modal here -->
+            <div class="mb-3" id="shippingAddressDiv">
+              <label for="shippingAddress" class="form-label">Shipping Address:</label>
+              <textarea class="form-control" id="shippingAddress" name="shippingAddress" rows="3" required
+                placeholder="240 Macpherson Road #03-01A Pines Industrial Building"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="proceedButton" data-bs-toggle="modal"
+                data-bs-target="#confirmationModal" onclick="myFunction()">Proceed</button>
+            </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+    <script>
+      function myFunction() {
+        alert("Transaction Confirmed! \nThank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+      }
+    </script>
+    <!-- First modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalLabel">Transaction Confirmed!</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="confirmationModalBody">
+            <!-- Modal content will be dynamically updated here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- You can add any buttons or actions specific to the modal here -->
+          </div>
+        </div>
+      </div>
+    </div>
 
-<script>
-   document.getElementById('proceedButton').forEach(button => {
-   button.addEventListener('click', function (event) {
-    let confirmation = confirm("Transaction Confirmed! \n Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
-     if (!confirmation) {
-//       // If the user clicked "Cancel", prevent the form submission
-       event.preventDefault();
-    }
-   });
- });
+    <script>
+      document.getElementById('proceedButton').forEach(button => {
+        button.addEventListener('click', function (event) {
+          let confirmation = confirm("Transaction Confirmed! \n Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+          if (!confirmation) {
+            //       // If the user clicked "Cancel", prevent the form submission
+            event.preventDefault();
+          }
+        });
+      });
 
-  const proceedButton = document.getElementById("proceedButton");
-  const confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
-  const confirmationModalLabel = document.getElementById("confirmationModalLabel");
-  const confirmationModalBody = document.getElementById("confirmationModalBody");
+      const proceedButton = document.getElementById("proceedButton");
+      const confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
+      const confirmationModalLabel = document.getElementById("confirmationModalLabel");
+      const confirmationModalBody = document.getElementById("confirmationModalBody");
 
-  // Show the confirmation modal and update its content based on which "Proceed" button is clicked
-  proceedButton.addEventListener("click", () => {
-    // Perform any necessary form validation here before updating the modal content
+      // Show the confirmation modal and update its content based on which "Proceed" button is clicked
+      proceedButton.addEventListener("click", () => {
+        // Perform any necessary form validation here before updating the modal content
 
-    // For the first "Proceed" button, set the modal title and content
-    confirmationModalLabel.textContent = "Transaction Confirmed!";
-    confirmationModalBody.textContent = "Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.";
+        // For the first "Proceed" button, set the modal title and content
+        confirmationModalLabel.textContent = "Transaction Confirmed!";
+        confirmationModalBody.textContent = "Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.";
 
-    // Show the modal
-    confirmationModal.show();
-  });
-</script>
+        // Show the modal
+        confirmationModal.show();
+      });
+    </script>
 
-  <script>
-    // Get references to DOM elements
-const paymentMethodSelect = document.getElementById("paymentMethod");
-const meetupDetailsDiv = document.getElementById("meetupDetailsDiv");
-const shippingAddressDiv = document.getElementById("shippingAddressDiv");
+    <script>
+      // Get references to DOM elements
+      const paymentMethodSelect = document.getElementById("paymentMethod");
+      const meetupDetailsDiv = document.getElementById("meetupDetailsDiv");
+      const shippingAddressDiv = document.getElementById("shippingAddressDiv");
 
-// Function to show/hide the meetupDetailsDiv based on the selected payment method
-function handlePaymentMethodChange() {
-  const selectedPaymentMethod = paymentMethodSelect.value;
+      // Function to show/hide the meetupDetailsDiv based on the selected payment method
+      function handlePaymentMethodChange() {
+        const selectedPaymentMethod = paymentMethodSelect.value;
 
-  if (selectedPaymentMethod === "cash") {
-    meetupDetailsDiv.style.display = "block";
-    shippingAddressDiv.style.display = "none";
-  } else {
-    meetupDetailsDiv.style.display = "block";
-    shippingAddressDiv.style.display = "block";
-  }
-}
+        if (selectedPaymentMethod === "cash") {
+          meetupDetailsDiv.style.display = "block";
+          shippingAddressDiv.style.display = "none";
+        } else {
+          meetupDetailsDiv.style.display = "block";
+          shippingAddressDiv.style.display = "block";
+        }
+      }
 
-// Initial setup: Hide meetupDetailsDiv by default
-handlePaymentMethodChange();
+      // Initial setup: Hide meetupDetailsDiv by default
+      handlePaymentMethodChange();
 
-// Add event listener to the paymentMethodSelect to detect changes
-paymentMethodSelect.addEventListener("change", handlePaymentMethodChange);
-  </script>
+      // Add event listener to the paymentMethodSelect to detect changes
+      paymentMethodSelect.addEventListener("change", handlePaymentMethodChange);
+    </script>
 
 
-  <script>
-  // Function to handle the search
-  function searchProducts() {
-    const searchInput = document.getElementById("searchInput");
-    const searchTerm = searchInput.value.toLowerCase();
-    const searchResultsContainer = document.getElementById("searchResultsContainer");
+    <script>
+      // Function to handle the search
+      function searchProducts() {
+        const searchInput = document.getElementById("searchInput");
+        const searchTerm = searchInput.value.toLowerCase();
+        const searchResultsContainer = document.getElementById("searchResultsContainer");
 
-    // Perform your search logic here. For example, you can have an array of products:
-    const products = [
-      // Add more products as needed
-    ];
+        // Perform your search logic here. For example, you can have an array of products:
+        const products = [
+          // Add more products as needed
+        ];
 
-    // Filter products based on the search term
-    const filteredProducts = products.filter((product) =>
-      product.toLowerCase().includes(searchTerm)
-    );
+        // Filter products based on the search term
+        const filteredProducts = products.filter((product) =>
+          product.toLowerCase().includes(searchTerm)
+        );
 
-    // Display the search results
-    let searchResultsHtml = "";
-    filteredProducts.forEach((product) => {
-      searchResultsHtml += `<p>${product}</p>`;
-    });
-    searchResultsContainer.innerHTML = searchResultsHtml;
-  }
+        // Display the search results
+        let searchResultsHtml = "";
+        filteredProducts.forEach((product) => {
+          searchResultsHtml += `<p>${product}</p>`;
+        });
+        searchResultsContainer.innerHTML = searchResultsHtml;
+      }
 
-  // Attach an event listener to the search input to call the searchProducts function on each keyup
-  const searchInput = document.getElementById("searchInput");
-  searchInput.addEventListener("keyup", searchProducts);
-</script>
+      // Attach an event listener to the search input to call the searchProducts function on each keyup
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("keyup", searchProducts);
+    </script>
 </body>
 
 </html>

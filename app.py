@@ -261,7 +261,6 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-        print(commList)
     return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
 
 
@@ -476,7 +475,7 @@ def event_list():
     names = retreive_event_name(events)
     return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
 
-@app.route('/Report_generation/Event_details.html/<report>')
+@app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
     events = retreive_data_event()
     details = retrieve_event_from_name(events, report)
@@ -496,22 +495,29 @@ def update_event():
     data = request.get_json()
 
     event_name = data.get('event_name')
-    event_details = retrieve_event_from_name(data, event_name)
+    original = extract_event_by_name(event_name)
 
     try:
-        for key, value in data.items():
-            if key in event_details and event_details[key] != value:
-                event_details[key] = value
-            else:
-                continue
+        if original is None:
+            return jsonify({'message': 'Event not found'})
 
-        event_details.update_to_firebase()
+        for key, value in data.items():
+            if key in original and original[key] != value:
+                original[key] = value
+
+        # Get a reference to the "Events" location in the database
+        ref = db.reference("Events")
+
+        # Update the existing data with the new data
+        ref.child(event_name).update(original)
 
         return jsonify({'message': 'Updated'})
-    except:
-        return jsonify({'message': 'error'})
+    except Exception as e:
+        return jsonify({'message': 'Error during update'})
+
+
     
-@app.route('/Report_generation/Transactions_report')
+@app.route('/Report_generation/Transactions_report', methods=['GET'])
 def Transactions_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
@@ -519,13 +525,13 @@ def Transactions_report():
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
     return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [5,6,7,8,9,10], Total_received = [5,6,7,8,9,10], Total_number = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
 
-@app.route('/Report_generation/saved_reports')
+@app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
     reports = get_all_reports()
     details = retrieve_report_name(reports)
     return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details)
 
-@app.route('/Report_generation/<string:report_type>/<string:Report_id>')
+@app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
     report = get_all_reports()
     data = retrieve_ByID(report,Report_id)
@@ -683,93 +689,30 @@ def MyProducts(product_id):
 
 @app.route('/transaction_handling/marketplace')
 def marketplace():
-    products = [
-        {
-            'title': 'Fantastic Book',
-            'description': ' This is a fantastic book that will take you on an unforgettable journey through its captivating plot,keeping you turning the pages until the very end.',
-            'price': 14.99,
-            'seller': 'Jane Doe',
-            'rating': 4.7,
-            'condition': 'Like New',
-            'image': 'book.jpg',
-        },
-        {
-            'title': 'Vintage Bicycle',
-            'description': ' This vintage bicycle is a true gem for bike enthusiasts. Its classic design and sturdy build make it perfect for leisurely rides in the neighborhood.',
-            'price': 199.99,
-            'seller': 'John Smith',
-            'rating': 4.5,
-            'condition': 'Used',
-            'image': 'bicycle.jpg',
-        },
-        {
-            'title': 'Garden Tools',
-            'description': 'This garden tools set is perfect for anyone with a green thumb. It includes everything you need to tend to your garden and grow beautiful plants.',
-            'price': 49.99,
-            'seller': 'Mary Johnson',
-            'rating': 4.8,
-            'condition': 'New',
-            'image': 'gardentools.jpg',
-        },
-        {
-            'title': 'Digital Camera',
-            'description': 'This digital camera is perfect for capturing all your special moments. Its high-resolution sensor and advanced features ensure stunning photos and videos.',
-            'price': 299.99,
-            'seller': 'Michael Brown',
-            'rating': 4.6,
-            'condition': 'Used',
-            'image': 'digitalcamera.jpg',
-        },
-        {
-            'title': 'Skateboard',
-            'description': 'This skateboard is perfect for beginners and experienced riders alike. Its durable construction and smooth wheels ensure a fun and safe ride.',
-            'price': 49.99,
-            'seller': 'Robert Johnson',
-            'rating': 4.4,
-            'condition': 'Used',
-            'image': 'skateboard.jpg',
-        },
-        {
-            'title': 'Cookware Set',
-            'description': 'This cookware set is a must-have for any aspiring chef. It includes high-quality pots, pans, and utensils to help you create delicious meals.',
-            'price': 79.99,
-            'seller': 'Emily Lee',
-            'rating': 4.9,
-            'condition': 'Like New',
-            'image': 'Cookware.jpg',
-        },
-        {
-            'title': 'Acoustic Guitar',
-            'description': 'This acoustic guitar is perfect for music enthusiasts and aspiring musicians. Its rich tones and comfortable playability make it a joy to play.',
-            'price': 199.99,
-            'seller': 'Sarah Brown',
-            'rating': 4.3,
-            'condition': 'Used',
-            'image': 'acousticguitar.jpg',
-        },
-        {
-            'title': 'Original Painting',
-            'description': 'This original painting is a masterpiece that will add beauty and elegance to any home. Its stunning colors and intricate details are truly captivating.',
-            'price': 499.99,
-            'seller': 'William Doe',
-            'rating': 4.2,
-            'condition': 'Like New',
-            'image': 'Paining.jpg',
-        },
-        {
-            'title': 'Headphones',
-            'description': 'These wireless headphones deliver an immersive audio experience. With noise-canceling technology and long battery life, they are perfect for music lovers on the go.',
-            'price': 99.99,
-            'seller': 'Lisa Johnson',
-            'rating': 4.7,
-            'condition': 'Used',
-            'image': 'wirelessheadphones.jpg',
-        },
+    allProducts = pyredb.child("products").get()
+    res = []
 
-        # Add more product dictionaries here for other products
-    ]
-    return render_template('/transaction_handling/marketplace.html', user_name=current_user, products=products)
+    for i in allProducts.each():
+        res.append(i.val())
+    
+    return render_template('/transaction_handling/marketplace.html', products = res, user_name = current_user)
 
+
+
+@app.route('/handle_modal_submission', methods=['POST'])
+def handle_modal_submission():
+    # Access the form data from the request object
+    product_name = request.form.get('productName')
+    # product_image = request.files['productImage']
+    product_description = request.form.get('productDescription')
+    product_price = request.form.get('productPrice')
+    product_condition = request.form.get('productCondition')
+
+    data = {"product_name": product_name, "product_description": product_description, "product_price": product_price, "product_condition": product_condition, "seller": current_user}
+    pyredb.child("products").push(data)
+
+    # Redirect to a page or return a response
+    return redirect(url_for('index'))
 
 
 

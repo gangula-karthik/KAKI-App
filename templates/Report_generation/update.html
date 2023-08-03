@@ -11,7 +11,7 @@
 <h1 class="display-4">Update Event</h1>
 
 <form id="eventForm" >
-        <label for="event_name">Venue:</label>
+        <label for="event_name">Event name:</label>
         <input class="form-control" type="text" id="event_name" name="event_name" value="{{ event.event_name }}" required><br>
 
         <label for="venue">Venue:</label>
@@ -26,11 +26,11 @@
         <label for="overall_in_charge">Overall in Charge:</label>
         <input class="form-control" type="text" id="overall_in_charge" name="overall_in_charge" value="{{ event.overall_in_charge }}" required><br>
 
-        <label for="dateposted">Date Posted:</label>
-        <input class="form-control" type="date" id="dateposted" name="dateposted" value="{{ event.dateposted }}" required><br>
+        <label for="date_posted">Date Posted:</label>
+        <input class="form-control" type="date" id="date_posted" name="date_posted" value="{{ event.date_posted }}" required><br>
 
-        <label for="event_location">Event Location:</label>
-        <input class="form-control" type="text" id="event_location" name="event_location" value="{{ event.event_location }}" required><br>
+<!--        <label for="event_location">Event Venue:</label>-->
+<!--        <input class="form-control" type="text" id="event_location" name="event_location" value="{{ event.venue}}" required><br>-->
 
          <label for="event_description">Event Description:</label><br>
         <textarea class="form-control" id="event_description" name="event_description" rows="4" cols="50" required>{{ event.event_description }}</textarea><br>
@@ -56,8 +56,8 @@
       const event_date = document.getElementById("event_date").value;
       const time = document.getElementById("time").value;
       const overall_in_charge = document.getElementById("overall_in_charge").value;
-      const dateposted = document.getElementById("dateposted").value;
-      const event_location = document.getElementById("event_location").value;
+      const date_posted = document.getElementById("date_posted").value;
+<!--      const event_location = document.getElementById("event_location").value;-->
       const event_description = document.getElementById("event_description").value;
 
       // Create a dictionary to store the form data
@@ -67,8 +67,8 @@
         event_date: event_date,
         time: time,
         overall_in_charge: overall_in_charge,
-        dateposted: dateposted,
-        event_location: event_location,
+        date_posted: date_posted,
+<!--        event_location: event_location,-->
         event_description: event_description,
       };
 
