@@ -17,6 +17,7 @@ from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 from Report_generation.Admin_classes import *
 from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
 from Report_generation.report_functions import *
+from Report_generation.retriving_data_functions import *
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -489,6 +490,7 @@ def update_event():
     except Exception as e:
         return jsonify({'message': 'Error during update'})
 
+import datetime
 @app.route('/Report_generation/general_report', methods=['GET'])
 def general_report():
     now = datetime.datetime.now()
@@ -504,7 +506,10 @@ def Transactions_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = 69, Total_received = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
+    total_count = total_count_transactions()
+    total_cost = sum_cost_in_route()
+    total_received = sum_retrieve_in_route()
+    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = total_cost, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
