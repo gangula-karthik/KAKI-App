@@ -34,7 +34,7 @@ def index():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
-        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  # Replace with your reCAPTCHA Secret Key
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
         data = {
@@ -86,7 +86,6 @@ def dashboard():
         return render_template('account_management/update_usercred.html', user_data=user_data)
     else:
         return redirect('/')
-
 
 @app.route('/logout')
 def logout():
@@ -146,9 +145,7 @@ def add_user_credentials():
 
         # Retrieve the email from the session
         email = session.get('user_email', None)
-
-
-
+        
         # Retrieve the token ID from the session
         token_id = session.get('user_token', None)  
 
@@ -158,12 +155,14 @@ def add_user_credentials():
         if token_id is None:
             return "User token ID not found. Please log in first."
 
+        # Add the "status" field with the value "User" to the data
         data = {
-            "email": email,  # Include the email in the data to be stored
+            "email": email,
             "name": name,
             "username": username,
             "birthdate": birthdate,
-            "town": town
+            "town": town,
+            "status": "User"  # Add the "status" field with the value "User"
         }
 
         # Use the token ID as the key in the database
