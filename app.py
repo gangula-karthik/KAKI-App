@@ -675,13 +675,13 @@ def MyProducts(product_id):
 
 @app.route('/transaction_handling/marketplace')
 def marketplace():
-    allProducts = pyredb.child("products").get()
-    res = []
+    allProducts = pyredb.child("products").get().val()
 
-    for i in allProducts.each():
-        res.append(i.val())
+    products = [(id, productInfo) for id, productInfo in allProducts.items()]
+    # for i in allProducts.each():
+    #     res.append(i.val())
     
-    return render_template('/transaction_handling/marketplace.html', products = res, user_name = current_user)
+    return render_template('/transaction_handling/marketplace.html', products = products, user_name = current_user)
 
 
 
@@ -698,12 +698,20 @@ def handle_modal_submission():
     pyredb.child("products").push(data)
 
     # Redirect to a page or return a response
-    return redirect(url_for('index'))
+    return redirect(url_for('marketplace'))
+
+
 
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
+
+
+
     pyredb.child('products').child(product_id).remove()
     flash('Product has been deleted')
-    return redirect(url_for('show_products'))
+    return redirect(url_for('marketplace'))
+
+
+
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000)
