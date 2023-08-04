@@ -41,9 +41,7 @@ class Ticket:
         self.descriptions = descriptions
         self.opened_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.closed_at = None
-        # self.addMLPriority(self.subject)
         self.images = []
-        self.replies = [] # replies should be a list of dictionaries
         try:
             self.ticket_id = db.child('/tickets').push(self.__dict__)['name']
             db.child(f'/tickets/{self.ticket_id}').update({"ticket_id": self.ticket_id})
@@ -53,14 +51,6 @@ class Ticket:
 
     def addStaffID(self, staff_id):
         self.staff_id = staff_id
-    
-    def addMLPriority(self, subject):
-        """
-        BROKEN: FIX IMMEDIATELY
-        """
-        # model = fasttext.load_model("/Users/daaa/Downloads/KAKI-App/customer_support/model.bin")
-        # priority = model.predict(f"{self.topic} {self.subject} {self.descriptions}")
-        # self.ml_priority = priority[0][0].replace("__label__", "").replace("\"", "")
 
     def addTopic(self, topic):
         topic = topic.lower()
@@ -139,7 +129,6 @@ def updateTopic(ticket_id, new_topic):
     new_topic = new_topic.lower()
     if new_topic in topicList:
         topic = new_topic
-        ticket_id = ticket_id
         db.child(f'/tickets/{ticket_id}').update({"topic": topic})
     else:
         raise ValueError("Invalid topic")
