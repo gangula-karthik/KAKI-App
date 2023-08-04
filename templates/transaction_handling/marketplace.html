@@ -107,7 +107,6 @@
     </button>
 
     <!-- selling products modal -->
-    <!-- paste the chatgpt code over here  -->
     <div class="modal fade" id="sellProducts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -185,7 +184,8 @@
       </div>
       <div class="card-footer w-100">
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
-        <button onclick="deleteProduct('{{ product.product_id }}')" class="btn btn-danger w-100 mt-2">Delete</button>
+       <form action="{{ url_for('delete_product', product_id=product.id) }}" method="post">
+      <button type="submit" class="btn btn-danger w-100 mt-2">Delete</button>
       </div>
     </div>
 

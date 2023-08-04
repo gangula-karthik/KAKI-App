@@ -714,8 +714,10 @@ def handle_modal_submission():
     # Redirect to a page or return a response
     return redirect(url_for('index'))
 
-
-
-
+@app.route('/delete_product/<string:product_id>', methods=['POST'])
+def delete_product(product_id):
+    pyredb.child('products').child(product_id).remove()
+    flash('Product has been deleted')
+    return redirect(url_for('show_products'))
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000)
