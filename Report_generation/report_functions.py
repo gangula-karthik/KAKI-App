@@ -263,3 +263,47 @@ def sum_retrieve_in_route():
             continue
 
     return total_cost
+
+def sort_by_individual_points(top_n):
+    # Get a reference to the Firestore database
+    ref = db.reference("/this is the route to the individuals")
+
+    list_items = ref.get()
+
+    # Sort the items in descending order based on 'product_price' (cost)
+    sorted_items = sorted(list_items.values(), key=lambda x: float(x['this is the name of the column of the points']), reverse=True)
+
+    # Return the top products based on the desired number (top_n)
+    return sorted_items[:top_n]
+
+def sort_by_community_points(top_n):
+    # Get a reference to the Firestore database
+    ref = db.reference("/this is the route to the community")
+
+    list_items = ref.get()
+
+    # Sort the items in descending order based on 'product_price' (cost)
+    sorted_items = sorted(list_items.values(), key=lambda x: float(x['this is the name of the column of the points']), reverse=True)
+
+    # Return the top products based on the desired number (top_n)
+    return sorted_items[:top_n]
+
+
+def sum_retrieve_in_route():
+    # Get a reference to the Firestore database
+    ref = db.reference("/products")
+
+    list_items = ref.get()
+
+    # Calculate the sum of the 'cost' column
+    total_cost = 0
+    for item in list_items:
+        inst = list_items[item]
+        if inst['seller']=='leap':
+
+            mon = float(inst['product_price'])
+            total_cost += mon
+        else:
+            continue
+
+    return total_cost
