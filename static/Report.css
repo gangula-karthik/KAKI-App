@@ -63,13 +63,19 @@ margin-top:1%;
 overflow-y:scroll;
 }
 
+.card_for_trans{
+display: grid;
+grid-template-columns: 1fr 1fr;
+grid-gap: 20px;
+border: 1px solid black;
+width: 50%;
+}
+
 .Line_graph_transaction_report{
 background-color:#3F3F48;
 border:1px solid white;
-height: 28%;
-width:100%;
+height: 20%;
 border-radius:15px;
-float:left;
 margin-top:2%;
 }
 
