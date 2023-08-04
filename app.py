@@ -332,7 +332,7 @@ def Individual_report():
     {"name": "Player 5", "score": 69}
 ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'],neighbours_helped = '69', number_of_activities = '69')
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = '69')
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
@@ -348,7 +348,7 @@ def Community_report():
         {"name": "Player 5", "score": 69}
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, pie_data = [5,6,7,8], pie_label=['Community service','Service','Community event','Others'], most_contribute = 'Nameless', number_of_activities = '69')
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contribute = 'Nameless', number_of_activities = '69')
 
 @app.route('/save_data/com', methods=['POST'])
 def save_data_com():
@@ -369,10 +369,8 @@ def save_data_com():
         report_c.set_current_year(data['current_year'])
         report_c.set_list_months(data['listMonths'])
         report_c.set_line_data(data['line_data'])
-        report_c.set_pie_data(data['pie_data'])
         report_c.set_most_contributed(data['most_contributed'])
-        report_c.set_activities(data['activities'])
-        report_c.set_pie_label(data['pie_label'])
+        report_c.set_activities(data['number_of_activities'])
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
@@ -403,10 +401,9 @@ def save_data_indi():
         report_i.set_current_year(data['current_year'])
         report_i.set_list_months(data['listMonths'])
         report_i.set_line_data(data['line_data'])
-        report_i.set_pie_data(data['pie_data'])
         report_i.set_neighbours_helped(data['neighbours_helped'])
-        report_i.set_activities(data['activities'])
-        report_i.set_pie_label(data['pie_label'])
+        report_i.set_activities(data['number_of_activities'])
+
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
@@ -444,30 +441,7 @@ def save_data_trans():
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
-    # Retrieve data from the frontend (make sure to include the necessary fields in your AJAX request)
-    # data = request.json
-    # report = get_trans()
-    # try:
-    #     for item in report.values():
-    #         if data['current_year'] == item['current_year'] and data['current_month'] == item['current_month']:
-    #             return jsonify({'message': 'Report already saved'})
-    #
-    # except:
-    #     # Create a Com_Report instance and set the attributes from the received data
-    #     report_trans = Trans_Report()
-    #     report_trans.set_current_month(data['current_month'])
-    #     report_trans.set_current_year(data['current_year'])
-    #     report_trans.set_list_months(data['listMonths'])
-    #     report_trans.set_Total_spent(data['Total_spent'])
-    #     report_trans.set_Total_received(data['Total_received'])
-    #     report_trans.set_no_transaction_data(data['Total_number'])
-    #     # Add other attributes as needed
-    #
-    #     # Save the report to Firebase using the class method
-    #     report_trans.save_to_firebase()
-    #
-    #     # Return a response to indicate success (you can customize this based on your needs)
-    #     return jsonify({"message": "Data saved successfully!"})
+
 
 @app.route('/event_lists', methods=['GET'])
 def event_list():
@@ -515,6 +489,13 @@ def update_event():
     except Exception as e:
         return jsonify({'message': 'Error during update'})
 
+@app.route('/Report_generation/general_report', methods=['GET'])
+def general_report():
+    now = datetime.datetime.now()
+    month = now.strftime("%B")
+    current_year = now.year
+    ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
+    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_spent = 69, Total_received = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
 
     
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
@@ -523,7 +504,7 @@ def Transactions_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [5,6,7,8,9,10], Total_received = [5,6,7,8,9,10], Total_number = [5,6,7,8,9,10],current_year=current_year,listMonths = ListMonths)
+    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = 69, Total_received = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():

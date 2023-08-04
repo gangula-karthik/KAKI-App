@@ -209,3 +209,4 @@ def update_event(event_obj, new_values):
 
     # Assuming you have a method to update the event in the database (e.g., update_to_database)
     event_obj.update_to_database()
+

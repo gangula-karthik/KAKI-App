@@ -18,10 +18,8 @@ class Indi_Report:
         self.__CurrentYear__ = None
         self.__listMonths__ = None
         self.__lineData__ = None
-        self.__pieData__ = None
         self.__neighboursHelped__ = None
         self.__activities__ = None
-        self.__pieLabel__ = None
         self.__type__ =  'Individual'
 
     # Getter and setter methods for Indi_Report attributes
@@ -64,11 +62,6 @@ class Indi_Report:
     def set_line_data(self, line_data):
         self.__lineData__ = line_data
 
-    def get_pie_data(self):
-        return self.__pieData__
-
-    def set_pie_data(self, pie_data):
-        self.__pieData__ = pie_data
 
     def get_neighbours_helped(self):
         return self.__neighboursHelped__
@@ -82,11 +75,7 @@ class Indi_Report:
     def set_activities(self, activities):
         self.__activities__ = activities
 
-    def get_pie_label(self):
-        return self.__pieLabel__
 
-    def set_pie_label(self, pie_label):
-        self.__pieLabel__ = pie_label
 
     # Add getter and setter methods for other attributes as needed
 
@@ -99,10 +88,10 @@ class Indi_Report:
             "current_year": self.__CurrentYear__,
             "list_months": self.__listMonths__,
             "line_data": self.__lineData__,
-            "pie_data": self.__pieData__,
+
             "neighbours_helped": self.__neighboursHelped__,
             "activities": self.__activities__,
-            "pie_label": self.__pieLabel__,
+
             "report_type": 'Individual',
 
         }
@@ -155,10 +144,8 @@ class Com_Report:
         self.__CurrentYear__ = None
         self.__listMonths__ = None
         self.__lineData__ = None
-        self.__pieData__ = None
         self.__MostContributed__ = None
         self.__activities__ = None
-        self.__pieLabel__ = None
         self.__type__ =  'Community'
 
     # Getter and setter methods for Com_Report attributes
@@ -201,11 +188,7 @@ class Com_Report:
     def set_line_data(self, line_data):
         self.__lineData__ = line_data
 
-    def get_pie_data(self):
-        return self.__pieData__
 
-    def set_pie_data(self, pie_data):
-        self.__pieData__ = pie_data
 
     def get_most_contributed(self):
         return self.__MostContributed__
@@ -219,11 +202,7 @@ class Com_Report:
     def set_activities(self, activities):
         self.__activities__ = activities
 
-    def get_pie_label(self):
-        return self.__pieLabel__
 
-    def set_pie_label(self, pie_label):
-        self.__pieLabel__ = pie_label
 
     # Add getter and setter methods for other attributes as needed
 
@@ -236,10 +215,10 @@ class Com_Report:
             "current_year": self.__CurrentYear__,
             "listMonths": self.__listMonths__,
             "line_data": self.__lineData__,
-            "pie_data": self.__pieData__,
+
             "most_contributed": self.__MostContributed__,
             "activities": self.__activities__,
-            "pie_label": self.__pieLabel__,
+
             "report_type": 'Community',
         }
 
