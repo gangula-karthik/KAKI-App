@@ -48,6 +48,11 @@ overflow-y:scroll;
 </style>
 {% endblock %}
 
+{% block card_report1 %}
+ <h6 style="text-align: center;">Number of events participated:</h6>
+    <h3 style="text-align: center;"> {{number_of_activities}}</h3>
+    {% endblock %}
+
 {% block card_report %}
  <h6 style="text-align: center;">Number of Neighbours helped:</h6>
     <h3 style="text-align: center;"> {{ neighbours_helped }}</h3>
@@ -120,51 +125,6 @@ overflow-y:scroll;
          },
       });
    </script>
-
-<script>
-   const title = 'Activities participated:' + ' ' + {{number_of_activities}}
-   var chrt = document.getElementById("Pie").getContext("2d");
-      var chartId = new Chart(chrt, {
-         type: 'pie',
-         data: {
-
-            labels: {{pie_label | tojson}},
-
-            datasets: [{
-               data: {{ pie_data | tojson }},
-               backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen'],
-               borderColor: ['black'],
-            }],
-         },
-         options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins:{
-               title:{
-                  display: true,
-                  text: title,
-                  color: '#FFFFFF',
-                  font:{
-                  size:20,},
-                  },
-                legend:{
-                display: true,
-                color: '#FFFFFF',
-                position:'right',
-                labels:{
-                  boxWidth: 30,
-                  boxHeight: 10,
-
-                }
-
-                },
-            }
-         },
-      });
-
-
-
-</script>
 {% endblock %}
 
 {% block javascript3 %}
@@ -179,10 +139,9 @@ overflow-y:scroll;
             current_year: '{{ current_year }}',
             listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string
             line_data: {{ line_data | tojson }}, // safe filter to avoid escaping the JSON string
-            pie_data: {{ pie_data | tojson }}, // safe filter to avoid escaping the JSON string
             neighbours_helped: '{{ neighbours_helped }}',
-            activities: '{{ activities }}',
-            pie_label: {{ pie_label | tojson  }}, // safe filter to avoid escaping the JSON string
+            number_of_activities: '{{ number_of_activities }}',
+
 
         };
 

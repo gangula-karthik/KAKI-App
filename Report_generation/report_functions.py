@@ -209,3 +209,57 @@ def update_event(event_obj, new_values):
 
     # Assuming you have a method to update the event in the database (e.g., update_to_database)
     event_obj.update_to_database()
+
+
+def total_count_transactions():
+    # Get a reference to the Firestore database
+    ref = db.reference("/products")
+
+    # Reference the collection
+
+
+    # Get the number of documents in the collection
+    query_result = ref.get()
+    if query_result == None:
+        return 0
+    else:
+        count = len(query_result)
+
+    return count
+
+def sum_cost_in_route():
+    # Get a reference to the Firestore database
+    ref = db.reference("/products")
+
+    list_items = ref.get()
+
+    # Calculate the sum of the 'cost' column
+    total_cost = 0
+    for item in list_items:
+        inst = list_items[item]
+
+        mon = float(inst['product_price'])
+
+
+        total_cost += mon
+
+    return total_cost
+
+def sum_retrieve_in_route():
+    # Get a reference to the Firestore database
+    ref = db.reference("/products")
+
+    list_items = ref.get()
+
+    # Calculate the sum of the 'cost' column
+    total_cost = 0
+    for item in list_items:
+        inst = list_items[item]
+        if inst['seller']=='leap':
+
+            mon = float(inst['product_price'])
+            total_cost += mon
+        else:
+            continue
+
+    return total_cost

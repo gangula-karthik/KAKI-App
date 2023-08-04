@@ -107,7 +107,6 @@
     </button>
 
     <!-- selling products modal -->
-    <!-- paste the chatgpt code over here  -->
     <div class="modal fade" id="sellProducts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -117,38 +116,41 @@
           </div>
           <form method="POST" action="{{ url_for('handle_modal_submission') }}">
             <div class="modal-body">
-            <label for="productName" class="form-label">Product Name</label>
-            <input type="text" class="form-control" id="productName" name="productName">
+              <label for="productName" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="productName" name="productName">
 
-    <label for="productDescription" class="form-label">Product Description</label>
-    <input type="text" class="form-control" id="productDescription" name="productDescription">
-    <label for="productDescription" class="form-label">Product Price</label>
-    <div class="input-group mb-3">
-      <span class="input-group-text">$</span>
-      <input type="text" name="productPrice" class="form-control">
-    </div>
-
-
-    <div>
-      <label for="productCondition" class="form-label">Product Condition</label> <br>
-      <input type="radio" class="form-check-input" id="productConditionNew" name="productCondition" value="new" {{ 'checked' if product_condition == 'new' }}>
-      <label class="form-check-label" for="productConditionNew">New</label><br>
-      <input type="radio" class="form-check-input" id="productConditionLikeNew" name="productCondition" value="like new" {{ 'checked' if product_condition == 'like new' }}>
-      <label class="form-check-label" for="productConditionLikeNew">Like New</label><br>
-      <input type="radio" class="form-check-input" id="productConditionUsed" name="productCondition" value="used" {{ 'checked' if product_condition == 'used' }}>
-      <label class="form-check-label" for="productConditionUsed">Used</label>
-    </div>
-    
+              <label for="productDescription" class="form-label">Product Description</label>
+              <input type="text" class="form-control" id="productDescription" name="productDescription">
+              <label for="productDescription" class="form-label">Product Price</label>
+              <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <input type="text" name="productPrice" class="form-control">
+              </div>
 
 
+              <div>
+                <label for="productCondition" class="form-label">Product Condition</label> <br>
+                <input type="radio" class="form-check-input" id="productConditionNew" name="productCondition"
+                  value="New" {{ 'checked' if product_condition=='New' }}>
+                <label class="form-check-label" for="productConditionNew">New</label><br>
+                <input type="radio" class="form-check-input" id="productConditionLikeNew" name="productCondition"
+                  value="Like new" {{ 'checked' if product_condition=='Like new' }}>
+                <label class="form-check-label" for="productConditionLikeNew">Like New</label><br>
+                <input type="radio" class="form-check-input" id="productConditionUsed" name="productCondition"
+                  value="Used" {{ 'checked' if product_condition=='Used' }}>
+                <label class="form-check-label" for="productConditionUsed">Used</label>
+              </div>
 
 
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
-          </div>
-        </form>
+
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -177,15 +179,17 @@
     <div class="card text-bg-dark position-relative " style="width: 23rem;">
       <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
-        <h5 class="card-title"><strong>{{ product.product_name }}</strong></h5>
-        <p class="card-text">{{ product.product_description }}</p>
-        <p class="card-text"><strong>${{ product.product_price }}</strong></p>
-        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product.product_condition }}</p>
-        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product.seller }}</p>
+        <h5 class="card-title"><strong>{{ product[1].product_name }}</strong></h5>
+        <p class="card-text">{{ product[1].product_description }}</p>
+        <p class="card-text"><strong>${{ product[1].product_price }}</strong></p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product[1].product_condition }}</p>
+        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
-        <button onclick="deleteProduct('{{ product.product_id }}')" class="btn btn-danger w-100 mt-2">Delete</button>
+        <form action="{{ url_for('delete_product', product_id=product[0]) }}" method="post">
+          <button type="submit" class="btn btn-danger w-100 mt-2">Delete</button>
+        </form>
       </div>
     </div>
 
