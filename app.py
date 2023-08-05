@@ -28,15 +28,9 @@ from flask import Flask, jsonify, request
 import asyncio
 import os
 from dotenv import load_dotenv, find_dotenv
-from celery import Celery
+from flask_executor import Executor
 from celery_worker import generate_faqs
 
-
-
-def make_celery(app_name=__name__):
-    return Celery(app_name, backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
-
-celery = make_celery()
 
 
 config = {
@@ -52,6 +46,7 @@ firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-
 
 
 app = Flask(__name__)
+executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'leap'
@@ -64,6 +59,7 @@ firebase = pyrebase.initialize_app(config)
 pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
+
 
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
@@ -124,19 +120,57 @@ def noticeboard():
 def friendRequest():
     return render_template('friend_request.html', user_name=current_user)
 
-# Customer support routes
+
+# customer support routes
+
+
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
-    tickets = pyredb.child('tickets').get().val()
-    # try:
-    #     faqs = generate_faqs.delay(tickets)
-    # except:
-    #     faqs = []
-    #     logging.error("Failed to generate FAQs !")
-    # else:
-    #     logging.info("Generated FAQs successfully !")
-    messages = get_flashed_messages()
-    return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages)
+    try:
+        tickets = pyredb.child('tickets').get().val()
+    except Exception as e:
+        logging.error(f'Error retrieving tickets: {e}')
+        flash('An error occurred while retrieving tickets, please try again later', 'error')
+        tickets = None
+
+    future = executor.submit(generate_faqs)
+
+    def when_done(future):
+        faqs = future.result()
+        messages = get_flashed_messages()
+        return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages, faqs=faqs)
+
+    future.add_done_callback(when_done)
+
+    return "Generating FAQs, please wait...", 202
+
+
+@app.route('/start_faq_generation', methods=['POST'])
+def start_faq_generation():
+    global future
+    try:
+        tickets = pyredb.child('tickets').get().val()
+        future = executor.submit(generate_faqs, tickets)
+        return jsonify(success=True)
+    except Exception as e:
+        logging.error(f'Error starting FAQ generation: {e}')
+        return jsonify(success=False)
+
+@app.route('/check_faq_generation', methods=['GET'])
+def check_faq_generation():
+    if future.done():
+        return jsonify(done=True, faqs=future.result())
+    else:
+        return jsonify(done=False)
+    
+
+@app.route('/faq_status', methods=['GET'])
+def faq_status():
+    if future.done():
+        return jsonify({'status': 'done'})
+    else:
+        return jsonify({'status': 'pending'})
+
 
 
 @app.route('/user_chat', methods=['GET'])
