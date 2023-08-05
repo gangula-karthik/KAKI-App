@@ -1,0 +1,66 @@
+body {
+    margin-top: 20px;
+    color: #ffffff; /* Font color is white */
+    background: #27282F;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .card {
+    background: #373741;
+    border-radius: 5px;
+    border: 0;
+    margin-bottom: 20px;
+  }
+
+  .user-avatar img {
+    width: 90px;
+    height: 90px;
+    border-radius: 100px;
+  }
+
+  .user-profile h5.user-name {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .user-profile h6.user-email {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+
+  .about p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #ffffff; /* Text color is white */
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .about p[data-field] {
+    position: relative;
+  }
+
+  .about input {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-top: 5px;
+    color: #ffffff;
+    background-color: #373741;
+  }
+
+  .edit-mode input {
+    display: block;
+  }
+
+  .edit-btn.edit-mode {
+    display: none;
+  }
