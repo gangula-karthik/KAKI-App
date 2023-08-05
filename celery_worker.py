@@ -68,7 +68,7 @@ def generate_faqs():
     prompts = [
         "What are the most common issues reported?",
         "Which tickets are still open?",
-        "Who are the most active users?",
+        "What is the best solution for any issue?",
         "What are the next steps for resolving open tickets?"
     ]
 

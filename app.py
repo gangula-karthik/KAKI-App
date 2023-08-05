@@ -123,53 +123,40 @@ def friendRequest():
 
 # customer support routes
 
+# Global variable to keep track of the future
+future = None
 
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
+    global future
     try:
         tickets = pyredb.child('tickets').get().val()
     except Exception as e:
         logging.error(f'Error retrieving tickets: {e}')
         flash('An error occurred while retrieving tickets, please try again later', 'error')
         tickets = None
+      
+    # Only submit the task if it hasn't been submitted yet
+    if future is None:
+        future = executor.submit(generate_faqs)
 
-    future = executor.submit(generate_faqs)
-
-    def when_done(future):
+    if future.done():
         faqs = future.result()
         messages = get_flashed_messages()
         return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages, faqs=faqs)
-
-    future.add_done_callback(when_done)
-
-    return "Generating FAQs, please wait...", 202
-
-
-@app.route('/start_faq_generation', methods=['POST'])
-def start_faq_generation():
-    global future
-    try:
-        tickets = pyredb.child('tickets').get().val()
-        future = executor.submit(generate_faqs, tickets)
-        return jsonify(success=True)
-    except Exception as e:
-        logging.error(f'Error starting FAQ generation: {e}')
-        return jsonify(success=False)
-
-@app.route('/check_faq_generation', methods=['GET'])
-def check_faq_generation():
-    if future.done():
-        return jsonify(done=True, faqs=future.result())
     else:
-        return jsonify(done=False)
-    
+        return render_template('customer_support/loading.html'), 202
+
+
 
 @app.route('/faq_status', methods=['GET'])
 def faq_status():
     if future.done():
-        return jsonify({'status': 'done'})
+        faqs = future.result()
+        return jsonify({'status': 'done', 'faqs': faqs})
     else:
         return jsonify({'status': 'pending'})
+
 
 
 

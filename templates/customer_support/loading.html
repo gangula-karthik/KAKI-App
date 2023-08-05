@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Loading...</title>
+</head>
+
+<body>
+    <h1>Generating FAQs, please wait...</h1>
+</body>
+
+<script>
+    function checkFaqStatus() {
+        fetch('/faq_status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'done') {
+                    // The task is done, redirect to the support overview page
+                    window.location.href = '/support_overview';
+                } else {
+                    // The task is not done yet, check again in 5 seconds
+                    setTimeout(checkFaqStatus, 3000);
+                }
+            });
+    }
+
+    // Start checking the status as soon as the page loads
+    checkFaqStatus();
+
+</script>
+
+</html>
