@@ -147,10 +147,13 @@ def deleteTicket(ticket_id):
     if ticket_id not in allKeys:
         raise ValueError("Invalid ticket ID")
     else:
-        comments = [id for id, comment in db.child("comments").get().val().items() if comment['ticket_id'] == ticket_id]
+        commentData = db.child("comments").get().val()
+        if commentData is not None:
+            comments = [id for id, comment in commentData.items() if comment['ticket_id'] == ticket_id]
+            for i in comments:
+                db.child(f'/comments/{i}').remove()
+
         db.child(f'/tickets/{ticket_id}').remove()
-        for i in comments:
-            db.child(f'/comments/{i}').remove()
 
 def semanticSearch(searchTerm):
     documents = [i.val()['subject'] for i in db.child("tickets").get().each()]
