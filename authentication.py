@@ -114,8 +114,7 @@ def create_account():
                 # Save the token ID in the session
                 session['user_token'] = token_id
 
-                # Redirect to a page showing the verification message
-                return redirect('/verify_email')
+                return render_template('account_management/user_cred.html')
 
             except auth.EmailAlreadyExistsError:
                 existing_account = "An account with this email already exists."
