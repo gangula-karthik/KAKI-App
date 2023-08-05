@@ -32,20 +32,35 @@ try:
     user = pyreauth.sign_in_with_email_and_password(email, password)
     print(user)
 
-    # Send the email verification
-    user_id = user['idToken']
-    pyreauth.send_email_verification(user_id)
+    # Get the Firebase user
+    firebase_user = auth.get_user(user['localId'])
 
-    # Wait until the email is verified
-    while True:
-        user = pyreauth.get_account_info(user['idToken'])
-        email_verified = user['users'][0]['emailVerified']
-        if email_verified:
-            print("Email verified.")
-            break
-        else:
-            print("Email not verified. Waiting...")
-            time.sleep(5)  # Add a 5-second delay before checking again
+    # Check if the email is verified
+    email_verified = firebase_user.email_verified
+
+    if not email_verified:
+        # Update user's custom claims to indicate pending email verification
+        auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
+
+        # Send the email verification
+        pyreauth.send_email_verification(user['idToken'])
+
+        print("Verification email sent. Waiting for email verification...")
+
+        # Wait until the email is verified
+        while True:
+            firebase_user = auth.get_user(user['localId'])
+            email_verified = firebase_user.email_verified
+            if email_verified:
+                # Update user's custom claims to indicate email verification completed
+                auth.set_custom_user_claims(user['localId'], {'emailVerified': True})
+                print("Email verified.")
+                break
+            else:
+                print("Email not verified. Waiting...")
+                time.sleep(5)  # Add a 5-second delay before checking again
+    else:
+        print("Email already verified.")
 
 except Exception as e:
     print(f"Authentication failed: {e}")
