@@ -497,7 +497,7 @@ def general_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_spent = 69, Total_received = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
+    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = 69, Total_users = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
 
     
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
