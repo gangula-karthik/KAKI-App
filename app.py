@@ -128,15 +128,15 @@ def friendRequest():
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
     tickets = pyredb.child('tickets').get().val()
-    try:
-        faqs = generate_faqs.delay(tickets)
-    except:
-        faqs = []
-        logging.error("Failed to generate FAQs !")
-    else:
-        logging.info("Generated FAQs successfully !")
+    # try:
+    #     faqs = generate_faqs.delay(tickets)
+    # except:
+    #     faqs = []
+    #     logging.error("Failed to generate FAQs !")
+    # else:
+    #     logging.info("Generated FAQs successfully !")
     messages = get_flashed_messages()
-    return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages, faqs=faqs)
+    return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages)
 
 
 @app.route('/user_chat', methods=['GET'])
