@@ -1,52 +1,59 @@
-import pyotp, qrcode
-from flask import send_file
-from flask import session
-from firebaseconfig import db_ref
-import io, base64
+import pyotp
+import qrcode
+import io
+import base64
+from flask import Flask, render_template, request, redirect, url_for, session
 
-def generate_secret():
-    user_secret = pyotp.random_base32()
-    users_ref = db_ref.child("users")
-    query_result = users_ref.order_by_child('otpsecret').equal_to(user_secret).get()
-    if len(query_result) != 0:
-        return generate_secret()
-    else:
-        return user_secret
+# Update the Firebase configuration as needed
+# from your_firebase_module import db_ref
 
-def generate_qr(user_secret):
-    totp = pyotp.TOTP(user_secret)
-    provisioning_uri = totp.provisioning_uri(name='', issuer_name='')
-    qr_code = qrcode.make(provisioning_uri)
-    qr_code.save("qr_code.png")
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        # Perform user registration and save the email to session for verification
+        session['email'] = email
+
+        # Generate a secret key and QR code for Google Authenticator
+        secret_key = generate_secret()
+        generate_qr(secret_key)
+
+        # Redirect to the email verification page
+        return redirect(url_for('verify_email', secret_key=secret_key))
+
+    return render_template('register.html')
+
+@app.route('/verify_email/<secret_key>')
+def verify_email(secret_key):
+    # Get the email from the session and the secret key from the URL
+    email = session.get('email')
+
+    # Send an email containing the secret key and verification link to the user's email
+    send_verification_email(email, secret_key)
+
+    return render_template('verify_email.html', email=email)
 
 
-def otpverify(id,otp):
-    # Retrieve the user's secret key from your user database
-    user_secret = get_user_id(id,"otpsecret")
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        totp_code = request.form.get('totp_code')
 
+        # Perform user authentication with email and password
+        # ...
 
-    # Verify the OTP
-    totp = pyotp.TOTP(user_secret)
-    is_valid = totp.verify(otp)
+        # Verify the TOTP code against the secret key stored for the user
+        is_totp_valid = verify_totp_code(email, totp_code)
 
-    if is_valid:
-        return True
-    else:
-        return False
+        if is_totp_valid:
+            # User successfully authenticated
+            return "Login successful."
+        else:
+            return "Invalid TOTP code."
 
-
-
-def generate_qrurl(user_secret):
-    totp = pyotp.TOTP(user_secret)
-    provisioning_uri = totp.provisioning_uri(name='', issuer_name='')
-    qr_code = qrcode.make(provisioning_uri)
-
-    # Convert the QR code image to a byte array
-    qr_byte_array = io.BytesIO()
-    qr_code.save(qr_byte_array, format='PNG')
-    qr_byte_array.seek(0)
-
-    # Convert the byte array to a base64-encoded string
-    qr_base64_data = base64.b64encode(qr_byte_array.read()).decode('utf-8')
-
-    return qr_base64_data
+    return render_template('login.html')

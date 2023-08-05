@@ -108,16 +108,20 @@ def create_account():
                 )
                 # Save the email in the session
                 session['user_email'] = email
+
                 # Get the Firebase token ID (use user.uid instead of user['idToken'])
                 token_id = user.uid
                 # Save the token ID in the session
                 session['user_token'] = token_id
-                return render_template('account_management/user_cred.html')
+
+                # Redirect to a page showing the verification message
+                return redirect('/verify_email')
 
             except auth.EmailAlreadyExistsError:
                 existing_account = "An account with this email already exists."
                 return render_template('account_management/login.html', exist_message=existing_account)
     return render_template('account_management/login.html')
+
 
 
 @app.route('/forget_password', methods=['GET', 'POST'])

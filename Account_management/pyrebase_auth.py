@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
 import pyrebase
+import time
 
 config = {
     "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
@@ -27,19 +28,24 @@ storage = firebase.storage()
 email = input('Enter email: ')
 password = input('Enter password: ')
 
-
-# user = auth.create_user(
-#     email=email,
-#     password=password,
-# )
-
-# print("User created successfully:", user.uid)
-
-
-
-
 try:
     user = pyreauth.sign_in_with_email_and_password(email, password)
     print(user)
-except:
-    print("Authentication failed:")
+
+    # Send the email verification
+    user_id = user['idToken']
+    pyreauth.send_email_verification(user_id)
+
+    # Wait until the email is verified
+    while True:
+        user = pyreauth.get_account_info(user['idToken'])
+        email_verified = user['users'][0]['emailVerified']
+        if email_verified:
+            print("Email verified.")
+            break
+        else:
+            print("Email not verified. Waiting...")
+            time.sleep(5)  # Add a 5-second delay before checking again
+
+except Exception as e:
+    print(f"Authentication failed: {e}")
