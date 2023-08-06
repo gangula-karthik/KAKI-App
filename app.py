@@ -29,7 +29,7 @@ import asyncio
 import os
 from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
-from celery_worker import generate_faqs
+from FAQ_worker import generate_faqs
 
 
 

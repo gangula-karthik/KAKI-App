@@ -13,9 +13,12 @@ from langchain import PromptTemplate, LLMChain, OpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.summarize import load_summarize_chain
 from celery import Celery
+import logging
 
 load_dotenv(find_dotenv())
 HUGGINGFACEHUB_API_TOKEN = os.environ["HUGGINGFACEHUB_API_TOKEN"]
+
+logging.info("Starting FAQ generation...")
 
 config = {
     "apiKey": load_dotenv("PYREBASE_API_TOKEN"),
@@ -33,6 +36,8 @@ pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
 
+logging.info("Firebase initialized.")
+
 
 # See https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads for some other options
 repo_id = "tiiuae/falcon-7b-instruct"
@@ -44,7 +49,7 @@ template = """Question: {question}
 
 Using this information about helpdesk tickets: {formatted_template}
 
-Give a concise and general answer to the question above. dont mention the ticket ids and only look and the subject and description will writing the answer.
+Give a concise and general answer to the question above. dont mention the ticket ids. Try to give a general answer that can be applied to all tickets or answers that apply to the most important ticket in your opinion. Reply as a customer support agent who is providing high quality support to the customers.
 
 Answer: Let's think step by step."""
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
@@ -54,8 +59,8 @@ prompt_template = PromptTemplate(template=template, input_variables=["question",
 llm_chain = LLMChain(prompt=prompt_template, llm=falcon_llm)
 
 def generate_faqs():
-    print("Generating FAQs....")
     faqs = []
+    logging.info("Generating FAQs...")
     all_tickets_data = ""
 
     tickets = pyredb.child('tickets').get().val()
@@ -73,7 +78,9 @@ def generate_faqs():
         "What is the best solution for any issue?",
         "What are the next steps for resolving open tickets?"
     ]
+    logging.info("Prompts have been loaded...")
 
+    i = 1
     for prompt in prompts:
         formatted_prompt = {
             "question": prompt,
@@ -84,8 +91,11 @@ def generate_faqs():
             "question": prompt,
             "answer": response
         })
+        logging.info(f"FAQ {i} has been generated.")
+        i += 1
 
-    print(faqs)
+
+    logging.info(f"FAQs have been generated.")
     return faqs
 
 
