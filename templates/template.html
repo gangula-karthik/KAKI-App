@@ -23,8 +23,13 @@
 <body>
 
 
+    {% if is_staff %}
+    {% include 'navbarUser.html' %}
+    {% else %}
+    {% include 'navbarStaff.html' %}
+    {% endif %}
 
-    {% include 'navbar.html' %}
+    {% block javascript1 %} {% endblock %}
     <div class="main">
         <!--Adding content-->
         {% block content %}{% endblock %}

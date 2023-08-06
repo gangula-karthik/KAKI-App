@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KAKI - Welcome to your neighbourhood</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='navbar.css')}}" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/86b959e400.js" crossorigin="anonymous"></script>
+    <!-- Fontawesome CDN Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+</head>
+
+<body>
+    <nav class="sidebar">
+        <a href="#" class="logo">
+            <div class="welcome-text">Welcome 👋</div>
+            <div class="name-text">{{ user_name }}</div>
+        </a>
+
+
+        <div class="menu-content">
+            <ul class="menu-items">
+                <li class="item">
+                    <div class="submenu-item">
+                        <span>Customer Support</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+
+                    <ul class="menu-items submenu">
+                        <div class="menu-title">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            Back
+                        </div>
+                        <li class="item">
+                            <a href="/supportStaffOverview">Performance Metrics</a>
+                        </li>
+                        <li class="item">
+                            <a href="/ticketDashboard">Ticket Dashboard</a>
+                        </li>
+                        <li class="item">
+                            <a href="/user_tickets">View Tickets</a>
+                        </li>
+                        <li class="item">
+                            <a href="/user_chat">Chat</a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+        <div class="logo-bottom">
+            <i class="fa-sharp fa-solid fa-seedling"></i>
+            KAKI
+        </div>
+    </nav>
+    <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+
+</body>
+
+</html>
