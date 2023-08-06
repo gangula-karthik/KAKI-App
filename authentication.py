@@ -218,6 +218,7 @@ def add_user_credentials():
                     if email_verified:
                         # Update user's custom claims to indicate email verification completed
                         auth.set_custom_user_claims(user['localId'], {'emailVerified': True})
+                        session.pop('pwd',None)  
                         print("Email verified.")
                         break
                     else:
