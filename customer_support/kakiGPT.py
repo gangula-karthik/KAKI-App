@@ -1,7 +1,5 @@
 from celery import Celery
 from langchain import PromptTemplate, LLMChain
-import asyncio
-import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from flask_socketio import SocketIO, send
@@ -12,7 +10,6 @@ from langchain import HuggingFaceHub
 from langchain import PromptTemplate, LLMChain, OpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.summarize import load_summarize_chain
-from celery import Celery
 import logging
 
 load_dotenv(find_dotenv())
@@ -27,8 +24,6 @@ config = {
     "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
     "storageBucket": "kaki-db097.appspot.com",
 }
-
-cred = credentials.Certificate('Account_management/credentials.json')
 
 
 firebase = pyrebase.initialize_app(config)
@@ -47,9 +42,9 @@ falcon_llm = HuggingFaceHub(
 
 template = """Question: {question}
 
-Using this information about helpdesk tickets: {formatted_template}
+Try to answer the question as a professional staff with years of experience but short and concise answers and greet the users if they greet you. If you dont know the answer, then using this information about helpdesk tickets: {formatted_template}
 
-Give a concise and general answer to the question above. dont mention the ticket ids. Give the most important tickets or answers that apply to the most important ticket in your opinion. Reply as a customer support agent who is providing high quality support to the customers.
+Give very concise answers that are no longer than 3 sentences.
 
 Answer: Let's think step by step."""
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
@@ -59,7 +54,7 @@ llm_chain = LLMChain(prompt=prompt_template, llm=falcon_llm)
 
 
 def generate_answers(prompt):
-    logging.info("Generating FAQs...")
+    logging.info("Thinking...")
     all_tickets_data = ""
 
     tickets = pyredb.child('tickets').get().val()

@@ -12,7 +12,7 @@ from imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 from Report_generation.Admin_classes import *
 from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
@@ -30,6 +30,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
+from customer_support.kakiGPT import generate_answers
 
 
 
@@ -341,19 +342,33 @@ def update_comment(comment_id):
     flash('Comment has been updated!', 'success')
     return redirect(request.referrer)
 
+def background_task_bot_message(user_message):
+    time.sleep(5)
+    bot_response = generate_answers(user_message)
+    return bot_response
+
+
+from flask import jsonify
 
 @app.route('/kakigpt', methods=['GET', 'POST'])
 def kakiGPT():
-    bot_response = None
-    user_message = None
+    chat_history = session.get('chat_history', [])
 
     if request.method == 'POST':
         user_message = request.form.get('user_message')
-        print(user_message)
-        bot_response = f"You said: {user_message}"
-        return redirect(url_for('kakiGPT'))
+        chat_history.append({'type': 'user', 'message': user_message})
 
-    return render_template('customer_support/kakigpt.html', user_name=current_user, user_message=user_message, bot_response=bot_response)
+        future = executor.submit(background_task_bot_message, user_message)
+        bot_response = future.result()
+
+        chat_history.append({'type': 'bot', 'message': bot_response})
+        session['chat_history'] = chat_history
+
+        return jsonify({'bot_response': bot_response})
+
+    return render_template('customer_support/kakigpt.html', user_name=current_user, chat_history=chat_history)
+
+
 
 
 @socketio.on('message')

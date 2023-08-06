@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="card w-75 mb-3 text-center text-bg-dark mx-auto d-flex outline-div">
-  <div class="card-body">
-    <h1 class="card-title">KAKI support 👨‍💻</h1>
-    <p class="card-text">Welcome to KAKI customer support, how may we assist you today ?</p>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-      >Raise a ticket <i class="fa-solid fa-plus"></i></button>
-  </div>
+    <div class="card-body">
+        <h1 class="card-title">KAKI support 👨‍💻</h1>
+        <p class="card-text">Welcome to KAKI customer support, how may we assist you today ?</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Raise a
+            ticket <i class="fa-solid fa-plus"></i></button>
+    </div>
 </div>
 
 {% include 'customer_support/ticket_creation_modal.html' %}
@@ -27,10 +27,13 @@
     <div class="accordion-item">
         <h2 class="accordion-header">
             <button class="accordion-button collapsed bg-secondary" type="button">
-                <span class="placeholder-glowing bg-dark" style="width: 70%; height: 1rem;"></span>
+                <span class="placeholder bg-dark" style="width: 70%; height: 1rem;"></span>
             </button>
         </h2>
         <div class="accordion-collapse collapse">
+            <div class="spinner-grow text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
             <div class="accordion-body bg-secondary">
                 <span class="placeholder bg-dark d-block mb-2" style="width: 90%; height: 1rem;"></span>
                 <span class="placeholder bg-dark d-block mb-2" style="width: 80%; height: 1rem;"></span>
@@ -51,6 +54,7 @@
         0% {
             background-position: -200% 0;
         }
+
         100% {
             background-position: 200% 0;
         }
@@ -87,4 +91,3 @@
 
 
 {% endblock %}
-

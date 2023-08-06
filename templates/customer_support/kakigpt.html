@@ -68,40 +68,66 @@
 <body>
 
     <div class="chat-container">
-        <!-- Chat Header -->
         <div class="chat-header d-flex justify-content-between align-items-center">
             <h2>KAKI GPT 🤖</h2>
-            <!-- Settings Button -->
             <button class="settings-btn">
                 <i class="bi bi-gear-fill"></i>
             </button>
         </div>
 
-        <!-- Chat Messages -->
         <div class="chat-messages">
-            <div class="chat-message">
-                Hello! How can I assist you today?
-            </div>
-
-            {% if user_message %}
-            <div class="chat-message user text-info-emphasis bg-info-subtle border border-info-subtle rounded-2">User: {{ user_message }}</div>
+            {% for chat in chat_history %}
+            {% if chat.type == 'user' %}
+            <div class="chat-message user text-info-emphasis bg-info-subtle border border-info-subtle rounded-2">User:
+                {{ chat.message }}</div>
+            {% else %}
+            <div class="chat-message">Bot: {{ chat.message }}</div>
             {% endif %}
-            {% if bot_response %}
-            <div class="chat-message">Bot: {{ bot_response }}</div>
-            {% endif %}
-
-            <!-- Add more messages as needed -->
+            {% endfor %}
         </div>
 
-        <!-- Chat Input -->
-        <form class="chat-input d-flex" action="/kakigpt" method="POST">
-            <input type="text"  name="user_message" class="form-control me-2" placeholder="Type your message...">
-            <button type="submit" class="btn btn-info">Send</button>
+        <form class="chat-input d-flex" action="/kakigpt" method="POST" id="chat-form">
+            <input type="text" name="user_message" id="user-input" class="form-control me-2"
+                placeholder="Type your message...">
+            <button type="submit" class="btn btn-info col-3" id="send-btn">Send</button>
+            <button class="btn btn-info col-3 d-none" type="button" disabled id="loading-btn">
+                <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+                <span role="status">thinking...</span>
+            </button>
         </form>
 
     </div>
-
+    <script>
+        $(document).ready(function() {
+            $('#chat-form').submit(function(e) {
+                e.preventDefault();  // Prevent the form from submitting normally
+    
+                let userMessage = $('#user-input').val();
+                $('#chat-content').append(`<div>User: ${userMessage}</div>`);
+                
+                // Hide the "Send" button and show the "Loading..." button
+                $('#send-btn').addClass('d-none');
+                $('#loading-btn').removeClass('d-none');
+    
+                $.post('/kakigpt', {user_message: userMessage}, function(data) {
+                    $('#chat-content').append(`<div>Bot: ${data.bot_response}</div>`);
+                    
+                    // Revert back to the original "Send" button
+                    $('#send-btn').removeClass('d-none');
+                    $('#loading-btn').addClass('d-none');
+                });
+    
+                $('#user-input').val('');  // Clear the input field
+            });
+        });
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+
 </body>
 
 {% endblock %}
