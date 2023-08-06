@@ -31,6 +31,7 @@ password = input('Enter password: ')
 try:
     user = pyreauth.sign_in_with_email_and_password(email, password)
     print(user)
+    print(f"token iDDDDDDDDDD {user['localId']}")
 
     # Get the Firebase user
     firebase_user = auth.get_user(user['localId'])
