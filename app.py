@@ -29,7 +29,7 @@ import asyncio
 import os
 from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
-from FAQ_worker import generate_faqs
+from customer_support.FAQ_worker import generate_faqs
 
 
 
@@ -340,6 +340,20 @@ def update_comment(comment_id):
     
     flash('Comment has been updated!', 'success')
     return redirect(request.referrer)
+
+
+@app.route('/kakigpt', methods=['GET', 'POST'])
+def kakiGPT():
+    bot_response = None
+    user_message = None
+
+    if request.method == 'POST':
+        user_message = request.form.get('user_message')
+        print(user_message)
+        bot_response = f"You said: {user_message}"
+        return redirect(url_for('kakiGPT'))
+
+    return render_template('customer_support/kakigpt.html', user_name=current_user, user_message=user_message, bot_response=bot_response)
 
 
 @socketio.on('message')
