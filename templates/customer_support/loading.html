@@ -1,13 +1,69 @@
-<!DOCTYPE html>
-<html>
+{% extends "template.html" %}
 
-<head>
-    <title>Loading...</title>
-</head>
+{% block content %}
+<div class="card w-75 mb-3 text-center text-bg-dark mx-auto d-flex outline-div">
+  <div class="card-body">
+    <h1 class="card-title">KAKI support 👨‍💻</h1>
+    <p class="card-text">Welcome to KAKI customer support, how may we assist you today ?</p>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+      >Raise a ticket <i class="fa-solid fa-plus"></i></button>
+  </div>
+</div>
 
-<body>
-    <h1>Generating FAQs, please wait...</h1>
-</body>
+{% include 'customer_support/ticket_creation_modal.html' %}
+
+
+
+<h1 class="text-center" id="FAQ">Frequently Asked Question</h1>
+
+
+<div class="accordion w-75 mx-auto bg-dark" id="accordionPanelsStayOpenExample">
+
+    <div class="alert alert-info d-flex align-items-center mb-3" role="alert">
+        <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
+        FAQs are generating, please wait...
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed bg-secondary" type="button">
+                <span class="placeholder bg-dark" style="width: 70%; height: 1rem;"></span>
+            </button>
+        </h2>
+        <div class="accordion-collapse collapse">
+            <div class="accordion-body bg-secondary">
+                <span class="placeholder bg-dark d-block mb-2" style="width: 90%; height: 1rem;"></span>
+                <span class="placeholder bg-dark d-block mb-2" style="width: 80%; height: 1rem;"></span>
+                <span class="placeholder bg-dark d-block mb-2" style="width: 85%; height: 1rem;"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .placeholder {
+        border-radius: 0.25rem;
+        display: inline-block;
+        animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .placeholder.bg-secondary {
+        background: linear-gradient(90deg, #6c757d 25%, #adb5bd 50%, #6c757d 75%);
+        background-size: 200% 100%;
+    }
+</style>
+
+
+
 
 <script>
     function checkFaqStatus() {
@@ -29,4 +85,6 @@
 
 </script>
 
-</html>
+
+{% endblock %}
+

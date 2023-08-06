@@ -44,6 +44,8 @@ template = """Question: {question}
 
 Using this information about helpdesk tickets: {formatted_template}
 
+Give a concise and general answer to the question above. dont mention the ticket ids and only look and the subject and description will writing the answer.
+
 Answer: Let's think step by step."""
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
 
