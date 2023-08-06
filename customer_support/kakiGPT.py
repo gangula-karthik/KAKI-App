@@ -42,11 +42,13 @@ falcon_llm = HuggingFaceHub(
 
 template = """Question: {question}
 
-Try to answer the question as a professional staff with years of experience but short and concise answers and greet the users if they greet you. If you dont know the answer, then using this information about helpdesk tickets: {formatted_template}
+Context: As a seasoned professional with extensive experience, provide a concise response to the query. If the user offers a greeting, reciprocate warmly. If the answer isn't immediately known, utilize the provided helpdesk ticket information: {formatted_template}.
 
-Give very concise answers that are no longer than 3 sentences.
+Guideline: Responses should be succinct, aiming for no more than three sentences.
 
-Answer: Let's think step by step."""
+Answer:
+
+"""
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
 
 
@@ -54,7 +56,7 @@ llm_chain = LLMChain(prompt=prompt_template, llm=falcon_llm)
 
 
 def generate_answers(prompt):
-    logging.info("Thinking...")
+    print("Thinking...")
     all_tickets_data = ""
 
     tickets = pyredb.child('tickets').get().val()
@@ -77,7 +79,7 @@ def generate_answers(prompt):
     response = llm_chain.run(formatted_prompt)
 
 
-    logging.info(f"questions have been answered.")
+    print(f"questions have been answered.")
 
     return response
 

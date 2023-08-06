@@ -348,8 +348,6 @@ def background_task_bot_message(user_message):
     return bot_response
 
 
-from flask import jsonify
-
 @app.route('/kakigpt', methods=['GET', 'POST'])
 def kakiGPT():
     chat_history = session.get('chat_history', [])
