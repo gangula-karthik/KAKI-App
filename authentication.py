@@ -217,7 +217,7 @@ def add_user_credentials():
                     email_verified = firebase_user.email_verified
                     if email_verified:
                         # Update user's custom claims to indicate email verification completed
-                        auth.set_custom_user_claims(user['localId'], {'emailVerified': True})
+                        auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
                         session.pop('pwd',None)  
                         print("Email verified.")
                         break
