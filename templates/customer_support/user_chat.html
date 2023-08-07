@@ -31,19 +31,17 @@
                     Chat with Friend 1
                 </div>
                 <div class="chat-messages d-flex flex-column" id="chatMessages">
-                    <!-- Chat messages will go here -->
-                    <div class="chat-message receiver">
-                        Hello, how can I help you?
-                        <div class="timestamp">10:15 AM</div>
+                    {% for ticket_id, ticket_data in messages.items() %}
+                    {% for msg_id, msg_data in ticket_data.items() %}
+                    <div class="chat-message {{ 'staff' if msg_data['user'] == 'Leap' else 'user' }}">
+                        {{ msg_data['content'] }}
+                        <div class="timestamp">{{ msg_data['timestamp'] }}</div>
                     </div>
-                    <div class="chat-message sender">
-                        I need help with my account.
-                        <div class="timestamp">10:16 AM</div>
-                    </div>
-                    <div class="chat-message sender">
-                        I need help with my account.
-                        <div class="timestamp">10:16 AM</div>
-                    </div>
+                    {% endfor %}
+                    {% endfor %}
+
+
+
 
                 </div>
                 <form action="/send_message" method="post" class="mt-3">
@@ -54,7 +52,7 @@
                         </div>
                     </div>
                 </form>
-                
+
             </div>
         </div>
     </div>

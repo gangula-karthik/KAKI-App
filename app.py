@@ -168,9 +168,15 @@ def faq_status():
 
 @app.route('/user_chat', methods=['GET'])
 def staffChat():
-    messages = pyredb.child("messages").get().val()
-    print(messages)
-    return render_template('customer_support/user_chat.html', user_name=current_user, messages=messages)
+    raw_messages = pyredb.child("messages").get().val()
+    # messages = []
+    # for ticket_id, ticket_data in raw_messages.items():
+    #     for msg_id, msg_data in ticket_data.items():
+    #         msg_data['type'] = 'staff' if msg_data['user'] == 'Leap' else 'user'
+    #         messages.append(msg_data)
+
+
+    return render_template('customer_support/user_chat.html', user_name=current_user, messages=raw_messages)
 
 
     
