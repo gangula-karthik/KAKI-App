@@ -436,6 +436,27 @@ def delete_user():
         # Handle any errors that may occur
         print('Error deleting user data:', str(e))
         return "Error deleting user data."
+    
+@app.route('/toggle_user', methods=['POST'])
+def toggle_user():
+    try:
+        data = request.get_json()
+        user_id = data['user_id']
+        is_disabled = data['is_disabled']
+
+        # Toggle the user's account status in Firebase Authentication
+        auth.update_user(user_id, disabled=not is_disabled)
+
+        # Update the "disabled" field in the Realtime Database
+        pyredb.child("Users").child("Consumer").child(user_id).update({"disabled": not is_disabled})
+
+        return "User status updated successfully!"
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error updating user status:', str(e))
+        return "Error updating user status.", 500
+
+
 
 #End for Account Management Routes
 

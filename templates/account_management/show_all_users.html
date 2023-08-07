@@ -24,8 +24,15 @@
           </div>
           <div class="text-right">
             <button class="btn btn-primary edit-btn" data-user-id="{{ user_id }}">Update Profile</button>
+            {% if user_data.get('disabled', false) %}
+              <button class="btn btn-success toggle-btn" data-user-id="{{ user_id }}" data-is-disabled="true">Enable</button>
+            {% else %}
+              <button class="btn btn-warning toggle-btn" data-user-id="{{ user_id }}" data-is-disabled="false">Disable</button>
+            {% endif %}
             <button class="btn btn-danger delete-btn" data-user-id="{{ user_id }}">Delete</button>
           </div>
+          
+          
         </div>
       </div>
     </div>
@@ -33,7 +40,6 @@
   </div>
 </div>
 {% endblock %}
-
 
 {% block javascript2 %}
 <script src="{{ url_for('static', filename='settings_admin_view.js') }}"></script>
