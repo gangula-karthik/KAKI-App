@@ -55,7 +55,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = True
+staffStatus = False
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -97,7 +97,6 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 
 #Account management Routes
-@app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -418,14 +417,14 @@ def delete_user():
 
 #End for Account Management Routes
 
-# @app.route('/', methods=['GET'])
-# def index():
-#     events = retreive_data_event()
-#     names = retreive_event_name(events)
-#     if staffStatus == 'user': 
-#         return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
-#     else:
-#         return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+@app.route('/', methods=['GET'])
+def eventTest():
+    events = retreive_data_event()
+    names = retreive_event_name(events)
+    if staffStatus: 
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+    else:
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
 # Changed the template to my own so that i can see the layout
 
 
