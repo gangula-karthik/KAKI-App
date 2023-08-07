@@ -52,7 +52,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = 'user'
+staffStatus = 'staff'
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
