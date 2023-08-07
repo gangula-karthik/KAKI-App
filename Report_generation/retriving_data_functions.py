@@ -156,7 +156,7 @@ def get_last_six_months():
     last_six_months = []
 
     for i in range(6):
-        last_six_months.append(calendar.month_name[today.month])
+        last_six_months.insert(0, calendar.month_name[today.month])
         today -= timedelta(days=today.day)
         today -= timedelta(days=1)
 
