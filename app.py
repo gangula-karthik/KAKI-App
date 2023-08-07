@@ -1157,7 +1157,37 @@ def handle_modal_submission():
     # Redirect to a page or return a response
     return redirect(url_for('marketplace'))
 
+@app.route('/transaction_get_value')
+def show_all_products():
+    try:
+        # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
+        all_users_data = pyredb.child("products").get().val()
 
+        return render_template('marketplace', all_users_data=all_users_data)
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error:', str(e))
+        # You can choose to show an error message or redirect the user to an error page
+        return redirect('/error-page')
+
+
+@app.route('/update_product', methods=['POST'])
+def update_product():
+    try:
+        # Get the user_id and user_data from the request's JSON payload
+        request_data = request.get_json()
+        user_data = request_data.get('user_data')
+
+        # Update the user data in Firebase
+        pyredb.child("products").update(user_data)
+
+        # Return a success message (if needed)
+        return "User data updated successfully"
+    except Exception as e:
+        # Handle any errors that may occur during the update process
+        print('Error updating user data:', str(e))
+        # You can choose to show an error message or return an error response
+        return "Error updating user data", 500
 
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
