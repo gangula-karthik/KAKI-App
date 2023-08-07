@@ -447,9 +447,9 @@ def Community_report():
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
     if staffStatus == 'user':
-        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contribute = 'Nameless', number_of_activities = '69', is_staff = False)
+        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', is_staff = False)
     else:
-        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contribute = 'Nameless', number_of_activities = '69', is_staff = True)
+        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', is_staff = True)
 
 
 @app.route('/save_data/com', methods=['POST'])
@@ -550,13 +550,13 @@ def Transactions_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
-    total_count = total_count_transactions()
-    total_cost = sum_cost_in_route()
-    total_received = sum_retrieve_in_route()
+    # total_count = total_count_transactions()
+    # total_cost = sum_cost_in_route()
+    # total_received = sum_retrieve_in_route()
     if staffStatus == 'user':
-        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = total_cost, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=False)
+        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,is_staff=False)
     else:
-        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = total_cost, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=True)
+        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,is_staff=True)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
@@ -575,24 +575,22 @@ def view_report(report_type,Report_id):
         current_year = data['current_year']
         listMonths = data['listMonths']
         line_data = data['line_data']
-        pie_data = data['pie_data']
+        number_of_activities = data['activities']
         most_contributed = data['most_contributed']
-        activities = data['activities']
-        pie_label = data['pie_label']
 
-        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,most_contributed=most_contributed,activities=activities,pie_label=pie_label)
+
+        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed)
     elif report_type == "Individual":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
         current_year = data['current_year']
         listMonths = data['list_months']
         line_data = data['line_data']
-        pie_data = data['pie_data']
         neighbours_helped = data['neighbours_helped']
         activities = data['activities']
-        pie_label = data['pie_label']
 
-        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,neighbours_helped=neighbours_helped,activities=activities,pie_label=pie_label)
+
+        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities)
 
     elif report_type == "Transaction":
         current_month = data['current_month']
@@ -692,9 +690,9 @@ def general_report():
     ListMonths = get_last_six_months()
 
     if staffStatus == 'staff':
-        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = 69, Total_users = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths, is_staff=True)
+        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, is_staff=True)
     else:
-        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = 69, Total_users = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths, is_staff=False)
+        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, is_staff=False)
 
     
 
