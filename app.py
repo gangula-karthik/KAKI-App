@@ -51,7 +51,7 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'leap'
+current_user = 'Leap'
 staffStatus = 'user'
 
 
@@ -168,7 +168,33 @@ def faq_status():
 
 @app.route('/user_chat', methods=['GET'])
 def staffChat():
-    return render_template('customer_support/user_chat.html', user_name=current_user)
+    messages = pyredb.child("messages").get().val()
+    print(messages)
+    return render_template('customer_support/user_chat.html', user_name=current_user, messages=messages)
+
+
+    
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    message_content = request.form.get('message')
+    data = {
+        "user": current_user,
+        "ticket_id": "123",
+        "staff_id": "456",
+        "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
+        "content": message_content
+    }
+    print(data)
+    pyredb.child("messages").push(data)
+    return redirect(url_for('staffChat'))
+
+
+
+def get_messages(user_uid, friend_uid):
+    return pyredb.child("messages").child(user_uid).child(friend_uid).get().val()
+
+
 
 
 def allowed_file(filename):
@@ -283,8 +309,6 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
-
-        
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
@@ -351,6 +375,7 @@ def background_task_bot_message(user_message):
     time.sleep(5)
     bot_response = generate_answers(user_message)
     return bot_response
+    
 
 
 @app.route('/kakigpt', methods=['GET', 'POST'])
@@ -372,12 +397,6 @@ def kakiGPT():
     return render_template('customer_support/kakigpt.html', user_name=current_user, chat_history=chat_history)
 
 
-
-
-@socketio.on('message')
-def handleMessage(msg):
-    print('Message: ' + msg)
-    send(msg, broadcast=True)
 
 # customer support staff routes
 

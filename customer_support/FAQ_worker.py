@@ -54,7 +54,7 @@ template = """Question: {question}
 
 Using this information about helpdesk tickets: {formatted_template}
 
-Give a concise and general answer to the question above. dont mention the ticket ids. Give the most important tickets or answers that apply to the most important ticket in your opinion. Reply as a customer support agent who is providing high quality support to the customers.
+Give a concise and general answer to the question above. DO NOT mention the ticket ids at all. Give the most important tickets or answers that apply to the most important ticket in your opinion. Reply as a customer support agent who is providing high quality support to the customers.
 
 Answer: Let's think step by step."""
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
