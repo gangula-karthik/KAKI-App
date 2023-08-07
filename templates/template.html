@@ -24,9 +24,9 @@
 
 
     {% if is_staff %}
-    {% include 'navbarUser.html' %}
-    {% else %}
     {% include 'navbarStaff.html' %}
+    {% else %}
+    {% include 'navbarUser.html' %}
     {% endif %}
 
     {% block javascript1 %} {% endblock %}
