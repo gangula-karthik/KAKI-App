@@ -55,7 +55,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = True
+staffStatus = False
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -97,7 +97,6 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 
 #Account management Routes
-@app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -418,14 +417,14 @@ def delete_user():
 
 #End for Account Management Routes
 
-# @app.route('/', methods=['GET'])
-# def index():
-#     events = retreive_data_event()
-#     names = retreive_event_name(events)
-#     if staffStatus == 'user': 
-#         return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
-#     else:
-#         return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+@app.route('/', methods=['GET'])
+def eventTest():
+    events = retreive_data_event()
+    names = retreive_event_name(events)
+    if staffStatus: 
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+    else:
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
 # Changed the template to my own so that i can see the layout
 
 
@@ -1157,7 +1156,37 @@ def handle_modal_submission():
     # Redirect to a page or return a response
     return redirect(url_for('marketplace'))
 
+@app.route('/transaction_get_value')
+def show_all_products():
+    try:
+        # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
+        all_users_data = pyredb.child("products").get().val()
 
+        return render_template('marketplace', all_users_data=all_users_data)
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error:', str(e))
+        # You can choose to show an error message or redirect the user to an error page
+        return redirect('/error-page')
+
+
+@app.route('/update_product', methods=['POST'])
+def update_product():
+    try:
+        # Get the user_id and user_data from the request's JSON payload
+        request_data = request.get_json()
+        user_data = request_data.get('user_data')
+
+        # Update the user data in Firebase
+        pyredb.child("products").update(user_data)
+
+        # Return a success message (if needed)
+        return "User data updated successfully"
+    except Exception as e:
+        # Handle any errors that may occur during the update process
+        print('Error updating user data:', str(e))
+        # You can choose to show an error message or return an error response
+        return "Error updating user data", 500
 
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
