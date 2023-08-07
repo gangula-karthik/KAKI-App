@@ -4,6 +4,7 @@ import colorlog
 from colorama import Fore
 import datetime
 import pyrebase
+import calendar
 import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
@@ -390,7 +391,7 @@ def Individual_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
     current_year = now.year
-    ListMonths = ["Jan","Feb","March","April","May","June"]
+    ListMonths = get_last_six_months()
     leaderboard_data = [
     {"name": "Player 1", "score": 100},
     {"name": "Player 2", "score": 36},
@@ -406,7 +407,7 @@ def Community_report():
     now = datetime.datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
-    ListMonths = ["Jan","Feb","March","April","May","June"]
+    ListMonths = get_last_six_months()
     leaderboard_data = [
         {"name": "Player 1", "score": 100},
         {"name": "Player 2", "score": 36},
@@ -562,7 +563,9 @@ def general_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
     current_year = now.year
-    ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
+    ListMonths = get_last_six_months()
+
+
     return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = 69, Total_users = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
 
     
