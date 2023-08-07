@@ -34,7 +34,9 @@ from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
-from googletrans import LANGUAGES
+from googletrans import LANGUAGES, Translator
+
+translator = Translator()
 
 
 
@@ -504,7 +506,6 @@ def staffChat(ticket_id):
 
     langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
 
-
     return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
@@ -522,6 +523,21 @@ def send_message(ticket_id, username):
 
 
 
+@app.route('/user_chat/<ticket_id>/set_language', methods=['POST'])
+def set_language(ticket_id):
+    selected_language = request.form.get('language')
+    print(selected_language)
+    
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
+    
+    for msg_id, msg_data in ticket_messages.items():
+        translated_text = translator.translate(msg_data['content'], dest=selected_language).text
+        msg_data['content'] = translated_text
+
+    langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
 
