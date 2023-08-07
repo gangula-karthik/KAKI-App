@@ -37,24 +37,26 @@ from customer_support.kakiGPT import generate_answers
 import time
 
 
+cred = credentials.Certificate("Account_management/credentials.json")
+firebase_admin.initialize_app(cred)
 
 config = {
-    "apiKey": load_dotenv("PYREBASE_API_TOKEN"),
+    "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
     "authDomain": "kaki-db097.firebaseapp.com",
     "projectId": "kaki-db097",
     "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
     "storageBucket": "kaki-db097.appspot.com",
+    "messagingSenderId": "521940680838",
+    "appId": "1:521940680838:web:96e15f16f11bb306c91107",
+    "measurementId": "G-QMBGXFXJET"
 }
-
-cred = credentials.Certificate('Account_management/credentials.json')
-firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
 
 app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Leap'
+current_user = 'Lep'
 staffStatus = False
 
 
@@ -97,6 +99,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 
 #Account management Routes
+@app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -189,6 +192,23 @@ def logout():
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
+        # Validate reCAPTCHA response
+        recaptcha_response = request.form['g-recaptcha-response']
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  
+        captcha_url = "https://www.google.com/recaptcha/api/siteverify"
+
+        data = {
+            'secret': secret_key,
+            'response': recaptcha_response
+        }
+
+        response = requests.post(captcha_url, data=data)
+        result = response.json()
+
+        if not result['success']:
+            unsuccessful = 'Please complete the reCAPTCHA verification.'
+            return render_template('account_management/login.html', umessage=unsuccessful)
+        
         pwd0 = request.form['user_pwd0']
         pwd1 = request.form['user_pwd1']
         if pwd0 == pwd1:
@@ -417,7 +437,7 @@ def delete_user():
 
 #End for Account Management Routes
 
-@app.route('/', methods=['GET'])
+@app.route('/eventTest', methods=['GET'])
 def eventTest():
     events = retreive_data_event()
     names = retreive_event_name(events)
