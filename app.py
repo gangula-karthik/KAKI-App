@@ -1170,23 +1170,6 @@ def show_all_products():
         return redirect('/error-page')
 
 
-@app.route('/update_product', methods=['POST'])
-def update_product():
-    try:
-        # Get the user_id and user_data from the request's JSON payload
-        request_data = request.get_json()
-        user_data = request_data.get('user_data')
-
-        # Update the user data in Firebase
-        pyredb.child("products").update(user_data)
-
-        # Return a success message (if needed)
-        return "User data updated successfully"
-    except Exception as e:
-        # Handle any errors that may occur during the update process
-        print('Error updating user data:', str(e))
-        # You can choose to show an error message or return an error response
-        return "Error updating user data", 500
 
 @app.route('/update_product', methods=['POST'])
 def update_product():
