@@ -1171,34 +1171,31 @@ def show_all_products():
 
 
 
-@app.route('/update_product', methods=['POST'])
-def update_product():
-    data = []
-    try:
-        # Get the user_id and user_data from the request's JSON payload
-        # request_data = request.get_json()
-        # user_data = request_data.get('user_data')
-        product_name = request.form.get('updatedProductName')
-        print(product_name)
-        product_description = request.form.get('updatedProductDescription')
-        print(product_description)
-        product_price = request.form.get('updatedProductPrice')
-        print(product_price)
-        product_condition = request.form.get('updatedProductCondition')
-        print(product_condition)
-        request_data = request.get_json()
-        user_data = request_data.get('user_data')
+@app.route('/update_product/<product_id>', methods=['POST'])
+def update_product(product_id):
+    # Retrieve form data
+    product_name = request.form.get('updatedProductName')
+    product_description = request.form.get('updatedProductDescription')
+    product_price = request.form.get('updatedProductPrice')
+    product_condition = request.form.get('updatedProductCondition')
 
-        # Update the user data in Firebase
-        pyredb.child("products").update(user_data)
+    # Construct the data dictionarys
+    data = {
+        "product_name": product_name,
+        "product_description": product_description,
+        "product_price": product_price,
+        "product_condition": product_condition,
+        "seller": current_user  # Assuming current_user is a global or session variable
+    }
 
-        # Return a success message (if needed)
-        return "User data updated successfully"
-    except Exception as e:
-        # Handle any errors that may occur during the update process
-        print('Error updating user data:', str(e))
-        # You can choose to show an error message or return an error response
-        return "Error updating user data", 500
+    print(data)
+
+    # Update the product in Firebase
+    pyredb.child(f"products/{product_id}").update(data)
+
+    return redirect(url_for('marketplace'))
+    
+    
 
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
