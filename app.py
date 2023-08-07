@@ -9,7 +9,7 @@ import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
 from customer_support.ticket import *
-from imageUploader import FirebaseStorageClient
+from customer_support.imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
