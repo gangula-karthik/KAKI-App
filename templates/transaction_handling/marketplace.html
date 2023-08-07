@@ -85,6 +85,15 @@
       font-size: 14px;
       color: #bdbdbd;
     }
+    .edit-button {
+    float: right;
+    margin-left: 10px;
+    padding: 0;
+    color: #007bff;
+    cursor: pointer;
+    margin-top:-230px;
+  }
+
   </style>
 </head>
 
@@ -186,6 +195,7 @@
         <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
+        <button class="btn btn-link edit-button" onclick="editProduct({{ product[0] }})">Edit</button>
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
         <form action="{{ url_for('delete_product', product_id=product[0]) }}" method="post">
           <button type="submit" class="btn btn-danger w-100 mt-2">Delete</button>

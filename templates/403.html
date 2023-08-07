@@ -1,0 +1,44 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+<style>
+    /* Dark Mode Styling */
+    body {
+        background-color: #1c1c1e;
+        color: #ebebeb;
+    }
+
+    .container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1 {
+        margin-bottom: 1rem;
+        font-size: 3rem;
+    }
+
+    p {
+        font-size: 1.2rem;
+    }
+</style>
+</head>
+
+
+<body>
+    <div class="container">
+        <h1>403 Forbidden</h1>
+        <p>You do not have permission to access this page. Only staff members can view this content.</p>
+    </div>
+    
+    <!-- Optional: Include Bootstrap JS (if you plan to use Bootstrap's JavaScript components) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+{% endblock %}
+

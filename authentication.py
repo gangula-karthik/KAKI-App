@@ -121,6 +121,23 @@ def logout():
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
+        # Validate reCAPTCHA response
+        recaptcha_response = request.form['g-recaptcha-response']
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  
+        captcha_url = "https://www.google.com/recaptcha/api/siteverify"
+
+        data = {
+            'secret': secret_key,
+            'response': recaptcha_response
+        }
+
+        response = requests.post(captcha_url, data=data)
+        result = response.json()
+
+        if not result['success']:
+            unsuccessful = 'Please complete the reCAPTCHA verification.'
+            return render_template('account_management/login.html', umessage=unsuccessful)
+        
         pwd0 = request.form['user_pwd0']
         pwd1 = request.form['user_pwd1']
         if pwd0 == pwd1:

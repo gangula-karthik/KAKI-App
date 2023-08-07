@@ -57,15 +57,23 @@ class Product:
             print("Error reading data from Firebase:", e)
             return None
 
-    def update_data_in_firebase(document_id, data_to_update):
-        try:
-            ref = db.reference(f'products/{document_id}')  # Reference to the RTDB location
-            ref.update(data_to_update)
-            print(f"Document '{document_id}' successfully updated in the database.")
-            return True
-        except Exception as e:
-            print("Error updating data in Firebase:", e)
-            return False
+    def update(self, attribute_values):
+        # Update specific attributes of the report instance
+        for attribute, value in attribute_values.items():
+            setattr(self, attribute, value)
+
+        # Save the updated report data to Firebase Realtime Database
+        ref = db.reference("products")
+        report_ref = ref.child(self.__title__)
+        report_data = {
+            "title": self.__title__,
+            "description": self.__description__,
+            "price": self.__price__,
+            "seller_name": self.__seller_name__,
+            "condition": self.__condition__,
+        }
+        report_ref.update(report_data)
+
 
     def delete_data_from_firebase(document_id):
         try:
@@ -120,34 +128,35 @@ def test_add_and_read_from_firebase():
     if data:
         print("Data read from Firebase:", data)
 
-if __name__ == "__main__":
-    test_add_and_read_from_firebase()
+# if __name__ == "__main__":
+#     test_add_and_read_from_firebase()
+#
+#
+# def create_sample_products():
+#     products_ref = db.reference('products')
+#     products_ref.set({
+#         'product1': {'price': 50},
+#         'product2': {'price': 30},
+#         'product3': {'price': 25}
+#     })
+#
+# def calculate_total_price():
+#     try:
+#         data_ref = db.reference('products')
+#         all_products = data_ref.get()
+#
+#         total_price = 0
+#         if all_products:
+#             for product_id, product_data in all_products.items():
+#                 price = product_data.get('price', 0)
+#                 total_price += price
+#
+#         return total_price
+#
+#     except Exception as e:
+#         print("Error reading data from Firebase:", e)
+#         return None
 
-
-def create_sample_products():
-    products_ref = db.reference('products')
-    products_ref.set({
-        'product1': {'price': 50},
-        'product2': {'price': 30},
-        'product3': {'price': 25}
-    })
-
-def calculate_total_price():
-    try:
-        data_ref = db.reference('products')
-        all_products = data_ref.get()
-
-        total_price = 0
-        if all_products:
-            for product_id, product_data in all_products.items():
-                price = product_data.get('price', 0)
-                total_price += price
-
-        return total_price
-
-    except Exception as e:
-        print("Error reading data from Firebase:", e)
-        return None
 
 
 
