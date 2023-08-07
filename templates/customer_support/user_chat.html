@@ -14,6 +14,7 @@
 
     {% block content %}
 
+
     <div class="container-fluid main-screen">
         <div class="row">
             <div class="col-4 sidebar-chat overflow-auto">
@@ -24,54 +25,79 @@
                 <ul class="friend-list list-unstyled">
                     {% for ticket_id, ticket_data in tickets.items() %}
                     <li class="ticket-item d-flex align-items-center mb-3">
-                        <!-- Show spinner only if ticket status is open -->
-                        {% if ticket_data.status == 'open' %}
+                        {% if ticket_data.get('status') == 'open' %}
                         <div class="spinner-grow text-success spinner-grow-sm" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         {% endif %}
                         <a href="{{ url_for('staffChat', ticket_id=ticket_id) }}" class="ml-3">
-                            <div class="ticket-title">Ticket ID: {{ ticket_id }}</div>
-                            <div class="ticket-info">User: {{ ticket_data.user_id }}</div>
-                            <div class="ticket-info">Date Opened: {{ ticket_data.opened_at }}</div>
-                            <div class="ticket-info">Status: {{ ticket_data.status }}</div>
+                            <div class="ticket-title">Ticket: {{ ticket_data.get('subject', 'N/A') }}</div>
+                            <div class="ticket-info">User: {{ ticket_data.get('user_id', 'N/A') }}</div>
+                            <div class="ticket-info">Date Opened: {{ ticket_data.get('opened_at', 'N/A') }}</div>
+                            <div class="ticket-info">Status: {{ ticket_data.get('status', 'N/A') }}</div>
                         </a>
                     </li>
                     {% endfor %}
                 </ul>
-
-
-
             </div>
             <div class="col-8">
-                <div class="chat-header">
-                    Chat about ticket {{ ticket_subject }}
+                <div class="chat-header d-flex justify-content-between align-items-center">
+                    Chat about ticket {% if ticket_id and tickets.get(ticket_id) %}{{ tickets[ticket_id].get('subject',
+                    'N/A') }}{% else %}N/A{% endif %}
+                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#languageModal">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>                    
                 </div>
+
                 <div class="chat-messages d-flex flex-column" id="chatMessages">
                     {% if messages %}
                     {% for msg_id, msg_data in messages.items() %}
-                    <div class="chat-message {{ 'staff' if msg_data['user'] == 'Leap' else 'user' }}">
-                        {{ msg_data['content'] }}
-                        <div class="timestamp">{{ msg_data['timestamp'] }}</div>
+                    <div class="chat-message {{ 'staff' if msg_data.get('user') == 'Leap' else 'user' }}">
+                        {{ msg_data.get('content', '') }}
+                        <div class="timestamp">{{ msg_data.get('timestamp', 'N/A') }}</div>
                     </div>
                     {% endfor %}
                     {% endif %}
                 </div>
-                <form action="/send_message/{{ ticket_id }}/{{ username }}" method="post" class="mt-3">
+                {% if ticket_id and username %}
+                <form action="{{ url_for('send_message', ticket_id=ticket_id, username=username) }}" method="post"
+                    class="mt-3">
                     <div class="input-group">
-                        <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
-                        <input type="hidden" name="username" value="{{ username }}">
                         <input type="text" name="message" class="form-control" placeholder="Type your message here...">
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-primary">Send</button>
                         </div>
                     </div>
                 </form>
-
-
+                {% endif %}
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="languageModalLabel">Select Language</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-select" id="languageSelect">
+                        {% for lang in langs %}
+                        <option value="{{ lang[0] }}">{{ lang[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveLanguage">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);

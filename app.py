@@ -23,7 +23,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import auth
 import requests
-
+import time
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
 from customer_support.comments import Comment
@@ -34,7 +34,7 @@ from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
-import time
+from googletrans import LANGUAGES
 
 
 
@@ -494,21 +494,22 @@ def faq_status():
 @app.route('/user_chat')
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={})
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user)
 
 
 @app.route('/user_chat/<ticket_id>', methods=['GET'])
 def staffChat(ticket_id):
-    all_tickets = pyredb.child("messages").get().val() or {}
-    ticket_messages = all_tickets.get(ticket_id, {})
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user)
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
 
+    langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
-    print("Ticket ID:", ticket_id)
-    print("Username:", username)
     message_content = request.form.get('message')
     data = {
         "user": current_user,  
@@ -518,6 +519,7 @@ def send_message(ticket_id, username):
     }
     pyredb.child(f"messages/{ticket_id}").push(data) 
     return redirect(url_for('staffChat', ticket_id=ticket_id))
+
 
 
 
