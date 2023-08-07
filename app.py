@@ -1170,10 +1170,22 @@ def show_all_products():
         return redirect('/error-page')
 
 
+
 @app.route('/update_product', methods=['POST'])
 def update_product():
+    data = []
     try:
         # Get the user_id and user_data from the request's JSON payload
+        # request_data = request.get_json()
+        # user_data = request_data.get('user_data')
+        product_name = request.form.get('updatedProductName')
+        print(product_name)
+        product_description = request.form.get('updatedProductDescription')
+        print(product_description)
+        product_price = request.form.get('updatedProductPrice')
+        print(product_price)
+        product_condition = request.form.get('updatedProductCondition')
+        print(product_condition)
         request_data = request.get_json()
         user_data = request_data.get('user_data')
 
