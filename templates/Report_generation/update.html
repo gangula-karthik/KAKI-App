@@ -8,11 +8,10 @@
 {% from "_formHelper.html" import render_field %}
 
 
-<h1 class="display-4">Update Event</h1>
+<h1 class="display-4">Update Event: {{ event.event_name }}</h1>
 
 <form id="eventForm" >
-        <label for="event_name">Event name:</label>
-        <input class="form-control" type="text" id="event_name" name="event_name" value="{{ event.event_name }}" required><br>
+
 
         <label for="venue">Venue:</label>
         <input class="form-control" type="text" id="venue" name="venue" value="{{ event.venue }}" required><br>
@@ -51,7 +50,7 @@
       event.preventDefault(); // Prevent the default form submission
 
       // Get form values
-      const event_name = document.getElementById("event_name").value;
+
       const venue = document.getElementById("venue").value;
       const event_date = document.getElementById("event_date").value;
       const time = document.getElementById("time").value;
@@ -62,7 +61,7 @@
 
       // Create a dictionary to store the form data
       const dataToSend = {
-        event_name: event_name,
+        event_name: '{{ event.event_name }}',
         venue: venue,
         event_date: event_date,
         time: time,

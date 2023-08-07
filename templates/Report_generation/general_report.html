@@ -18,22 +18,22 @@
 <h1 class = "title_report">My {{ current_year}} {{ current_month }} Transactions</h1>
 <div class = 'cards_for_trans'>
 <div class = "Line_graph_transaction_report">
-<!--    <canvas id = "Line1"></canvas>-->
- <h6 style="text-align: center;">Number of Transaction:</h6>
-    <h3 style="text-align: center;"> {{ Total_number }}</h3>
+    <canvas id = "Line1"></canvas>
+<!-- <h6 style="text-align: center;">Number of Transaction:</h6>-->
+<!--    <h3 style="text-align: center;"> {{ Total_number }}</h3>-->
 </div>
 
 
 <div class = "Line_graph_transaction_report">
-<!--    <canvas id = "Line2"></canvas>-->
- <h6 style="text-align: center;">Total Users:</h6>
-    <h3 style="text-align: center;"> {{ Total_users }}</h3>
+    <canvas id = "Line2"></canvas>
+<!-- <h6 style="text-align: center;">Total Users:</h6>-->
+<!--    <h3 style="text-align: center;"> {{ Total_users }}</h3>-->
 </div>
 
 <div class = "Line_graph_transaction_report">
-<!--    <canvas id = "Line3"></canvas>-->
- <h6 style="text-align: center;">Total number of community events:</h6>
-    <h3 style="text-align: center;"> {{ Total_community }}</h3>
+    <canvas id = "Line3"></canvas>
+<!-- <h6 style="text-align: center;">Total number of community events:</h6>-->
+<!--    <h3 style="text-align: center;"> {{ Total_community }}</h3>-->
 </div>
 </div>
 <div>
@@ -47,106 +47,106 @@
 
 {% block javascript2 %}
 
-<!--<script>-->
-<!--      var chrt1 = document.getElementById("Line1").getContext("2d");-->
-<!--      var chartId1 = new Chart(chrt1, {-->
-<!--         type: 'line',-->
-<!--         data: {-->
+<script>
+      var chrt1 = document.getElementById("Line1").getContext("2d");
+      var chartId1 = new Chart(chrt1, {
+         type: 'line',
+         data: {
 
-<!--            labels: {{ listMonths | tojson }},-->
+            labels: {{ listMonths | tojson }},
 
-<!--            datasets: [{-->
-<!--               label: "online tutorial subjects",-->
-<!--               data: {{ Total_spent | tojson }},-->
-<!--               backgroundColor: ['Green'],-->
-<!--               borderColor: ['black'],-->
-<!--               borderWidth: 2,-->
-<!--               pointRadius: 5,-->
-<!--            }],-->
-<!--         },-->
-<!--         options: {-->
-<!--            maintainAspectRatio: false,-->
-<!--            responsive: true,-->
-<!--            plugins:{-->
-<!--               title:{-->
-<!--                  display: true,-->
-<!--                  text: "My Community's points over the months",-->
-<!--                  color: '#FFFFFF',-->
-<!--                  font:{-->
-<!--                  size:20,},-->
-<!--                  }-->
-<!--            }-->
-<!--         },-->
-<!--      });-->
-<!--   </script>-->
-
-
-<!--<script>-->
-<!--      var chrt2 = document.getElementById("Line2").getContext("2d");-->
-<!--      var chartId2 = new Chart(chrt2, {-->
-<!--         type: 'line',-->
-<!--         data: {-->
-
-<!--            labels: {{ listMonths | tojson }},-->
-
-<!--            datasets: [{-->
-<!--               label: "online tutorial subjects",-->
-<!--               data: {{ Total_received | tojson}},-->
-<!--               backgroundColor: ['Green'],-->
-<!--               borderColor: ['black'],-->
-<!--               borderWidth: 2,-->
-<!--               pointRadius: 5,-->
-<!--            }],-->
-<!--         },-->
-<!--         options: {-->
-<!--            maintainAspectRatio: false,-->
-<!--            responsive: true,-->
-<!--            plugins:{-->
-<!--               title:{-->
-<!--                  display: true,-->
-<!--                  text: "My Community's points over the months",-->
-<!--                  color: '#FFFFFF',-->
-<!--                  font:{-->
-<!--                  size:20,},-->
-<!--                  }-->
-<!--            }-->
-<!--         },-->
-<!--      });-->
-<!--   </script>-->
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ Total_numberT | tojson }},
+               backgroundColor: ['Green'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "Number of transactions over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
+         },
+      });
+   </script>
 
 
-<!--<script>-->
-<!--      var chrt3 = document.getElementById("Line3").getContext("2d");-->
-<!--      var chartId3 = new Chart(chrt3, {-->
-<!--         type: 'line',-->
-<!--         data: {-->
+<script>
+      var chrt2 = document.getElementById("Line2").getContext("2d");
+      var chartId2 = new Chart(chrt2, {
+         type: 'line',
+         data: {
 
-<!--            labels: {{ listMonths | tojson }},-->
+            labels: {{ listMonths | tojson }},
 
-<!--            datasets: [{-->
-<!--               label: "online tutorial subjects",-->
-<!--               data: {{ Total_number | tojson }},-->
-<!--               backgroundColor: ['Green'],-->
-<!--               borderColor: ['black'],-->
-<!--               borderWidth: 2,-->
-<!--               pointRadius: 5,-->
-<!--            }],-->
-<!--         },-->
-<!--         options: {-->
-<!--            maintainAspectRatio: false,-->
-<!--            responsive: true,-->
-<!--            plugins:{-->
-<!--               title:{-->
-<!--                  display: true,-->
-<!--                  text: "My Community's points over the months",-->
-<!--                  color: '#FFFFFF',-->
-<!--                  font:{-->
-<!--                  size:20,},-->
-<!--                  }-->
-<!--            }-->
-<!--         },-->
-<!--      });-->
-<!--   </script>-->
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ Total_users | tojson}},
+               backgroundColor: ['Green'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "Total users over the month",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
+         },
+      });
+   </script>
+
+
+<script>
+      var chrt3 = document.getElementById("Line3").getContext("2d");
+      var chartId3 = new Chart(chrt3, {
+         type: 'line',
+         data: {
+
+            labels: {{ listMonths | tojson }},
+
+            datasets: [{
+               label: "online tutorial subjects",
+               data: {{ Total_community | tojson }},
+               backgroundColor: ['Green'],
+               borderColor: ['black'],
+               borderWidth: 2,
+               pointRadius: 5,
+            }],
+         },
+         options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins:{
+               title:{
+                  display: true,
+                  text: "Community events over the months",
+                  color: '#FFFFFF',
+                  font:{
+                  size:20,},
+                  }
+            }
+         },
+      });
+   </script>
 
 
 <script>
@@ -168,13 +168,12 @@ html2pdf().set(options).from(content).save();
         $(document).ready(function() {
         $('#saveButton').on('click', function() {
             var dataToSend = {
-
                 current_month: '{{ current_month }}',
                 current_year: '{{ current_year }}',
                 listMonths: {{ listMonths | tojson }}, // safe filter to avoid escaping the JSON string
-                Total_spent: {{ Total_spent | tojson }}, // safe filter to avoid escaping the JSON string
-                Total_received: {{ Total_received | tojson }}, // safe filter to avoid escaping the JSON string
-                Total_number: {{ Total_number | tojson  }}, // safe filter to avoid escaping the JSON string
+                Total_community: {{ Total_community | tojson }}, // safe filter to avoid escaping the JSON string
+                Total_users: {{ Total_users | tojson }}, // safe filter to avoid escaping the JSON string
+                Total_number: {{ Total_numberT | tojson  }}, // safe filter to avoid escaping the JSON string
             };
 
             $.ajax({

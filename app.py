@@ -2,8 +2,9 @@ import logging
 from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect
 import colorlog
 from colorama import Fore
-import datetime
+from datetime import datetime
 import pyrebase
+import calendar
 import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
@@ -53,7 +54,8 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'leap'
+current_user = 'Leap'
+staffStatus = 'user'
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -96,7 +98,10 @@ handler.setFormatter(colorlog.ColoredFormatter(
 def index():
     events = retreive_data_event()
     names = retreive_event_name(events)
-    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+    if staffStatus == 'user': 
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
+    else:
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
 # Changed the template to my own so that i can see the layout
 
 
@@ -166,7 +171,39 @@ def faq_status():
 
 @app.route('/user_chat', methods=['GET'])
 def staffChat():
-    return render_template('customer_support/user_chat.html', user_name=current_user)
+    raw_messages = pyredb.child("messages").get().val()
+    # messages = []
+    # for ticket_id, ticket_data in raw_messages.items():
+    #     for msg_id, msg_data in ticket_data.items():
+    #         msg_data['type'] = 'staff' if msg_data['user'] == 'Leap' else 'user'
+    #         messages.append(msg_data)
+
+
+    return render_template('customer_support/user_chat.html', user_name=current_user, messages=raw_messages)
+
+
+    
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    message_content = request.form.get('message')
+    data = {
+        "user": current_user,
+        "ticket_id": "123",
+        "staff_id": "456",
+        "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
+        "content": message_content
+    }
+    print(data)
+    pyredb.child(f"messages/{data['ticket_id']}").push(data)
+    return redirect(url_for('staffChat'))
+
+
+
+def get_messages(user_uid, friend_uid):
+    return pyredb.child("messages").child(user_uid).child(friend_uid).get().val()
+
+
 
 
 def allowed_file(filename):
@@ -281,8 +318,6 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
-
-        
     return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
@@ -349,6 +384,7 @@ def background_task_bot_message(user_message):
     time.sleep(5)
     bot_response = generate_answers(user_message)
     return bot_response
+    
 
 
 @app.route('/kakigpt', methods=['GET', 'POST'])
@@ -371,12 +407,6 @@ def kakiGPT():
 
 
 
-
-@socketio.on('message')
-def handleMessage(msg):
-    print('Message: ' + msg)
-    send(msg, broadcast=True)
-
 # customer support staff routes
 
 @app.route('/supportStaffOverview', methods=['GET'])
@@ -393,7 +423,7 @@ def Individual_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
     current_year = now.year
-    ListMonths = ["Jan","Feb","March","April","May","June"]
+    ListMonths = get_last_six_months()
     leaderboard_data = [
     {"name": "Player 1", "score": 100},
     {"name": "Player 2", "score": 36},
@@ -402,14 +432,21 @@ def Individual_report():
     {"name": "Player 5", "score": 69}
 ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = '69')
+    if staffStatus == 'user':
+        return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = '69', is_staff=False)
+    else:
+        return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data,
+                               user_name=current_user, current_month=month, line_data=[5, 6, 7, 8, 9, 10],
+                               current_year=current_year, listMonths=ListMonths, neighbours_helped='69',
+                               number_of_activities='69', is_staff=True)
 
+import datetime
 @app.route('/Report_generation/Community_report')
 def Community_report():
     now = datetime.datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
-    ListMonths = ["Jan","Feb","March","April","May","June"]
+    ListMonths = get_last_six_months()
     leaderboard_data = [
         {"name": "Player 1", "score": 100},
         {"name": "Player 2", "score": 36},
@@ -418,7 +455,11 @@ def Community_report():
         {"name": "Player 5", "score": 69}
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contribute = 'Nameless', number_of_activities = '69')
+    if staffStatus == 'user':
+        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', is_staff = False)
+    else:
+        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', is_staff = True)
+
 
 @app.route('/save_data/com', methods=['POST'])
 def save_data_com():
@@ -512,79 +553,26 @@ def save_data_trans():
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
 
-
-@app.route('/event_lists', methods=['GET'])
-def event_list():
-    events = retreive_data_event()
-    names = retreive_event_name(events)
-    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names)
-
-@app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
-def Event_details(report):
-    events = retreive_data_event()
-    details = retrieve_event_from_name(events, report)
-
-
-    return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details)
-
-@app.route('/Report_generation/update.html/<event_name>', methods = ['GET', 'POST'])
-def update(event_name):
-    events = retreive_data_event()
-    event_details = retrieve_event_from_name(events, event_name)
-    update_user_form = CreateUserForm(request.form)
-    return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details)
-
-@app.route('/updateEvent', methods=['POST'])
-def update_event():
-    data = request.get_json()
-
-    event_name = data.get('event_name')
-    original = extract_event_by_name(event_name)
-
-    try:
-        if original is None:
-            return jsonify({'message': 'Event not found'})
-
-        for key, value in data.items():
-            if key in original and original[key] != value:
-                original[key] = value
-
-        # Get a reference to the "Events" location in the database
-        ref = db.reference("Events")
-
-        # Update the existing data with the new data
-        ref.child(event_name).update(original)
-
-        return jsonify({'message': 'Updated'})
-    except Exception as e:
-        return jsonify({'message': 'Error during update'})
-
-import datetime
-@app.route('/Report_generation/general_report', methods=['GET'])
-def general_report():
-    now = datetime.datetime.now()
-    month = now.strftime("%B")
-    current_year = now.year
-    ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = 69, Total_users = 69, Total_number = 69,current_year=current_year,listMonths = ListMonths)
-
-    
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
 def Transactions_report():
     now = datetime.datetime.now()
     month = now.strftime("%B")
     current_year = now.year
-    ListMonths = ["Jan", "Feb", "March", "April", "May", "June"]
-    total_count = total_count_transactions()
-    total_cost = sum_cost_in_route()
-    total_received = sum_retrieve_in_route()
-    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = total_cost, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths)
+    ListMonths = get_last_six_months()
+    # total_count = total_count_transactions()
+    # total_cost = sum_cost_in_route()
+    # total_received = sum_retrieve_in_route()
+    if staffStatus == 'user':
+        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,is_staff=False)
+    else:
+        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,is_staff=True)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
     reports = get_all_reports()
     details = retrieve_report_name(reports)
-    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details)
+    if staffStatus == 'user':
+        return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details, is_staff=False)
 
 @app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
@@ -596,24 +584,22 @@ def view_report(report_type,Report_id):
         current_year = data['current_year']
         listMonths = data['listMonths']
         line_data = data['line_data']
-        pie_data = data['pie_data']
+        number_of_activities = data['activities']
         most_contributed = data['most_contributed']
-        activities = data['activities']
-        pie_label = data['pie_label']
 
-        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,most_contributed=most_contributed,activities=activities,pie_label=pie_label)
+
+        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed)
     elif report_type == "Individual":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
         current_year = data['current_year']
         listMonths = data['list_months']
         line_data = data['line_data']
-        pie_data = data['pie_data']
         neighbours_helped = data['neighbours_helped']
         activities = data['activities']
-        pie_label = data['pie_label']
 
-        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,pie_data = pie_data,neighbours_helped=neighbours_helped,activities=activities,pie_label=pie_label)
+
+        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities)
 
     elif report_type == "Transaction":
         current_month = data['current_month']
@@ -646,6 +632,79 @@ def delete_report():
     elif report_type == "Transaction":
         delete_Trans_from_firebase(report_id)
         return jsonify({"status": "success"})
+@app.route('/event_lists', methods=['GET'])
+def event_list():
+    events = retreive_data_event()
+    names = retreive_event_name(events)
+    if staffStatus == 'staff':
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+    else:
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
+
+@app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
+def Event_details(report):
+    events = retreive_data_event()
+    details = retrieve_event_from_name(events, report)
+
+    if staffStatus == 'staff':
+        return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details,is_staff=True)
+    else:
+        return render_template('/Report_generation/Event_details.html', user_name=current_user, details=details,
+                               is_staff=False)
+
+
+@app.route('/Report_generation/update.html/<event_name>', methods = ['GET', 'POST'])
+def update(event_name):
+    events = retreive_data_event()
+    event_details = retrieve_event_from_name(events, event_name)
+    update_user_form = CreateUserForm(request.form)
+    if staffStatus == 'staff':
+        return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details, is_staff=True)
+    else:
+        return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,
+                               event=event_details, is_staff=False)
+
+
+@app.route('/updateEvent', methods=['POST'])
+def update_event():
+    data = request.get_json()
+
+    event_name = data.get('event_name')
+    original = extract_event_by_name(event_name)
+
+    try:
+        if original is None:
+            return jsonify({'message': 'Event not found'})
+
+        for key, value in data.items():
+            if key in original and original[key] != value:
+                original[key] = value
+
+        # Get a reference to the "Events" location in the database
+        ref = db.reference("Events")
+
+        # Update the existing data with the new data
+        ref.child(event_name).update(original)
+
+        return jsonify({'message': 'Updated'})
+    except Exception as e:
+        return jsonify({'message': 'Error during update'})
+
+
+@app.route('/Report_generation/general_report', methods=['GET'])
+def general_report():
+    now = datetime.datetime.now()
+    month = now.strftime("%B")
+    current_year = now.year
+    ListMonths = get_last_six_months()
+
+    if staffStatus == 'staff':
+        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, is_staff=True)
+    else:
+        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, is_staff=False)
+
+    
+
 
 
 

@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, db, firestore
 from datetime import datetime, timedelta
 from calendar import month_abbr
+import calendar
 import pyrebase
 
 
@@ -149,3 +150,14 @@ def retrieve_participation_count(event_id):
             return 0  # Participation count not set for the event
     else:
         return 0  # Event document not found in Firestore
+
+def get_last_six_months():
+    today = datetime.now()
+    last_six_months = []
+
+    for i in range(6):
+        last_six_months.insert(0, calendar.month_name[today.month])
+        today -= timedelta(days=today.day)
+        today -= timedelta(days=1)
+
+    return last_six_months
