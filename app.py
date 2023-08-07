@@ -51,6 +51,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'leap'
+staffStatus = 'user'
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -93,7 +94,10 @@ handler.setFormatter(colorlog.ColoredFormatter(
 def index():
     events = retreive_data_event()
     names = retreive_event_name(events)
-    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+    if staffStatus == 'user': 
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
+    else:
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
 # Changed the template to my own so that i can see the layout
 
 
