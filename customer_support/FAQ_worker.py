@@ -15,8 +15,13 @@ from langchain.chains.summarize import load_summarize_chain
 from celery import Celery
 import logging
 
-load_dotenv(find_dotenv())
-HUGGINGFACEHUB_API_TOKEN = os.environ["HUGGINGFACEHUB_API_TOKEN"]
+try:
+    load_dotenv(find_dotenv())
+    HUGGINGFACEHUB_API_TOKEN = os.environ["HUGGINGFACEHUB_API_TOKEN"]
+except KeyError:
+    print("Error: HUGGINGFACEHUB_API_TOKEN not found in environment variables.")
+except Exception as e:
+    print(f"An unknown error occurred ({e})...")
 
 logging.info("Starting FAQ generation...")
 
