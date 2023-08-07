@@ -44,10 +44,10 @@
                     </div>
                     
                 </div>
-                <div class="chat-input">
-                    <input type="text" class="form-control" id="chatInput" placeholder="Type a message">
-                    <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
-                </div>
+                <form action="/send_message" method="post">
+                    <input type="text" name="message" placeholder="Type your message here...">
+                    <input type="submit" value="Send">
+                </form>
             </div>
         </div>
     </div>
