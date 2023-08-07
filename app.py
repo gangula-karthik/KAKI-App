@@ -55,7 +55,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = False
+staffStatus = True
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -492,26 +492,34 @@ def faq_status():
 
 
 
+@app.route('/user_chat')
+def listTickets():
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={})
+
+
 @app.route('/user_chat/<ticket_id>', methods=['GET'])
 def staffChat(ticket_id):
-    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
-    return render_template('customer_support/user_chat.html', user_name=current_user, messages=ticket_messages)
+    all_tickets = pyredb.child("messages").get().val() or {}
+    ticket_messages = all_tickets.get(ticket_id, {})
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user)
 
 
-    
 
-@app.route('/send_message', methods=['POST'])
-def send_message():
+@app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
+def send_message(ticket_id, username):
+    print("Ticket ID:", ticket_id)
+    print("Username:", username)
     message_content = request.form.get('message')
     data = {
-        "user": current_user,
+        "user": current_user,  
         "staff_id": "456",
         "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
         "content": message_content
     }
-    ticket_id = pyredb.child(f"messages/{data['ticket_id']}").push(data)
-    pyredb.child(f"tickets/{data['ticket_id']}/messages").update({"ticket_id": ticket_id})
-    return redirect(url_for('staffChat'))
+    pyredb.child(f"messages/{ticket_id}").push(data) 
+    return redirect(url_for('staffChat', ticket_id=ticket_id))
+
 
 
 
@@ -691,7 +699,7 @@ def update_comment(comment_id):
     return redirect(request.referrer)
 
 def background_task_bot_message(user_message):
-    time.sleep(5)
+    time.sleep(2)
     bot_response = generate_answers(user_message)
     return bot_response
     
@@ -726,14 +734,17 @@ def forbidden(e):
 
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
-    if staffStatus == True:
+    if staffStatus:
         return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
     else: 
         return abort(403)
 
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
-    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user)
+    if staffStatus:
+        return render_template('customer_support_staff/ticketManagement.html', user_name=current_user)
+    else: 
+        return abort(403)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
