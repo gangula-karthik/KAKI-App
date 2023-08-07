@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect
+from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect, abort
 import colorlog
 from colorama import Fore
 from datetime import datetime
@@ -55,7 +55,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = 'user'
+staffStatus = False
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -469,7 +469,6 @@ def customerOverview():
         flash('An error occurred while retrieving tickets, please try again later', 'error')
         tickets = None
       
-    # Only submit the task if it hasn't been submitted yet
     if future is None:
         future = executor.submit(generate_faqs)
 
@@ -493,17 +492,10 @@ def faq_status():
 
 
 
-@app.route('/user_chat', methods=['GET'])
-def staffChat():
-    raw_messages = pyredb.child("messages").get().val()
-    # messages = []
-    # for ticket_id, ticket_data in raw_messages.items():
-    #     for msg_id, msg_data in ticket_data.items():
-    #         msg_data['type'] = 'staff' if msg_data['user'] == 'Leap' else 'user'
-    #         messages.append(msg_data)
-
-
-    return render_template('customer_support/user_chat.html', user_name=current_user, messages=raw_messages)
+@app.route('/user_chat/<ticket_id>', methods=['GET'])
+def staffChat(ticket_id):
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
+    return render_template('customer_support/user_chat.html', user_name=current_user, messages=ticket_messages)
 
 
     
@@ -513,19 +505,13 @@ def send_message():
     message_content = request.form.get('message')
     data = {
         "user": current_user,
-        "ticket_id": "123",
         "staff_id": "456",
         "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
         "content": message_content
     }
-    print(data)
-    pyredb.child(f"messages/{data['ticket_id']}").push(data)
+    ticket_id = pyredb.child(f"messages/{data['ticket_id']}").push(data)
+    pyredb.child(f"tickets/{data['ticket_id']}/messages").update({"ticket_id": ticket_id})
     return redirect(url_for('staffChat'))
-
-
-
-def get_messages(user_uid, friend_uid):
-    return pyredb.child("messages").child(user_uid).child(friend_uid).get().val()
 
 
 
@@ -733,9 +719,17 @@ def kakiGPT():
 
 # customer support staff routes
 
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('403.html'), 403
+
+
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
-    return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
+    if staffStatus == True:
+        return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
+    else: 
+        return abort(403)
 
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
