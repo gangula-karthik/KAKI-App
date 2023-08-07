@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify
+from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect
 import colorlog
 from colorama import Fore
 import datetime
@@ -12,7 +12,6 @@ from imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, session
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 from Report_generation.Admin_classes import *
 from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
@@ -21,6 +20,9 @@ from Report_generation.retriving_data_functions import *
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+from firebase_admin import auth
+import requests
+
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
 from customer_support.comments import Comment
@@ -31,6 +33,7 @@ from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
+import time
 
 
 
