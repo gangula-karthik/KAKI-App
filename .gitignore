@@ -164,3 +164,6 @@ cython_debug/
 **/serviceAccountKey.json
 **/credentials.json
 .DS_Store
+
+# ignore the test files
+customer_support/experiments

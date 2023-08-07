@@ -9,7 +9,7 @@ import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
 from customer_support.ticket import *
-from imageUploader import FirebaseStorageClient
+from customer_support.imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
@@ -23,7 +23,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import auth
 import requests
-
+import time
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
 from customer_support.comments import Comment
@@ -34,7 +34,9 @@ from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
-import time
+from googletrans import LANGUAGES, Translator
+
+translator = Translator()
 
 
 cred = credentials.Certificate("Account_management/credentials.json")
@@ -514,21 +516,21 @@ def faq_status():
 @app.route('/user_chat')
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={})
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user)
 
 
 @app.route('/user_chat/<ticket_id>', methods=['GET'])
 def staffChat(ticket_id):
-    all_tickets = pyredb.child("messages").get().val() or {}
-    ticket_messages = all_tickets.get(ticket_id, {})
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user)
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
 
+    langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
-    print("Ticket ID:", ticket_id)
-    print("Username:", username)
     message_content = request.form.get('message')
     data = {
         "user": current_user,  
@@ -540,6 +542,22 @@ def send_message(ticket_id, username):
     return redirect(url_for('staffChat', ticket_id=ticket_id))
 
 
+
+@app.route('/user_chat/<ticket_id>/set_language', methods=['POST'])
+def set_language(ticket_id):
+    selected_language = request.form.get('language')
+    print(selected_language)
+    
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
+    
+    for msg_id, msg_data in ticket_messages.items():
+        translated_text = translator.translate(msg_data['content'], dest=selected_language).text
+        msg_data['content'] = translated_text
+
+    langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
 
@@ -1191,34 +1209,31 @@ def show_all_products():
 
 
 
-@app.route('/update_product', methods=['POST'])
-def update_product():
-    data = []
-    try:
-        # Get the user_id and user_data from the request's JSON payload
-        # request_data = request.get_json()
-        # user_data = request_data.get('user_data')
-        product_name = request.form.get('updatedProductName')
-        print(product_name)
-        product_description = request.form.get('updatedProductDescription')
-        print(product_description)
-        product_price = request.form.get('updatedProductPrice')
-        print(product_price)
-        product_condition = request.form.get('updatedProductCondition')
-        print(product_condition)
-        request_data = request.get_json()
-        user_data = request_data.get('user_data')
+@app.route('/update_product/<product_id>', methods=['POST'])
+def update_product(product_id):
+    # Retrieve form data
+    product_name = request.form.get('updatedProductName')
+    product_description = request.form.get('updatedProductDescription')
+    product_price = request.form.get('updatedProductPrice')
+    product_condition = request.form.get('updatedProductCondition')
 
-        # Update the user data in Firebase
-        pyredb.child("products").update(user_data)
+    # Construct the data dictionarys
+    data = {
+        "product_name": product_name,
+        "product_description": product_description,
+        "product_price": product_price,
+        "product_condition": product_condition,
+        "seller": current_user  # Assuming current_user is a global or session variable
+    }
 
-        # Return a success message (if needed)
-        return "User data updated successfully"
-    except Exception as e:
-        # Handle any errors that may occur during the update process
-        print('Error updating user data:', str(e))
-        # You can choose to show an error message or return an error response
-        return "Error updating user data", 500
+    print(data)
+
+    # Update the product in Firebase
+    pyredb.child(f"products/{product_id}").update(data)
+
+    return redirect(url_for('marketplace'))
+    
+    
 
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
