@@ -186,7 +186,7 @@ def send_message():
         "content": message_content
     }
     print(data)
-    pyredb.child("messages").push(data)
+    pyredb.child(f"messages/{data['ticket_id']}").push(data)
     return redirect(url_for('staffChat'))
 
 
