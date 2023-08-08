@@ -186,6 +186,11 @@
   <div class="container">
     {% for product in products %}
     <div class="card text-bg-dark position-relative " style="width: 23rem;">
+      {% if is_staff %}
+      <button class="btn btn-danger position-absolute top-0 end-0 m-2" data-toggle="modal" data-target="#flagModal" onclick="openFlagModal('{{ product[0] }}')">
+        <i class="fas fa-flag"></i>
+      </button>
+      {% endif %}
       <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title"><strong>{{ product[1].product_name }}</strong></h5>
@@ -203,8 +208,33 @@
         </form>
       </div>
     </div>
-
     {% endfor %}
+</div>
+
+    <!-- Flag Reason Modal -->
+<div class="modal fade" id="flagModal" tabindex="-1" aria-labelledby="flagModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="flagModalLabel">Flag Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="flagForm">
+          <div class="mb-3">
+            <label for="flagReason" class="form-label">Reason for Flagging</label>
+            <textarea class="form-control" id="flagReason" name="flagReason" rows="3" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitFlag()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
     <div class="modal fade" id="exampleModalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
@@ -251,6 +281,31 @@
       </div>
     </div>
   </div>
+  <script>
+function openFlagModal(productId) {
+    // Set the value of the product ID input field
+    document.getElementById('productIdInput').value = productId;
+
+    // Open the flag modal
+    $('#flagModal').modal('show');
+}
+
+function submitFlag() {
+    const flagReason = document.getElementById('flagReason').value;
+    const productId = document.getElementById('productIdInput').value;
+
+    // Handle flagging logic here, including submitting the reason and product ID
+    console.log('Flagged product:', productId);
+    console.log('Flag reason:', flagReason);
+
+    // Close the modal
+    $('#flagModal').modal('hide');
+
+    // Display success message
+    window.alert('Successfully Flagged');
+}
+</script>
+
 
   <script>
 
