@@ -1332,5 +1332,40 @@ def services():
     return render_template('transaction_handling/services.html')
 
 
+@app.route('/update_service/<product_id>', methods=['POST'])
+def update_product(product_id):
+    # Retrieve form data
+
+
+    # change all these
+    product_name = request.form.get('updatedProductName')
+    product_description = request.form.get('updatedProductDescription')
+    product_price = request.form.get('updatedProductPrice')
+    product_condition = request.form.get('updatedProductCondition')
+
+    # Construct the data dictionarys
+    data = {
+        "product_name": product_name,
+        "product_description": product_description,
+        "product_price": product_price,
+        "product_condition": product_condition,
+        "seller": current_user  # Assuming current_user is a global or session variable
+    }
+
+    print(data)
+
+    # Update the product in Firebase
+    pyredb.child(f"products/{product_id}").update(data)
+
+    return redirect(url_for('service'))
+
+
+@app.route('/delete_service/<string:product_id>', methods=['POST'])
+def delete_product(product_id):
+    pyredb.child('products').child(product_id).remove()
+    flash('Product has been deleted')
+    return redirect(url_for('service'))
+
+
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000)
