@@ -22,11 +22,21 @@ font-size:30px;
 {% block content %}
 
 <div>
-            {% for report in events %}
-            <div  class="saved_cards">
-                    <a class='link_report' href="/Report_generation/Event_details.html/{{ report }}">{{report}}</a>
-            </div>
-
-            {% endfor %}
+    <h1>Event reports</h1>
+    {% if events %}
+    {% for report in events %}
+        <div class="saved_cards">
+            <a class='link_report' href="/Report_generation/Event_details.html/{{ report }}">{{ report }}</a>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="container d-flex align-items-center justify-content-center" style="height: 70vh;">
+    <div class="text-center">
+      <h1 style="font-size: 4rem;">💀</h1>
+      <h3 style="font-size: 3rem;">Well, this is awkward</h3>
+      <h6>Looks like there is nothing right now. There are no events.</h6>
+    </div>
+  </div>
+{% endif %}
 </div>
 {% endblock %}
