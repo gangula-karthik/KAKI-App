@@ -60,11 +60,8 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = "Matt" # I need this to be retrieved from the session
-user_status = "Staff" # I need this to be retrieved from the session
-# current_user = session.get('username', None) # I need this to be retrieved from the session
-# user_status = session.get('status', None) # I need this to be retrieved from the session
-staffStatus = user_status == "Staff"
+current_user = None
+staffStatus = None
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -93,6 +90,8 @@ handler.setFormatter(colorlog.ColoredFormatter(
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    global current_user
+    global staffStatus
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
@@ -155,19 +154,25 @@ def index():
 
                 if username:
                     session["username"] = username
+                    current_user = session["username"]
                     print("Username:", session["username"])
                 else:
                     print("Username not found in the database.")
 
                 if status:
                     session["status"] = status
+                    staffStatus = session["status"] == "Staff"
                     print("Status:", session["status"])
                 else:
                     print("Status not found in the database.")
             except Exception as db_exception:
                 print("Error fetching data from the Realtime Database:", str(db_exception))
 
-            return redirect('/staff/users')
+            if staffStatus:    
+                return redirect('/supportStaffOverview')
+            else:
+                return redirect('/home')
+
             # return redirect('/dashboard')
         except Exception as auth_exception:
             print("Authentication failed:", str(auth_exception))
