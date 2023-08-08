@@ -85,15 +85,15 @@
       font-size: 14px;
       color: #bdbdbd;
     }
-    .edit-button {
-    float: right;
-    margin-left: 10px;
-    padding: 0;
-    color: #007bff;
-    cursor: pointer;
-    margin-top:-230px;
-  }
 
+    .edit-button {
+      float: right;
+      margin-left: 10px;
+      padding: 0;
+      color: #007bff;
+      cursor: pointer;
+      margin-top: -230px;
+    }
   </style>
 </head>
 
@@ -195,7 +195,8 @@
         <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
-        <button class="btn btn-link edit-button" onclick="editProduct({{ product[0] }})">Edit</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalEdit"
+          data-product-id="{{ product[0] }}">Edit</button>
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
         <form action="{{ url_for('delete_product', product_id=product[0]) }}" method="post">
           <button type="submit" class="btn btn-danger w-100 mt-2">Delete</button>
@@ -204,9 +205,71 @@
     </div>
 
     {% endfor %}
+
+
+    <div class="modal fade" id="exampleModalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit Product</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" id="editForm" action="/update_product/placeholder">
+              <div class="mb-3">
+                <label for="updatedProductName" class="form-label">Updated Product Name:</label>
+                <input type="text" class="form-control" id="updatedProductName" name="updatedProductName" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="updatedProductDescription" class="form-label">Updated Product Description:</label>
+                <input type="text" class="form-control" id="updatedProductDescription" name="updatedProductDescription"
+                  required>
+              </div>
+
+              <div class="mb-3">
+                <label for="updatedProductPrice" class="form-label">Updated Product Price:</label>
+                <input type="text" class="form-control" id="updatedProductPrice" name="updatedProductPrice" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="updatedProductCondition" class="form-label">Updated Product Condition:</label>
+                <input type="text" class="form-control" id="updatedProductCondition" name="updatedProductCondition"
+                  required>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Modal -->
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const editButtons = document.querySelectorAll('[data-toggle="modal"][data-target="#exampleModalEdit"]');
+      const editForm = document.getElementById('editForm');
+
+      editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const productId = button.getAttribute('data-product-id');
+          editForm.action = `/update_product/${productId}`;
+        });
+      });
+    });
+
+
+  </script>
+
+
   <div class="modal fade" id="buyPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content text-bg-dark">
@@ -216,7 +279,6 @@
         </div>
         <div class="modal-body">
           <form id="transactionForm">
-            <!-- Additional form fields -->
             <div class="mb-3">
               <label for="name" class="form-label">Name:</label>
               <input type="text" class="form-control" id="name" name="name" required placeholder="John Doe">

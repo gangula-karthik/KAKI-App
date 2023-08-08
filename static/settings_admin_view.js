@@ -103,3 +103,81 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const enableButtons = document.querySelectorAll(".enable-btn");
+    const disableButtons = document.querySelectorAll(".disable-btn");
+  
+    enableButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const userId = button.getAttribute("data-user-id");
+        toggleUserStatus(userId, false);
+      });
+    });
+  
+    disableButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const userId = button.getAttribute("data-user-id");
+        toggleUserStatus(userId, true);
+      });
+    });
+  });
+  
+  function disableUser(userId) {
+    // Send a POST request to the server to disable the user
+    fetch('/disable_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: userId }),
+    })
+      .then((response) => response.text())
+      .then((message) => {
+        alert(message);
+        // Reload the page after disabling the user
+        location.reload();
+      })
+      .catch((error) => {
+        console.error('Error disabling user:', error);
+      });
+  }
+
+  document.querySelectorAll('.disable-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const userId = btn.getAttribute('data-user-id');
+      disableUser(userId);
+    });
+  });
+
+  function toggleUser(userId, isDisabled) {
+    // Toggle the user's account status (enable/disable) and send a POST request to the server
+    fetch('/toggle_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: userId, is_disabled: isDisabled }),
+    })
+      .then((response) => response.text())
+      .then((message) => {
+        alert(message);
+        // Reload the page after updating the user's account status
+        location.reload();
+      })
+      .catch((error) => {
+        console.error('Error updating user account:', error);
+      });
+  }
+  
+  document.querySelectorAll('.toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const userId = btn.getAttribute('data-user-id');
+      const isDisabled = btn.getAttribute('data-is-disabled') === 'true';
+      // Toggle the user's account status (enable if currently disabled, disable if currently enabled)
+      toggleUser(userId, isDisabled);
+    });
+  });
+  
+  

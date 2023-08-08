@@ -9,7 +9,7 @@ import sys
 sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
 from customer_support.ticket import *
-from imageUploader import FirebaseStorageClient
+from customer_support.imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
@@ -23,7 +23,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import auth
 import requests
-
+import time
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
 from customer_support.comments import Comment
@@ -34,27 +34,31 @@ from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
-import time
+from googletrans import LANGUAGES, Translator
+
+translator = Translator()
 
 
+cred = credentials.Certificate("Account_management/credentials.json")
+firebase_admin.initialize_app(cred)
 
 config = {
-    "apiKey": load_dotenv("PYREBASE_API_TOKEN"),
+    "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
     "authDomain": "kaki-db097.firebaseapp.com",
     "projectId": "kaki-db097",
     "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
     "storageBucket": "kaki-db097.appspot.com",
+    "messagingSenderId": "521940680838",
+    "appId": "1:521940680838:web:96e15f16f11bb306c91107",
+    "measurementId": "G-QMBGXFXJET"
 }
-
-cred = credentials.Certificate('Account_management/credentials.json')
-firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
 
 app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Leap'
+current_user = 'Lep'
 staffStatus = False
 
 
@@ -97,6 +101,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 
 #Account management Routes
+@app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -189,6 +194,23 @@ def logout():
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
+        # Validate reCAPTCHA response
+        recaptcha_response = request.form['g-recaptcha-response']
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  
+        captcha_url = "https://www.google.com/recaptcha/api/siteverify"
+
+        data = {
+            'secret': secret_key,
+            'response': recaptcha_response
+        }
+
+        response = requests.post(captcha_url, data=data)
+        result = response.json()
+
+        if not result['success']:
+            unsuccessful = 'Please complete the reCAPTCHA verification.'
+            return render_template('account_management/login.html', umessage=unsuccessful)
+        
         pwd0 = request.form['user_pwd0']
         pwd1 = request.form['user_pwd1']
         if pwd0 == pwd1:
@@ -414,10 +436,31 @@ def delete_user():
         # Handle any errors that may occur
         print('Error deleting user data:', str(e))
         return "Error deleting user data."
+    
+@app.route('/toggle_user', methods=['POST'])
+def toggle_user():
+    try:
+        data = request.get_json()
+        user_id = data['user_id']
+        is_disabled = data['is_disabled']
+
+        # Toggle the user's account status in Firebase Authentication
+        auth.update_user(user_id, disabled=not is_disabled)
+
+        # Update the "disabled" field in the Realtime Database
+        pyredb.child("Users").child("Consumer").child(user_id).update({"disabled": not is_disabled})
+
+        return "User status updated successfully!"
+    except Exception as e:
+        # Handle any errors that may occur
+        print('Error updating user status:', str(e))
+        return "Error updating user status.", 500
+
+
 
 #End for Account Management Routes
 
-@app.route('/', methods=['GET'])
+@app.route('/eventTest', methods=['GET'])
 def eventTest():
     events = retreive_data_event()
     names = retreive_event_name(events)
@@ -494,21 +537,21 @@ def faq_status():
 @app.route('/user_chat')
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={})
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user)
 
 
 @app.route('/user_chat/<ticket_id>', methods=['GET'])
 def staffChat(ticket_id):
-    all_tickets = pyredb.child("messages").get().val() or {}
-    ticket_messages = all_tickets.get(ticket_id, {})
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user)
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
 
+    langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
-    print("Ticket ID:", ticket_id)
-    print("Username:", username)
     message_content = request.form.get('message')
     data = {
         "user": current_user,  
@@ -520,6 +563,22 @@ def send_message(ticket_id, username):
     return redirect(url_for('staffChat', ticket_id=ticket_id))
 
 
+
+@app.route('/user_chat/<ticket_id>/set_language', methods=['POST'])
+def set_language(ticket_id):
+    selected_language = request.form.get('language')
+    print(selected_language)
+    
+    all_tickets = pyredb.child("tickets").get().val() or {}
+    ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
+    
+    for msg_id, msg_data in ticket_messages.items():
+        translated_text = translator.translate(msg_data['content'], dest=selected_language).text
+        msg_data['content'] = translated_text
+
+    langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
 
 
@@ -1170,23 +1229,32 @@ def show_all_products():
         return redirect('/error-page')
 
 
-@app.route('/update_product', methods=['POST'])
-def update_product():
-    try:
-        # Get the user_id and user_data from the request's JSON payload
-        request_data = request.get_json()
-        user_data = request_data.get('user_data')
 
-        # Update the user data in Firebase
-        pyredb.child("products").update(user_data)
+@app.route('/update_product/<product_id>', methods=['POST'])
+def update_product(product_id):
+    # Retrieve form data
+    product_name = request.form.get('updatedProductName')
+    product_description = request.form.get('updatedProductDescription')
+    product_price = request.form.get('updatedProductPrice')
+    product_condition = request.form.get('updatedProductCondition')
 
-        # Return a success message (if needed)
-        return "User data updated successfully"
-    except Exception as e:
-        # Handle any errors that may occur during the update process
-        print('Error updating user data:', str(e))
-        # You can choose to show an error message or return an error response
-        return "Error updating user data", 500
+    # Construct the data dictionarys
+    data = {
+        "product_name": product_name,
+        "product_description": product_description,
+        "product_price": product_price,
+        "product_condition": product_condition,
+        "seller": current_user  # Assuming current_user is a global or session variable
+    }
+
+    print(data)
+
+    # Update the product in Firebase
+    pyredb.child(f"products/{product_id}").update(data)
+
+    return redirect(url_for('marketplace'))
+    
+    
 
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
