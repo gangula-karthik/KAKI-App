@@ -60,7 +60,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = False
+staffStatus = True
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -538,7 +538,10 @@ def faq_status():
 @app.route('/user_chat')
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user)
+    if staffStatus:
+        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+    else:
+        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
 
 
 @app.route('/user_chat/<ticket_id>', methods=['GET', 'POST'])
@@ -554,7 +557,10 @@ def staffChat(ticket_id):
         translated_text = translator.translate(msg_data['content'], dest=selected_language).text
         msg_data['content'] = translated_text
 
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
+    if staffStatus:
+        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, is_staff=staffStatus, langs=langs)
+    else:
+        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs, is_staff=staffStatus)
 
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
@@ -724,7 +730,11 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
-    return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
+    
+    if staffStatus:
+        return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets, is_staff=staffStatus)
+    else:
+        return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
 def getComments(): 
@@ -825,7 +835,7 @@ def forbidden(e):
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
     if staffStatus:
-        return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
+        return render_template('customer_support_staff/staffOverview.html', user_name=current_user, is_staff=staffStatus)
     else: 
         return abort(403)
     
@@ -883,7 +893,7 @@ def staffTicketDashboard():
 
     avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
 
-    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members)
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members, is_staff=staffStatus)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
