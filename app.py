@@ -156,7 +156,7 @@ def index():
                         time.sleep(5)  # Add a 5-second delay before checking again
             else:
                 print("Email already verified.")
-            return redirect('/staff/users')
+            return redirect('/supportStaffOverview')
             # return redirect('/dashboard')
         except:
             unsuccessful = 'Please check your credentials'
