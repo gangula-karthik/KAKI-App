@@ -1325,7 +1325,7 @@ def marketplace():
 
     products = [(id, productInfo) for id, productInfo in allProducts.items()]
     
-    return render_template('/transaction_handling/marketplace.html', products = products, username = current_user)
+    return render_template('/transaction_handling/marketplace.html', products = products, username = current_user, is_staff=staffStatus)
 
 
 
