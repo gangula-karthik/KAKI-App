@@ -1309,6 +1309,9 @@ def delete_product(product_id):
     flash('Product has been deleted')
     return redirect(url_for('marketplace'))
 
+@app.route('/transaction_handling/services')
+def services():
+    return render_template('transaction_handling/services.html')
 
 
 if __name__ == '__main__':

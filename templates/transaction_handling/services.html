@@ -1,0 +1,446 @@
+{% extends "template.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/marketplace.html" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Marketplace</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      color: #f0ebeb;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    .product img {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .product-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 0 5px;
+    }
+
+    .product-description {
+      margin: 0 0 5px;
+    }
+
+    .product-price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #f0ebeb;
+      margin-bottom: 10px;
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .product-info div {
+      margin-bottom: 5px;
+    }
+
+    .seller-name,
+    .rating,
+    .item-condition {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .text-muted-on-dark {
+      font-size: 14px;
+      color: #bdbdbd;
+    }
+
+    .edit-button {
+      float: right;
+      margin-left: 10px;
+      padding: 0;
+      color: #007bff;
+      cursor: pointer;
+      margin-top: -230px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Marketplace</h1>
+  </header>
+  <div class="search-container">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search for products..."
+      style="padding: 5px 10px; ; border-radius:7px;">
+    <button onclick="searchProducts()"
+      style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
+    <div id="searchResultsContainer">
+    </div>
+    <!-- <button onclick="showSellForm()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button> -->
+    <button type="button" class="btn btn-primary"
+      style="padding: 6px 35px;color:#fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;"
+      data-bs-toggle="modal" data-bs-target="#sellServices">
+      Sell
+    </button>
+
+    <!-- selling products modal -->
+    <div class="modal fade" id="sellProducts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Product Details</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="POST" action="{{ url_for('handle_modal_submission') }}">
+            <div class="modal-body">
+              <label for="productName" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="productName" name="productName">
+
+              <label for="productDescription" class="form-label">Product Description</label>
+              <input type="text" class="form-control" id="productDescription" name="productDescription">
+              <label for="productDescription" class="form-label">Product Price</label>
+              <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <input type="text" name="productPrice" class="form-control">
+              </div>
+
+
+              <div>
+                <label for="productCondition" class="form-label">Product Condition</label> <br>
+                <input type="radio" class="form-check-input" id="productConditionNew" name="productCondition"
+                  value="New" {{ 'checked' if product_condition=='New' }}>
+                <label class="form-check-label" for="productConditionNew">New</label><br>
+                <input type="radio" class="form-check-input" id="productConditionLikeNew" name="productCondition"
+                  value="Like new" {{ 'checked' if product_condition=='Like new' }}>
+                <label class="form-check-label" for="productConditionLikeNew">Like New</label><br>
+                <input type="radio" class="form-check-input" id="productConditionUsed" name="productCondition"
+                  value="Used" {{ 'checked' if product_condition=='Used' }}>
+                <label class="form-check-label" for="productConditionUsed">Used</label>
+              </div>
+
+
+
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="sellFormContainer" style="display: none;">
+      <form id="sellForm" onsubmit="submitSellForm(event)">
+        <label for="productTitle">Product Title:</label>
+        <input type="text" id="productTitle" required><br>
+
+        <label for="productDescription">Product Description:</label>
+        <textarea id="productDescription" required></textarea><br>
+
+        <label for="productPrice">Product Price ($):</label>
+        <input type="number" id="productPrice" required><br>
+
+        <label for="productImage">Product Image URL:</label>
+        <input type="text" id="productImage" required><br>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+  </div>
+  <div class="container">
+    {% for product in products %}
+    <div class="card text-bg-dark position-relative " style="width: 23rem;">
+      <img src="#" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title"><strong>{{ product[1].product_name }}</strong></h5>
+        <p class="card-text">{{ product[1].product_description }}</p>
+        <p class="card-text"><strong>${{ product[1].product_price }}</strong></p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product[1].product_condition }}</p>
+        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product[1].seller }}</p>
+      </div>
+      <div class="card-footer w-100">
+        <button class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModalEdit"
+          data-product-id="{{ product[0] }}" style="margin-bottom: 7px; background-color: #6c757d; border-color: #6c757d;">Edit</button>
+        <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100" >Buy Now</a>
+        <form action="{{ url_for('delete_product', product_id=product[0]) }}" method="post">
+          <button type="submit" class="btn btn-danger w-100 mt-2" style="background-color: #dc3545; border-color: #dc3545;">Delete</button>
+        </form>
+      </div>
+    </div>
+
+    {% endfor %}
+
+
+    <div class="modal fade" id="exampleModalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit Product</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="background-color: transparent; border: none;">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" id="editForm" action="/update_product/placeholder">
+              <div class="mb-3">
+                <label for="updatedProductName" class="form-label">Updated Product Name:</label>
+                <input type="text" class="form-control" id="updatedProductName" name="updatedProductName" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="updatedProductDescription" class="form-label">Updated Product Description:</label>
+                <input type="text" class="form-control" id="updatedProductDescription" name="updatedProductDescription"
+                  required>
+              </div>
+
+              <div class="mb-3">
+                <label for="updatedProductPrice" class="form-label">Updated Product Price:</label>
+                <input type="text" class="form-control" id="updatedProductPrice" name="updatedProductPrice" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="updatedProductCondition" class="form-label">Updated Product Condition:</label>
+                <input type="text" class="form-control" id="updatedProductCondition" name="updatedProductCondition"
+                  required>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const editButtons = document.querySelectorAll('[data-toggle="modal"][data-target="#exampleModalEdit"]');
+      const editForm = document.getElementById('editForm');
+
+      editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const productId = button.getAttribute('data-product-id');
+          editForm.action = `/update_product/${productId}`;
+        });
+      });
+    });
+
+
+  </script>
+
+
+  <div class="modal fade" id="buyPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content text-bg-dark">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Transaction</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="transactionForm">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name:</label>
+              <input type="text" class="form-control" id="name" name="name" required placeholder="John Doe">
+            </div>
+
+            <div class="mb-3">
+              <label for="contactNumber" class="form-label">Contact Number:</label>
+              <input type="tel" class="form-control" id="contactNumber" name="contactNumber" required
+                placeholder="+6593212323">
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" class="form-control" id="email" name="email" required placeholder="john@example.com">
+            </div>
+
+            <div class="mb-3">
+              <label for="paymentMethod" class="form-label">Payment Method:</label>
+              <select class="form-control" id="paymentMethod" name="paymentMethod" required>
+                <option value="">Select Payment Method</option>
+                <option value="cash">Cash (Meet-up Only)</option>
+                <option value="creditCard">Credit Card</option>
+                <option value="debitCard">Debit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="paynow">PayNow</option>
+                <option value="paylah">PayLah</option>
+                <!-- Add more options as needed -->
+              </select>
+            </div>
+
+            <div class="mb-3" id="meetupDetailsDiv" style="display: none;">
+              <label for="meetupDetails" class="form-label">Meet-up Details (Optional - Put NIL if not
+                applicable):</label>
+              <textarea class="form-control" id="meetupDetails" name="meetupDetails" rows="3"
+                placeholder="NIL"></textarea>
+            </div>
+
+            <div class="mb-3" id="shippingAddressDiv">
+              <label for="shippingAddress" class="form-label">Shipping Address:</label>
+              <textarea class="form-control" id="shippingAddress" name="shippingAddress" rows="3" required
+                placeholder="240 Macpherson Road #03-01A Pines Industrial Building"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="proceedButton" data-bs-toggle="modal"
+                data-bs-target="#confirmationModal" onclick="myFunction()">Proceed</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function myFunction() {
+        alert("Transaction Confirmed! \nThank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+      }
+    </script>
+    <!-- First modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalLabel">Transaction Confirmed!</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="confirmationModalBody">
+            <!-- Modal content will be dynamically updated here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- You can add any buttons or actions specific to the modal here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('proceedButton').forEach(button => {
+        button.addEventListener('click', function (event) {
+          let confirmation = confirm("Transaction Confirmed! \n Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.");
+          if (!confirmation) {
+            //       // If the user clicked "Cancel", prevent the form submission
+            event.preventDefault();
+          }
+        });
+      });
+
+      const proceedButton = document.getElementById("proceedButton");
+      const confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
+      const confirmationModalLabel = document.getElementById("confirmationModalLabel");
+      const confirmationModalBody = document.getElementById("confirmationModalBody");
+
+      // Show the confirmation modal and update its content based on which "Proceed" button is clicked
+      proceedButton.addEventListener("click", () => {
+        // Perform any necessary form validation here before updating the modal content
+
+        // For the first "Proceed" button, set the modal title and content
+        confirmationModalLabel.textContent = "Transaction Confirmed!";
+        confirmationModalBody.textContent = "Thank you for your transaction. The seller will contact you via your provided contact number or email to facilitate the payment.";
+
+        // Show the modal
+        confirmationModal.show();
+      });
+    </script>
+
+    <script>
+      // Get references to DOM elements
+      const paymentMethodSelect = document.getElementById("paymentMethod");
+      const meetupDetailsDiv = document.getElementById("meetupDetailsDiv");
+      const shippingAddressDiv = document.getElementById("shippingAddressDiv");
+
+      // Function to show/hide the meetupDetailsDiv based on the selected payment method
+      function handlePaymentMethodChange() {
+        const selectedPaymentMethod = paymentMethodSelect.value;
+
+        if (selectedPaymentMethod === "cash") {
+          meetupDetailsDiv.style.display = "block";
+          shippingAddressDiv.style.display = "none";
+        } else {
+          meetupDetailsDiv.style.display = "block";
+          shippingAddressDiv.style.display = "block";
+        }
+      }
+
+      // Initial setup: Hide meetupDetailsDiv by default
+      handlePaymentMethodChange();
+
+      // Add event listener to the paymentMethodSelect to detect changes
+      paymentMethodSelect.addEventListener("change", handlePaymentMethodChange);
+    </script>
+
+
+    <script>
+      // Function to handle the search
+      function searchProducts() {
+        const searchInput = document.getElementById("searchInput");
+        const searchTerm = searchInput.value.toLowerCase();
+        const searchResultsContainer = document.getElementById("searchResultsContainer");
+
+        // Perform your search logic here. For example, you can have an array of products:
+        const products = [
+          // Add more products as needed
+        ];
+
+        // Filter products based on the search term
+        const filteredProducts = products.filter((product) =>
+          product.toLowerCase().includes(searchTerm)
+        );
+
+        // Display the search results
+        let searchResultsHtml = "";
+        filteredProducts.forEach((product) => {
+          searchResultsHtml += `<p>${product}</p>`;
+        });
+        searchResultsContainer.innerHTML = searchResultsHtml;
+      }
+
+      // Attach an event listener to the search input to call the searchProducts function on each keyup
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("keyup", searchProducts);
+    </script>
+</body>
+
+</html>
+
+{% endblock %}
