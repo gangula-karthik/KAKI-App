@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="../../static/user_chat.css">
 </head>
 
+<style>
+
+    .custom-container {
+    border-radius: 15px; /* Adjust this value for the desired roundness */
+    padding: 20px; /* 20px top and bottom, 0px left and right */
+}
+
+</style>
+
 <body>
     {% extends "template.html" %}
 
@@ -19,24 +28,37 @@
         <div class="row">
             <div class="col-4 sidebar-chat overflow-auto">
                 <h2>Support Chat</h2>
-                <ul class="friend-list list-unstyled">
-                    {% for ticket_id, ticket_data in tickets.items() %}
-                    <li class="ticket-item d-flex align-items-center mb-3">
-                        {% if ticket_data.get('status') == 'open' %}
-                        <div class="spinner-grow text-success spinner-grow-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        {% endif %}
-                        <a href="{{ url_for('staffChat', ticket_id=ticket_id) }}"
-                            data-ticket-subject="{{ ticket_data.get('subject', 'N/A') | lower }}"
-                            class="ml-3 ticket-link">
-                            <div class="ticket-title">Ticket: {{ ticket_data.get('subject', 'N/A') }}</div>
-                            <div class="ticket-info">Date Opened: {{ ticket_data.get('opened_at', 'N/A') }}</div>
-                            <div class="ticket-info">Status: {{ ticket_data.get('status', 'N/A') }}</div>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
+                <div class="container bg-dark text-white mt-5 custom-container">
+                    <ul class="list-unstyled">
+                        {% for ticket_id, ticket_data in tickets.items() %}
+                        <li class="mb-4">
+                            <div class="card bg-info-subtle border border-info-subtle rounded-2">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <strong class="text-uppercase text-white">Ticket: {{ ticket_data.get('subject',
+                                        'N/A') }}</strong>
+                                    {% if ticket_data.get('status') == 'open' %}
+                                    <span class="badge bg-success">Open</span>
+                                    {% elif ticket_data.get('status') == 'resolved' %}
+                                    <span class="badge bg-light text-dark">Resolved</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">In Progress</span>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1 text-white">Date Opened: {{ ticket_data.get('opened_at', 'N/A') }}
+                                    </p>
+                                    <a href="{{ url_for('staffChat', ticket_id=ticket_id) }}"
+                                        class="btn btn-outline-light mt-2">
+                                        Open Chat
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+
             </div>
             <div class="col-8">
                 <div class="chat-header d-flex justify-content-between align-items-center">
@@ -149,7 +171,7 @@
 
 
 
-    
+
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
     document.getElementById('sendButton').addEventListener('click', function (e) {
