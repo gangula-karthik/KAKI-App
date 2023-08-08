@@ -188,11 +188,11 @@
     <div class="card text-bg-dark position-relative " style="width: 23rem;">
       <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
-        <h5 class="card-title"><strong>{{ service.service_name }}</strong></h5>
-        <p class="card-text">{{ service.service_description }}</p>
-        <p class="card-text"><strong>${{ service.service_price }}</strong></p>
-        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ service.service_condition }}</p>
-        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ service.seller }}</p>
+        <h5 class="card-title"><strong>{{ service[1].service_name }}</strong></h5>
+        <p class="card-text">{{ service[1].service_description }}</p>
+        <p class="card-text"><strong>${{ service[1].service_price }}</strong></p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ service[1].service_condition }}</p>
+        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ service[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
         <button class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModalEdit"

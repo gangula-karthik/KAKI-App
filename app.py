@@ -1324,8 +1324,6 @@ def marketplace():
     allProducts = pyredb.child("products").get().val()
 
     products = [(id, productInfo) for id, productInfo in allProducts.items()]
-    # for i in allProducts.each():
-    #     res.append(i.val())
     
     return render_template('/transaction_handling/marketplace.html', products = products, username = current_user)
 
@@ -1429,8 +1427,9 @@ def s_handle_modal_submission():
 
 @app.route('/transaction_handling/services', methods=['GET'])
 def show_all_services():
-    all_users_data = [i.val() for i in pyredb.child("services").get()]
-    return render_template('transaction_handling/services.html', services=all_users_data)
+    services = pyredb.child("services").get().val()
+    services = [(id, serviceInfo) for id, serviceInfo in services.items()]
+    return render_template('transaction_handling/services.html', services=services)
 
 @app.route('/update_service/<service_id>', methods=['POST'])
 def update_service(service_id):
@@ -1454,13 +1453,13 @@ def update_service(service_id):
     # Update the product in Firebase
     pyredb.child(f"services/{service_id}").update(data)
 
-    return redirect(url_for('services'))
+    return redirect(url_for('show_all_services'))
 
 @app.route('/delete_service/<string:service_id>', methods=['POST'])
 def delete_service(service_id):
     pyredb.child('services').child(service_id).remove()
     flash('Service has been deleted')
-    return redirect(url_for('services'))
+    return redirect(url_for('show_all_services'))
 
 
 # @app.route('/update_service/<product_id>', methods=['POST'])
