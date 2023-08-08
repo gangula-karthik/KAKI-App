@@ -1380,9 +1380,9 @@ def delete_product(product_id):
     flash('Product has been deleted')
     return redirect(url_for('marketplace'))
 
-@app.route('/transaction_handling/services')
-def services():
-    return render_template('transaction_handling/services.html')
+# @app.route('/transaction_handling/services')
+# def services():
+#     return render_template('transaction_handling/services.html')
 
 # @app.route('/transaction_handling/services')
 # def Sservices():
@@ -1412,18 +1412,12 @@ def s_handle_modal_submission():
 
     # Redirect to a page or return a response
     return redirect(url_for('services'))
-@app.route('/transaction_handling/services')
+
+
+@app.route('/transaction_handling/services', methods=['GET'])
 def show_all_services():
-    # try:
-        # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
-    all_users_data = pyredb.child("services").get().val()
-    print(all_users_data)
-    return render_template('transaction_handling/services.html', all_users_data=all_users_data)
-    # except Exception as e:
-    #     # Handle any errors that may occur
-    #     print('Error:', str(e))
-    #     # You can choose to show an error message or redirect the user to an error page
-    #     return redirect('/error-page')
+    all_users_data = [i.val() for i in pyredb.child("services").get()]
+    return render_template('transaction_handling/services.html', services=all_users_data)
 
 @app.route('/update_service/<service_id>', methods=['POST'])
 def update_service(service_id):
