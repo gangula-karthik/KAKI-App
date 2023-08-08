@@ -389,7 +389,11 @@ def show_all_users():
         # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
         all_users_data = pyredb.child("Users").child("Consumer").get().val()
 
-        return render_template('account_management/show_all_users.html', all_users_data=all_users_data)
+        if staffStatus:
+            return render_template('account_management/show_all_users.html', all_users_data=all_users_data, username=current_user, is_staff=staffStatus)
+        else:
+            abort(403)
+            
     except Exception as e:
         # Handle any errors that may occur
         print('Error:', str(e))
