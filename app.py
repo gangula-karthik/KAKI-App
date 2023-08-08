@@ -151,7 +151,7 @@ def index():
             try:
                 username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
                 status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
-
+                town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
                 if username:
                     session["username"] = username
                     current_user = session["username"]
@@ -165,6 +165,8 @@ def index():
                     print("Status:", session["status"])
                 else:
                     print("Status not found in the database.")
+
+                session["town"] = town
             except Exception as db_exception:
                 print("Error fetching data from the Realtime Database:", str(db_exception))
 
