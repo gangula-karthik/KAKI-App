@@ -60,8 +60,8 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = "Leap" # I need this to be retrieved from the session
-user_status = "User" # I need this to be retrieved from the session
+current_user = "Matt" # I need this to be retrieved from the session
+user_status = "Staff" # I need this to be retrieved from the session
 # current_user = session.get('username', None) # I need this to be retrieved from the session
 # user_status = session.get('status', None) # I need this to be retrieved from the session
 staffStatus = user_status == "Staff"
@@ -542,7 +542,7 @@ def listTickets():
 
     # If the person accessing is staff, filter the tickets assigned to them
     if staffStatus:  # Assuming staffStatus returns True for staff members
-        user_tickets = {k: v for k, v in all_tickets.items() if v.get('assigned_to') == current_user}
+        user_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == current_user}
 
     # If the person accessing is a regular user, filter the tickets created by them
     else:
@@ -558,19 +558,10 @@ def listTickets():
 def staffChat(ticket_id):
     all_tickets = pyredb.child("tickets").get().val() or {}
 
-
-    if staffStatus: 
-        user_tickets = {k: v for k, v in all_tickets.items() if v.get('staff_id') == current_user}
-    else:
-        user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
-
+    user_tickets = {k: v for k, v in all_tickets.items() if v.get('user_id') == current_user or v.get('staff_id') == current_user}
     ticket_data = user_tickets.get(ticket_id, None)
 
-    # Extract the specific ticket's data using a dictionary comprehension
-    # ticket_data = next((data for id, data in user_chat_data if id == ticket_id), None)
-
-    # Check if the user has permission to view the ticket
-    if not user_tickets:
+    if not ticket_data:
         return abort(403) 
 
     if staffStatus:  # if not the right staff
@@ -589,6 +580,7 @@ def staffChat(ticket_id):
         msg_data['content'] = translated_text
 
     return render_template('customer_support/user_chat.html', tickets=user_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, is_staff=staffStatus, langs=langs)
+
 
 
 
