@@ -19,7 +19,7 @@
     <nav class="sidebar">
         <a href="#" class="logo">
             <div class="welcome-text">Welcome 👋</div>
-            <div class="name-text">{{ user_name }}</div>
+            <div class="name-text">{{ username }}</div>
         </a>
 
 
@@ -69,10 +69,28 @@
                         <li class="item">
                             <a href="/Report_generation/general_report">General report</a>
                         </li>
-
                     </ul>
                 </li>
 
+                <li class="item">
+                    <div class="submenu-item">
+                        <span>Settings</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+
+                    <ul class="menu-items submenu">
+                        <div class="menu-title">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            Back
+                        </div>
+                        <li class="item">
+                            <a href="/dashboard">Setting</a>
+                        </li>
+                        <li class="item">
+                            <a href="/show_all_users">All Users</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
         <div class="logo-bottom">

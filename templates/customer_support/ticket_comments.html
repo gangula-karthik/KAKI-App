@@ -98,7 +98,7 @@
         </div>
         <div class="card-body">
             <p class="card-text">{{ comment[1]['comment'] }}</p>
-            {% if comment[1]['comment_by'] == user_name %}
+            {% if comment[1]['comment_by'] == username %}
             <div class="d-flex justify-content-start">
                 <form action="{{ url_for('delete_comment', comment_id=comment[0]) }}" class="me-2" method="post">
                     <button class="btn btn-outline-danger" id="{{ comment[0] }}"

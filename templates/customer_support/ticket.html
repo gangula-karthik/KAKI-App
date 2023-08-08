@@ -35,7 +35,7 @@
         <small class="text-info"> {{ ticket.user_id }}</small>
       </div>
       <div class="d-flex align-items-center">
-        {% if ticket.user_id == user_name %}
+        {% if ticket.user_id == username %}
         <form method="POST" action="/delete_ticket/{{ ticket.ticket_id }}" class="me-2 delete-form">
           <button type="submit" class="btn btn-outline-danger delete-button" data-id="{{ ticket.ticket_id }}"><i class="fa-solid fa-trash-can"></i> Delete Ticket</button>
         </form>
