@@ -34,6 +34,7 @@ margin-top:2px;
 {% block content %}
 <h1>Saved Reports</h1>
 <div>
+            {% if reports %}
             {% for report in reports %}
             <div  class="saved_cards">
                     <a class='link_report' href="/Report_generation/{{report.report_type}}/{{ report.Report_id }}">{{report.name}}</a>
@@ -41,6 +42,15 @@ margin-top:2px;
             </div>
 
             {% endfor %}
+    {% else %}
+    <div class="container d-flex align-items-center justify-content-center" style="height: 70vh;">
+    <div class="text-center">
+      <h1 style="font-size: 4rem;">💀</h1>
+      <h3 style="font-size: 3rem;">Well, this is awkward</h3>
+      <h6>Looks like there is nothing right now. To save a report click the save button under the respective reports.</h6>
+    </div>
+  </div>
+{% endif %}
 </div>
 {% endblock %}
 

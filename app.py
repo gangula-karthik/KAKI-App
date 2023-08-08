@@ -40,7 +40,7 @@ translator = Translator()
 
 
 cred = credentials.Certificate("Account_management/credentials.json")
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
 config = {
     "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
@@ -465,9 +465,9 @@ def eventTest():
     events = retreive_data_event()
     names = retreive_event_name(events)
     if staffStatus: 
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
     else:
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=False)
 # Changed the template to my own so that i can see the layout
 
 
@@ -871,13 +871,8 @@ def Individual_report():
     {"name": "Player 5", "score": 69}
 ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    if staffStatus == 'user':
-        return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = '69', is_staff=False)
-    else:
-        return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data,
-                               user_name=current_user, current_month=month, line_data=[5, 6, 7, 8, 9, 10],
-                               current_year=current_year, listMonths=ListMonths, neighbours_helped='69',
-                               number_of_activities='69', is_staff=True)
+
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = '69', staffStatus=False)
 
 import datetime
 @app.route('/Report_generation/Community_report')
@@ -894,10 +889,8 @@ def Community_report():
         {"name": "Player 5", "score": 69}
     ]
     leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-    if staffStatus == 'user':
-        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', is_staff = False)
-    else:
-        return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', is_staff = True)
+
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', staffStatus = False)
 
 
 @app.route('/save_data/com', methods=['POST'])
@@ -1001,17 +994,16 @@ def Transactions_report():
     # total_count = total_count_transactions()
     # total_cost = sum_cost_in_route()
     # total_received = sum_retrieve_in_route()
-    if staffStatus == 'user':
-        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,is_staff=False)
-    else:
-        return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,is_staff=True)
+    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,staffStatus=False)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
     reports = get_all_reports()
+
+
     details = retrieve_report_name(reports)
-    if staffStatus == 'user':
-        return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details, is_staff=False)
+    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details, staffStatus=False)
+
 
 @app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
@@ -1076,9 +1068,9 @@ def event_list():
     events = retreive_data_event()
     names = retreive_event_name(events)
     if staffStatus == 'staff':
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
     else:
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=False)
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=False)
 
 @app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
@@ -1086,10 +1078,10 @@ def Event_details(report):
     details = retrieve_event_from_name(events, report)
 
     if staffStatus == 'staff':
-        return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details,is_staff=True)
+        return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details,staffStatus=True)
     else:
         return render_template('/Report_generation/Event_details.html', user_name=current_user, details=details,
-                               is_staff=False)
+                               staffStatus=False)
 
 
 @app.route('/Report_generation/update.html/<event_name>', methods = ['GET', 'POST'])
@@ -1098,10 +1090,10 @@ def update(event_name):
     event_details = retrieve_event_from_name(events, event_name)
     update_user_form = CreateUserForm(request.form)
     if staffStatus == 'staff':
-        return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details, is_staff=True)
+        return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details, staffStatus=True)
     else:
         return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,
-                               event=event_details, is_staff=False)
+                               event=event_details, staffStatus=False)
 
 
 @app.route('/updateEvent', methods=['POST'])
@@ -1138,9 +1130,9 @@ def general_report():
     ListMonths = get_last_six_months()
 
     if staffStatus == 'staff':
-        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, is_staff=True)
+        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=True)
     else:
-        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, is_staff=False)
+        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=False)
 
     
 
