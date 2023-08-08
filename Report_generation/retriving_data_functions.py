@@ -305,3 +305,134 @@ def get_individual_with_most_points_in_community(community, year, month):
                 top_individual = individual
 
     return top_individual
+
+
+def count_transactions_past_6_months_for_buyer(year, month, buyer_name):
+    transactions_data = db.reference("/TransactionsDummy").get()
+
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+              "November", "December"]
+    month_index = months.index(month)
+
+    transaction_counts = []
+
+    for i in range(6):
+        current_month_index = (month_index - i) % 12
+        current_month = months[current_month_index]
+        current_year = year
+
+        if current_month_index > month_index:
+            current_year -= 1
+
+        count = 0
+
+        if transactions_data:
+            for transaction_key, transaction in transactions_data.items():
+                if "year" in transaction and "month" in transaction and "buyer" in transaction:
+                    if transaction["year"] == current_year and transaction["month"] == current_month and transaction[
+                        "buyer"] == buyer_name:
+                        count += 1
+
+        transaction_counts.insert(0, count)  # Insert at the beginning to reverse the order
+
+    return transaction_counts
+
+
+def sum_product_costs_past_6_months_for_seller(year, month, seller_name):
+    transactions_data = db.reference("/TransactionsDummy").get()
+
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+              "November", "December"]
+    month_index = months.index(month)
+
+    product_cost_sum = []
+
+    for i in range(6):
+        current_month_index = (month_index - i) % 12
+        current_month = months[current_month_index]
+        current_year = year
+
+        if current_month_index > month_index:
+            current_year -= 1
+
+        cost_sum = 0
+
+        if transactions_data:
+            for transaction_key, transaction in transactions_data.items():
+                if "year" in transaction and "month" in transaction and "seller" in transaction and "product_cost" in transaction:
+                    if transaction["year"] == current_year and transaction["month"] == current_month and transaction[
+                        "seller"] == seller_name:
+                        cost_sum += transaction["product_cost"]
+
+        product_cost_sum.insert(0, cost_sum)  # Insert at the beginning to reverse the order
+
+    return product_cost_sum
+
+def sum_product_costs_past_6_months_for_buyer(year, month, buyer_name):
+    transactions_data = db.reference("/TransactionsDummy").get()
+
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+              "November", "December"]
+    month_index = months.index(month)
+
+    product_cost_sum = []
+
+    for i in range(6):
+        current_month_index = (month_index - i) % 12
+        current_month = months[current_month_index]
+        current_year = year
+
+        if current_month_index > month_index:
+            current_year -= 1
+
+        cost_sum = 0
+
+        if transactions_data:
+            for transaction_key, transaction in transactions_data.items():
+                if "year" in transaction and "month" in transaction and "buyer" in transaction and "product_cost" in transaction:
+                    if transaction["year"] == current_year and transaction["month"] == current_month and transaction[
+                        "buyer"] == buyer_name:
+                        cost_sum += transaction["product_cost"]
+
+        product_cost_sum.insert(0, cost_sum)  # Insert at the beginning to reverse the order
+
+    return product_cost_sum
+
+def count_transactions_past_6_months(year, month):
+    transactions_data = db.reference("/TransactionsDummy").get()
+
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+              "November", "December"]
+    month_index = months.index(month)
+
+    transaction_counts = []
+
+    for i in range(6):
+        current_month_index = (month_index - i) % 12
+        current_month = months[current_month_index]
+        current_year = year
+
+        if current_month_index > month_index:
+            current_year -= 1
+
+        count = 0
+
+        if transactions_data:
+            for transaction_key, transaction in transactions_data.items():
+                if "year" in transaction and "month" in transaction:
+                    if transaction["year"] == current_year and transaction["month"] == current_month:
+                        count += 1
+
+        transaction_counts.append(count)
+
+    return transaction_counts
+
+def count_events(path = '/Events'):
+    data = db.reference(path).get()
+
+    if isinstance(data, dict):
+        return len(data)
+    elif isinstance(data, list):
+        return len(data)
+    else:
+        return 0

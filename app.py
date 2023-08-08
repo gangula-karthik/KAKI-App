@@ -1015,7 +1015,10 @@ def Transactions_report():
     # total_count = total_count_transactions()
     # total_cost = sum_cost_in_route()
     # total_received = sum_retrieve_in_route()
-    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,staffStatus=False)
+    total_count = count_transactions_past_6_months_for_buyer(current_year,month,'John Doe')
+    total_received = sum_product_costs_past_6_months_for_seller(current_year,month,'John Doe')
+    total_cost = sum_product_costs_past_6_months_for_buyer(current_year,month,'John Doe')
+    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = total_cost, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,staffStatus=False)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
@@ -1145,8 +1148,9 @@ def general_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
-
-    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=True)
+    total_numberT = count_transactions_past_6_months(current_year,month)
+    events = count_events()
+    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = events, Total_users = [6,9,6,9,6,9], Total_numberT = total_numberT,current_year=current_year,listMonths = ListMonths, staffStatus=True)
 
     
 
