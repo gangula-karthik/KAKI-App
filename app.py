@@ -156,13 +156,11 @@ def index():
                         time.sleep(5)  # Add a 5-second delay before checking again
             else:
                 print("Email already verified.")
-
             return redirect('/staff/users')
             # return redirect('/dashboard')
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
-
     return render_template('account_management/login.html')
 
 @app.route('/dashboard')
@@ -250,7 +248,6 @@ def forget_password():
         r_email = 'Error sending password reset email'
         return render_template('account_management/forget_password.html', exist_message=r_email)
     
-
 
 @app.route('/add_user_credentials', methods=['GET', 'POST'])
 def add_user_credentials():
