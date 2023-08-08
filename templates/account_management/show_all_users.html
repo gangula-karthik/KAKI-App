@@ -23,13 +23,13 @@
             <p data-field="status">Status: {{ user_data.get('status', '') }}</p>
           </div>
           <div class="text-right">
-            <button class="btn btn-primary edit-btn" data-user-id="{{ user_id }}">Update</button>
+            <button class="btn btn-outline-primary edit-btn" data-user-id="{{ user_id }}">Update</button>
             {% if user_data.get('disabled', false) %}
-              <button class="btn btn-success toggle-btn" data-user-id="{{ user_id }}" data-is-disabled="true">Enable</button>
+              <button class="btn btn-outline-success toggle-btn" data-user-id="{{ user_id }}" data-is-disabled="true">Enable</button>
             {% else %}
-              <button class="btn btn-warning toggle-btn" data-user-id="{{ user_id }}" data-is-disabled="false">Disable</button>
+              <button class="btn btn-outline-warning toggle-btn" data-user-id="{{ user_id }}" data-is-disabled="false">Disable</button>
             {% endif %}
-            <button class="btn btn-danger delete-btn" data-user-id="{{ user_id }}">Delete</button>
+            <button class="btn btn-outline-danger delete-btn" data-user-id="{{ user_id }}">Delete</button>
           </div>
         </div>
       </div>
