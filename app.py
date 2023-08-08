@@ -58,7 +58,7 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Lep'
+current_user = 'Leap'
 staffStatus = False
 
 
@@ -540,12 +540,18 @@ def listTickets():
     return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user)
 
 
-@app.route('/user_chat/<ticket_id>', methods=['GET'])
+@app.route('/user_chat/<ticket_id>', methods=['GET', 'POST'])
 def staffChat(ticket_id):
     all_tickets = pyredb.child("tickets").get().val() or {}
     ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
 
     langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
+
+    selected_language = session.get('language', 'en')
+
+    for msg_id, msg_data in ticket_messages.items():
+        translated_text = translator.translate(msg_data['content'], dest=selected_language).text
+        msg_data['content'] = translated_text
 
     return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
 
@@ -554,7 +560,7 @@ def staffChat(ticket_id):
 def send_message(ticket_id, username):
     message_content = request.form.get('message')
     data = {
-        "user": current_user,  
+        "user": username,  
         "staff_id": "456",
         "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
         "content": message_content
@@ -566,8 +572,10 @@ def send_message(ticket_id, username):
 
 @app.route('/user_chat/<ticket_id>/set_language', methods=['POST'])
 def set_language(ticket_id):
-    selected_language = request.form.get('language')
-    print(selected_language)
+    if request.method == 'POST':
+        selected_language = request.form.get('language')
+        session['language'] = selected_language 
+        print(selected_language, "for the", ticket_id)
     
     all_tickets = pyredb.child("tickets").get().val() or {}
     ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
@@ -578,8 +586,8 @@ def set_language(ticket_id):
 
     langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
 
-    return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
-
+    # return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
+    return redirect(url_for('staffChat', ticket_id=ticket_id))
 
 
 def allowed_file(filename):
@@ -736,11 +744,13 @@ def set_comment(ticket_ID):
 
     return redirect(url_for('ticketComments', ticket_ID=ticket_ID))
 
+
 @app.route('/user_tickets/delete_comment/<comment_id>', methods=['POST'])
 def delete_comment(comment_id):
     pyredb.child("comments").child(comment_id).remove()
     flash('Comment has been deleted 🗑️', 'success')
     return redirect(request.referrer)
+
 
 @app.route('/update_comment/<comment_id>', methods=['POST'])
 def update_comment(comment_id):
@@ -756,11 +766,11 @@ def update_comment(comment_id):
     flash('Comment has been updated!', 'success')
     return redirect(request.referrer)
 
+
 def background_task_bot_message(user_message):
     time.sleep(2)
     bot_response = generate_answers(user_message)
     return bot_response
-    
 
 
 @app.route('/kakigpt', methods=['GET', 'POST'])
@@ -797,12 +807,14 @@ def staffSupportOverview():
     else: 
         return abort(403)
 
+
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
     if staffStatus:
         return render_template('customer_support_staff/ticketManagement.html', user_name=current_user)
     else: 
         return abort(403)
+
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
