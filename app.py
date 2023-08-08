@@ -582,9 +582,15 @@ def faq_status():
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
 
+    current_user = session['username']
+    print("'"+current_user+"'")
+    staffStatus = session['status'] == "Staff"
+    print(staffStatus)
+
     # If the person accessing is staff, filter the tickets assigned to them
     if staffStatus:  # Assuming staffStatus returns True for staff members
         user_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == current_user}
+        print(user_tickets)
 
     # If the person accessing is a regular user, filter the tickets created by them
     else:
@@ -598,6 +604,10 @@ def listTickets():
 
 @app.route('/user_chat/<ticket_id>', methods=['GET', 'POST'])
 def staffChat(ticket_id):
+    current_user = session['username']
+    print(current_user)
+    staffStatus = session['status'] == "Staff"
+
     all_tickets = pyredb.child("tickets").get().val() or {}
 
     user_tickets = {k: v for k, v in all_tickets.items() if v.get('user_id') == current_user or v.get('staff_id') == current_user}
@@ -628,6 +638,7 @@ def staffChat(ticket_id):
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
+
     ticket = pyredb.child(f"tickets/{ticket_id}").get().val()
 
     if not ticket or (username != ticket['user_id'] and username != ticket['staff_id']):
@@ -941,8 +952,6 @@ def staffTicketDashboard():
     # Calculate the average scaled score
     average_scaled_score = round(total_scaled_score / total_tickets_with_sentiment if total_tickets_with_sentiment else 0, 2)
 
-
-
     total_resolution_time = 0
     resolved_tickets_count = 0
     for ticket in all_tickets.values():
@@ -955,6 +964,8 @@ def staffTicketDashboard():
     avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
 
     return render_template('customer_support_staff/ticketManagement.html', username=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members, is_staff=staffStatus)
+
+
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
