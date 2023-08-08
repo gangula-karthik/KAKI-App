@@ -92,6 +92,8 @@ handler.setFormatter(colorlog.ColoredFormatter(
 def index():
     global current_user
     global staffStatus
+    global name
+    global town
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
@@ -152,6 +154,7 @@ def index():
                 username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
                 status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
                 town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
+                name = pyredb.child("Users").child("Consumer").child(local_id).child("name").get().val()
                 if username:
                     session["username"] = username
                     current_user = session["username"]
@@ -166,7 +169,15 @@ def index():
                 else:
                     print("Status not found in the database.")
 
+                if status:
+                    session["town"] = status
+                    staffStatus = session["town"] == "Staff"
+                    print("Status:", session["town"])
+                else:
+                    print("Status not found in the database.")
+
                 session["town"] = town
+                session["name"] = name
             except Exception as db_exception:
                 print("Error fetching data from the Realtime Database:", str(db_exception))
 
@@ -950,9 +961,9 @@ def Individual_report():
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
-    leaderboard_data = get_top_individuals_by_points(current_year,month,'bishan_toa_payoh')
-    list_data = get_individual_points_over_past_months('John Doe', current_year, month)
-    activities = get_individual_activities('John Doe', current_year,month)
+    leaderboard_data = get_top_individuals_by_points(current_year,month)
+    list_data = get_individual_points_over_past_months(name, current_year, month)
+    activities = get_individual_activities(name, current_year,month)
 
     return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=False)
 
@@ -964,8 +975,8 @@ def Community_report():
     current_year = str(now.year)
     ListMonths = get_last_six_months()
     leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
-    list_data = get_last_five_months_of_specified_year('bishan_toa_payoh',current_year,month)
-    top_g = get_individual_with_most_points_in_community('bishan_toa_payoh',current_year,month)
+    list_data = get_last_five_months_of_specified_year(town,current_year,month)
+    top_g = get_individual_with_most_points_in_community(town,current_year,month)
     return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = '69', is_staff=False)
 
 
@@ -1070,9 +1081,9 @@ def Transactions_report():
     # total_count = total_count_transactions()
     # total_cost = sum_cost_in_route()
     # total_received = sum_retrieve_in_route()
-    total_count = count_transactions_past_6_months_for_buyer(current_year, month, 'John Doe')
-    total_received =sum_product_costs_past_6_months_for_seller(current_year, month, 'John Doe')
-    total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, 'John Doe')
+    total_count = count_transactions_past_6_months_for_buyer(current_year, month, name)
+    total_received =sum_product_costs_past_6_months_for_seller(current_year, month, name)
+    total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, name)
     return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=False)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
