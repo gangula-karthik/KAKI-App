@@ -60,8 +60,10 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = session.get('username', None) # I need this to be retrieved from the session
-user_status = session.get('status', None) # I need this to be retrieved from the session
+current_user = "Leap" # I need this to be retrieved from the session
+user_status = "User" # I need this to be retrieved from the session
+# current_user = session.get('username', None) # I need this to be retrieved from the session
+# user_status = session.get('status', None) # I need this to be retrieved from the session
 staffStatus = user_status == "Staff"
 
 
@@ -115,7 +117,6 @@ def index():
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
             # Get the Firebase token ID
-            print(user)
             token_id = user['idToken']
             # Save the token ID in the session
             session['user_token'] = token_id
@@ -144,8 +145,10 @@ def index():
             else:
                 print("Email already verified.")
             
-            session['username'] = pyredb.child("Users").child("Consumer").child(token_id).child("username").val()
-            session['status'] = pyredb.child("Users").child("Consumer").child(token_id).child("status").val()
+            # session['username'] = pyredb.child("Users").child("Consumer").child(token_id).child("username").val()
+            # session['status'] = pyredb.child("Users").child("Consumer").child(token_id).child("status").val()
+            # print(session['status'])
+            # print(session['username'])
 
             return redirect('/staff/users')
             # return redirect('/dashboard')
