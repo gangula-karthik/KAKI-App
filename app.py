@@ -756,7 +756,7 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=False)
+    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=staffStatus)
 
 
 @app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
