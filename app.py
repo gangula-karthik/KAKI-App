@@ -59,7 +59,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = False
+staffStatus = True
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -506,6 +506,8 @@ def customerOverview():
     global future
     try:
         tickets = pyredb.child('tickets').get().val()
+        if not tickets:
+            flash('No tickets available. Check back later.', 'info')
     except Exception as e:
         logging.error(f'Error retrieving tickets: {e}')
         flash('An error occurred while retrieving tickets, please try again later', 'error')
@@ -520,6 +522,7 @@ def customerOverview():
         return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages, faqs=faqs)
     else:
         return render_template('customer_support/loading.html'), 202
+
 
 
 
@@ -724,7 +727,7 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList)
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList, is_staff=False)
 
 
 @app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
@@ -810,11 +813,42 @@ def staffSupportOverview():
 
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
-    if staffStatus:
-        return render_template('customer_support_staff/ticketManagement.html', user_name=current_user)
-    else: 
-        return abort(403)
+    if not staffStatus:
+        abort(403)
 
+    all_tickets = pyredb.child("tickets").get().val() or {}
+
+    backlog_count = sum(1 for ticket in all_tickets.values() if ticket.get('status') != 'resolved')
+
+    sentiments = {'positive': 0, 'neutral': 0, 'negative': 0}
+    total_tickets_with_sentiment = 0
+
+    for ticket in all_tickets.values():
+        sentiment = ticket.get('subject_sentiment')
+        if sentiment in sentiments:
+            sentiments[sentiment] += 1
+            total_tickets_with_sentiment += 1
+
+    # Convert counts to percentages
+    for sentiment, count in sentiments.items():
+        sentiments[sentiment] = (count / total_tickets_with_sentiment) * 100 if total_tickets_with_sentiment else 0
+
+
+    total_resolution_time = 0
+    resolved_tickets_count = 0
+    for ticket in all_tickets.values():
+        if ticket.get('status') == 'resolved':
+            opened_at = datetime.datetime.strptime(ticket['opened_at'], '%Y-%m-%d %H:%M:%S')
+            closed_at = datetime.datetime.strptime(ticket['closed_at'], '%Y-%m-%d %H:%M:%S')
+            # resolved_at = datetime.datetime.strptime(ticket['resolved_at'], '%Y-%m-%d %H:%M:%S')
+            # total_resolution_time += (resolved_at - opened_at).total_seconds()
+            # For now, I'll use the current time as a placeholder
+            total_resolution_time += (closed_at - opened_at).total_seconds() // 3600
+            resolved_tickets_count += 1
+
+    avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
+
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=sentiments, avg_resolution_time=avg_resolution_time)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')

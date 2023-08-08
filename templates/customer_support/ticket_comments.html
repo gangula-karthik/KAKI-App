@@ -84,7 +84,13 @@
     <div class="card text-bg-dark comment-card">
         <div class="card-header comment-card-header d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="text-light">@{{ comment[1]['comment_by'] }}</h5>
+                <h5 class="text-light d-inline-block">
+                    @{{ comment[1]['comment_by'] }}
+                </h5>
+                {% if is_staff == True %}
+                <span class="badge bg-primary d-inline-block ml-2">Staff 🤓</span>
+                {% endif %}
+
             </div>
             <div>
                 <small class="text-light">{{ comment[1]['comment_date'] }}</small>
@@ -111,52 +117,51 @@
     </div>
 
 
-        <div class="modal fade" id="updateCommentModal{{ comment[0] }}" tabindex="-1"
-            aria-labelledby="updateCommentModalLabel{{ comment[0] }}" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="updateCommentModalLabel">Update Comment</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ url_for('update_comment', comment_id=comment[0]) }}" method="POST">
-                        <input type="hidden" name="comment_id" value="{{ comment[0] }}">
-                        <div class="modal-body">
-                            <label for="commentText" class="form-label">Comment Text</label>
-                            <textarea class="form-control" id="commentText" name="commentText" rows="3"
-                                required></textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <form action="{{ url_for('update_comment', comment_id=comment[0]) }}" method="POST">
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </form>
-                        </div>
-                    </form>
+    <div class="modal fade" id="updateCommentModal{{ comment[0] }}" tabindex="-1"
+        aria-labelledby="updateCommentModalLabel{{ comment[0] }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateCommentModalLabel">Update Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <form action="{{ url_for('update_comment', comment_id=comment[0]) }}" method="POST">
+                    <input type="hidden" name="comment_id" value="{{ comment[0] }}">
+                    <div class="modal-body">
+                        <label for="commentText" class="form-label">Comment Text</label>
+                        <textarea class="form-control" id="commentText" name="commentText" rows="3" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="{{ url_for('update_comment', comment_id=comment[0]) }}" method="POST">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
+                    </div>
+                </form>
             </div>
         </div>
-
-
-
-        {% endfor %}
-        {% endif %}
     </div>
 
 
-    <script>
-        window.onload = function () {
-            setTimeout(function () {
-                var alerts = document.getElementsByClassName('alert');
-                for (var i = 0; i < alerts.length; i++) {
-                    alerts[i].style.display = 'none';
-                }
-            }, 5000);
-        };
-    </script>
+
+    {% endfor %}
+    {% endif %}
+</div>
+
+
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            var alerts = document.getElementsByClassName('alert');
+            for (var i = 0; i < alerts.length; i++) {
+                alerts[i].style.display = 'none';
+            }
+        }, 5000);
+    };
+</script>
 
 
 
 
 
-    {% endblock %}
+{% endblock %}

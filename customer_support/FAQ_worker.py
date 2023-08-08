@@ -70,6 +70,9 @@ def generate_faqs():
 
     tickets = pyredb.child('tickets').get().val()
 
+    if not tickets:
+        return faqs
+
     for ticket in tickets:
         subject = pyredb.child(f'tickets/{ticket}/subject').get().val()
         description = pyredb.child(f'tickets/{ticket}/descriptions').get().val()

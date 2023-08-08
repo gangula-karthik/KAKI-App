@@ -88,13 +88,7 @@ class Ticket:
     def calculate_subject_sentiment(self, subject):
         sia = SentimentIntensityAnalyzer()
         polarity_scores = sia.polarity_scores(subject)
-
-        if polarity_scores['compound'] > 0.05:
-            self.subject_sentiment = "positive"
-        elif polarity_scores['compound'] < -0.05:
-            self.subject_sentiment = "negative"
-        else:
-            self.subject_sentiment = "neutral"
+        self.subject_sentiment = polarity_scores['compound']
 
     def addReply(self, username, reply):
         reply_data = {
@@ -152,7 +146,8 @@ def deleteTicket(ticket_id):
             comments = [id for id, comment in commentData.items() if comment['ticket_id'] == ticket_id]
             for i in comments:
                 db.child(f'/comments/{i}').remove()
-
+        if db.child(f"messages/{ticket_id}").get().val() is not None:
+            db.child(f"messages/{ticket_id}").remove()
         db.child(f'/tickets/{ticket_id}').remove()
 
 def semanticSearch(searchTerm):
