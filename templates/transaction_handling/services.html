@@ -32,14 +32,14 @@
       padding: 20px;
     }
 
-    .product {
+    .service {
       display: flex;
       flex-direction: column;
       border: 1px solid #ddd;
       padding: 10px;
     }
 
-    .product img {
+    .service img {
       width: 150px;
       height: 150px;
       margin: 0 auto 10px;
@@ -47,30 +47,30 @@
       border-radius: 5px;
     }
 
-    .product-title {
+    .service-title {
       font-size: 20px;
       font-weight: bold;
       margin: 0 0 5px;
     }
 
-    .product-description {
+    .service-description {
       margin: 0 0 5px;
     }
 
-    .product-price {
+    .service-price {
       font-size: 18px;
       font-weight: bold;
       color: #f0ebeb;
       margin-bottom: 10px;
     }
 
-    .product-info {
+    .service-info {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    .product-info div {
+    .service-info div {
       margin-bottom: 5px;
     }
 
@@ -104,50 +104,50 @@
   <div class="search-container">
     <input type="text" class="search-input" id="searchInput" placeholder="Search for services..."
       style="padding: 5px 10px; ; border-radius:7px;">
-    <button onclick="searchProducts()"
+    <button onclick="searchservices()"
       style="padding: 6px 20px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer;">Search</button>
     <div id="searchResultsContainer">
     </div>
     <!-- <button onclick="showSellForm()" style="padding: 6px 35px; background-color: #ff0019; color: #fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;" >Sell</button> -->
     <button type="button" class="btn btn-primary"
       style="padding: 6px 35px;color:#fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;"
-      data-bs-toggle="modal" data-bs-target="#sellProducts">
+      data-bs-toggle="modal" data-bs-target="#sellservices">
       Sell
     </button>
 
-    <!-- selling products modal -->
-    <div class="modal fade" id="sellProducts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- selling services modal -->
+    <div class="modal fade" id="sellservices" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Product Details</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">service Details</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form method="POST" action="{{ url_for('handle_modal_submission') }}">
+          <form method="POST" action="{{ url_for('s_handle_modal_submission') }}">
             <div class="modal-body">
-              <label for="productName" class="form-label">Product Name</label>
-              <input type="text" class="form-control" id="productName" name="productName">
+              <label for="serviceName" class="form-label">service Name</label>
+              <input type="text" class="form-control" id="serviceName" name="serviceName">
 
-              <label for="productDescription" class="form-label">Product Description</label>
-              <input type="text" class="form-control" id="productDescription" name="productDescription">
-              <label for="productDescription" class="form-label">Product Price</label>
+              <label for="serviceDescription" class="form-label">service Description</label>
+              <input type="text" class="form-control" id="serviceDescription" name="serviceDescription">
+              <label for="serviceDescription" class="form-label">service Price</label>
               <div class="input-group mb-3">
                 <span class="input-group-text">$</span>
-                <input type="text" name="productPrice" class="form-control">
+                <input type="text" name="servicePrice" class="form-control">
               </div>
 
 
               <div>
-                <label for="productCondition" class="form-label">Product Condition</label> <br>
-                <input type="radio" class="form-check-input" id="productConditionNew" name="productCondition"
-                  value="New" {{ 'checked' if product_condition=='New' }}>
-                <label class="form-check-label" for="productConditionNew">New</label><br>
-                <input type="radio" class="form-check-input" id="productConditionLikeNew" name="productCondition"
-                  value="Like new" {{ 'checked' if product_condition=='Like new' }}>
-                <label class="form-check-label" for="productConditionLikeNew">Like New</label><br>
-                <input type="radio" class="form-check-input" id="productConditionUsed" name="productCondition"
-                  value="Used" {{ 'checked' if product_condition=='Used' }}>
-                <label class="form-check-label" for="productConditionUsed">Used</label>
+                <label for="serviceCondition" class="form-label">service Condition</label> <br>
+                <input type="radio" class="form-check-input" id="serviceConditionNew" name="serviceCondition"
+                  value="New" {{ 'checked' if service_condition=='New' }}>
+                <label class="form-check-label" for="serviceConditionNew">New</label><br>
+                <input type="radio" class="form-check-input" id="serviceConditionLikeNew" name="serviceCondition"
+                  value="Like new" {{ 'checked' if service_condition=='Like new' }}>
+                <label class="form-check-label" for="serviceConditionLikeNew">Like New</label><br>
+                <input type="radio" class="form-check-input" id="serviceConditionUsed" name="serviceCondition"
+                  value="Used" {{ 'checked' if service_condition=='Used' }}>
+                <label class="form-check-label" for="serviceConditionUsed">Used</label>
               </div>
 
 
@@ -166,17 +166,17 @@
 
     <div id="sellFormContainer" style="display: none;">
       <form id="sellForm" onsubmit="submitSellForm(event)">
-        <label for="productTitle">Product Title:</label>
-        <input type="text" id="productTitle" required><br>
+        <label for="serviceTitle">service Title:</label>
+        <input type="text" id="serviceTitle" required><br>
 
-        <label for="productDescription">Product Description:</label>
-        <textarea id="productDescription" required></textarea><br>
+        <label for="serviceDescription">service Description:</label>
+        <textarea id="serviceDescription" required></textarea><br>
 
-        <label for="productPrice">Product Price ($):</label>
-        <input type="number" id="productPrice" required><br>
+        <label for="servicePrice">service Price ($):</label>
+        <input type="number" id="servicePrice" required><br>
 
-        <label for="productImage">Product Image URL:</label>
-        <input type="text" id="productImage" required><br>
+        <label for="serviceImage">service Image URL:</label>
+        <input type="text" id="serviceImage" required><br>
 
         <button type="submit">Submit</button>
       </form>
@@ -184,21 +184,21 @@
 
   </div>
   <div class="container">
-    {% for product in products %}
+    {% for service in services %}
     <div class="card text-bg-dark position-relative " style="width: 23rem;">
       <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
-        <h5 class="card-title"><strong>{{ product[1].product_name }}</strong></h5>
-        <p class="card-text">{{ product[1].product_description }}</p>
-        <p class="card-text"><strong>${{ product[1].product_price }}</strong></p>
-        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ product[1].product_condition }}</p>
-        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product[1].seller }}</p>
+        <h5 class="card-title"><strong>{{ service[1].service_name }}</strong></h5>
+        <p class="card-text">{{ service[1].service_description }}</p>
+        <p class="card-text"><strong>${{ service[1].service_price }}</strong></p>
+        <p class="card-text text-muted-on-dark"><strong>Condition:</strong> {{ service[1].service_condition }}</p>
+        <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ service[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
         <button class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModalEdit"
-          data-product-id="{{ product[0] }}" style="margin-bottom: 7px; background-color: #6c757d; border-color: #6c757d;">Edit</button>
+          data-service-id="{{ service[0] }}" style="margin-bottom: 7px; background-color: #6c757d; border-color: #6c757d;">Edit</button>
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100" >Buy Now</a>
-        <form action="{{ url_for('delete_product', product_id=product[0]) }}" method="post">
+        <form action="{{ url_for('delete_service', service_id=service[0]) }}" method="post">
           <button type="submit" class="btn btn-danger w-100 mt-2" style="background-color: #dc3545; border-color: #dc3545;">Delete</button>
         </form>
       </div>
@@ -212,32 +212,32 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Edit Product</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit service</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="background-color: transparent; border: none;">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <form method="POST" id="editForm" action="/update_product/placeholder">
+            <form method="POST" id="editForm" action="/update_service/placeholder">
               <div class="mb-3">
-                <label for="updatedProductName" class="form-label">Updated Product Name:</label>
-                <input type="text" class="form-control" id="updatedProductName" name="updatedProductName" required>
+                <label for="updatedserviceName" class="form-label">Updated service Name:</label>
+                <input type="text" class="form-control" id="updatedserviceName" name="updatedServiceName" required>
               </div>
 
               <div class="mb-3">
-                <label for="updatedProductDescription" class="form-label">Updated Product Description:</label>
-                <input type="text" class="form-control" id="updatedProductDescription" name="updatedProductDescription"
+                <label for="updatedserviceDescription" class="form-label">Updated service Description:</label>
+                <input type="text" class="form-control" id="updatedserviceDescription" name="updatedServiceDescription"
                   required>
               </div>
 
               <div class="mb-3">
-                <label for="updatedProductPrice" class="form-label">Updated Product Price:</label>
-                <input type="text" class="form-control" id="updatedProductPrice" name="updatedProductPrice" required>
+                <label for="updatedservicePrice" class="form-label">Updated service Price:</label>
+                <input type="text" class="form-control" id="updatedservicePrice" name="updatedServicePrice" required>
               </div>
 
               <div class="mb-3">
-                <label for="updatedProductCondition" class="form-label">Updated Product Condition:</label>
-                <input type="text" class="form-control" id="updatedProductCondition" name="updatedProductCondition"
+                <label for="updatedserviceCondition" class="form-label">Updated service Condition:</label>
+                <input type="text" class="form-control" id="updatedserviceCondition" name="updatedServiceCondition"
                   required>
               </div>
 
@@ -260,8 +260,8 @@
 
       editButtons.forEach(button => {
         button.addEventListener('click', function () {
-          const productId = button.getAttribute('data-product-id');
-          editForm.action = `/update_product/${productId}`;
+          const serviceId = button.getAttribute('data-service-id');
+          editForm.action = `/update_service/${serviceId}`;
         });
       });
     });
@@ -412,32 +412,32 @@
 
     <script>
       // Function to handle the search
-      function searchProducts() {
+      function searchservices() {
         const searchInput = document.getElementById("searchInput");
         const searchTerm = searchInput.value.toLowerCase();
         const searchResultsContainer = document.getElementById("searchResultsContainer");
 
-        // Perform your search logic here. For example, you can have an array of products:
-        const products = [
-          // Add more products as needed
+        // Perform your search logic here. For example, you can have an array of services:
+        const services = [
+          // Add more services as needed
         ];
 
-        // Filter products based on the search term
-        const filteredProducts = products.filter((product) =>
-          product.toLowerCase().includes(searchTerm)
+        // Filter services based on the search term
+        const filteredservices = services.filter((service) =>
+          service.toLowerCase().includes(searchTerm)
         );
 
         // Display the search results
         let searchResultsHtml = "";
-        filteredProducts.forEach((product) => {
-          searchResultsHtml += `<p>${product}</p>`;
+        filteredservices.forEach((service) => {
+          searchResultsHtml += `<p>${service}</p>`;
         });
         searchResultsContainer.innerHTML = searchResultsHtml;
       }
 
-      // Attach an event listener to the search input to call the searchProducts function on each keyup
+      // Attach an event listener to the search input to call the searchservices function on each keyup
       const searchInput = document.getElementById("searchInput");
-      searchInput.addEventListener("keyup", searchProducts);
+      searchInput.addEventListener("keyup", searchservices);
     </script>
 </body>
 

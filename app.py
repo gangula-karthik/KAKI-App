@@ -1384,6 +1384,77 @@ def delete_product(product_id):
 def services():
     return render_template('transaction_handling/services.html')
 
+# @app.route('/transaction_handling/services')
+# def Sservices():
+#     return render_template('transaction_handling/services.html')
+#
+# @app.route('/transaction_handling/services')
+# def services():
+#     allServices = pyredb.child("services").get().val()
+#
+#     services = [(id, serviceInfo) for id, serviceInfo in allServices.items()]
+#     # for i in allProducts.each():
+#     #     res.append(i.val())
+#
+#     return render_template('/transaction_handling/service.html', services=services, username=current_user)
+
+@app.route('/s_handle_modal_submission', methods=['POST'])
+def s_handle_modal_submission():
+    # Access the form data from the request object
+    service_name = request.form.get('serviceName')
+    # product_image = request.files['productImage']
+    service_description = request.form.get('serviceDescription')
+    service_price = request.form.get('servicePrice')
+    service_condition = request.form.get('serviceCondition')
+
+    data = {"service_name": service_name, "service_description": service_description, "service_price": service_price, "service_condition": service_condition, "seller": current_user}
+    pyredb.child("services").push(data)
+
+    # Redirect to a page or return a response
+    return redirect(url_for('services'))
+@app.route('/transaction_handling/services')
+def show_all_services():
+    # try:
+        # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
+    all_users_data = pyredb.child("services").get().val()
+    print(all_users_data)
+    return render_template('transaction_handling/services.html', all_users_data=all_users_data)
+    # except Exception as e:
+    #     # Handle any errors that may occur
+    #     print('Error:', str(e))
+    #     # You can choose to show an error message or redirect the user to an error page
+    #     return redirect('/error-page')
+
+@app.route('/update_service/<service_id>', methods=['POST'])
+def update_service(service_id):
+    # Retrieve form data
+    service_name = request.form.get('updatedServiceName')
+    service_description = request.form.get('updatedServiceDescription')
+    service_price = request.form.get('updatedServicePrice')
+    service_condition = request.form.get('updatedServiceCondition')
+
+    # Construct the data dictionarys
+    data = {
+        "service_name": service_name,
+        "service_description": service_description,
+        "service_price": service_price,
+        "service_condition": service_condition,
+        "seller": current_user  # Assuming current_user is a global or session variable
+    }
+
+    print(data)
+
+    # Update the product in Firebase
+    pyredb.child(f"services/{service_id}").update(data)
+
+    return redirect(url_for('services'))
+
+@app.route('/delete_service/<string:service_id>', methods=['POST'])
+def delete_service(service_id):
+    pyredb.child('services').child(service_id).remove()
+    flash('Service has been deleted')
+    return redirect(url_for('services'))
+
 
 # @app.route('/update_service/<product_id>', methods=['POST'])
 # def update_product(product_id):
