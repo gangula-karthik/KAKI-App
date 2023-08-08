@@ -60,7 +60,8 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = True
+user_status = "User"
+staffStatus = user_status == "Staff"
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -1332,7 +1333,7 @@ def delete_product(product_id):
 
 @app.route('/transaction_handling/services')
 def services():
-    return render_template('transaction_handling/services.html')
+    return render_template('transaction_handling/services.html', username=current_user, is_staff=staffStatus)
 
 
 if __name__ == '__main__':
