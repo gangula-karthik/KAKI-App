@@ -238,17 +238,14 @@ def get_individual_points_for_month(individual_name, year, month):
     return points
 
 
-def get_top_individuals_by_points(year, month, community, limit=5):
+def get_top_individuals_by_points(year, month, limit=5):
     individuals_data = db.reference("/IndividualPoints").get()
 
     individual_points = {}
 
-    for individual, months_data in individuals_data.items():
-        if community and months_data.get("community") != community:
-            continue  # Skip individuals not in the specified community
-
-        if year in months_data and month in months_data.get(year, {}):
-            total_points = months_data[year][month]["points"]
+    for individual, data in individuals_data.items():
+        if year in data and month in data.get(year, {}):
+            total_points = data[year][month]["points"]
             individual_points[individual] = total_points
 
     # Sort individuals by points in descending order
