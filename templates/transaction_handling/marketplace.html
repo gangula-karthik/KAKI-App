@@ -112,7 +112,7 @@
     <button type="button" class="btn btn-primary"
       style="padding: 6px 35px;color:#fff; border-radius: 7px; cursor: pointer; float:right; margin-right: 50px;"
       data-bs-toggle="modal" data-bs-target="#sellProducts">
-      Launch demo modal
+      Sell
     </button>
 
     <!-- selling products modal -->
@@ -120,7 +120,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Product Details</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="POST" action="{{ url_for('handle_modal_submission') }}">
@@ -195,11 +195,11 @@
         <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ product[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalEdit"
-          data-product-id="{{ product[0] }}">Edit</button>
-        <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100">Chat Now</a>
+        <button class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModalEdit"
+          data-product-id="{{ product[0] }}" style="margin-bottom: 7px; background-color: #6c757d; border-color: #6c757d;">Edit</button>
+        <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100" >Buy Now</a>
         <form action="{{ url_for('delete_product', product_id=product[0]) }}" method="post">
-          <button type="submit" class="btn btn-danger w-100 mt-2">Delete</button>
+          <button type="submit" class="btn btn-danger w-100 mt-2" style="background-color: #dc3545; border-color: #dc3545;">Delete</button>
         </form>
       </div>
     </div>
@@ -213,7 +213,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLongTitle">Edit Product</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="background-color: transparent; border: none;">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
