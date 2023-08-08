@@ -59,8 +59,8 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Leap'
-user_status = "User"
+current_user = 'Matt' # I need this to be retrieved from the session
+user_status = 'Staff' # I need this to be retrieved from the session
 staffStatus = user_status == "Staff"
 
 
@@ -84,22 +84,6 @@ handler.setFormatter(colorlog.ColoredFormatter(
         'CRITICAL': 'red',
     }
 ))
-
-# @app.before_first_request
-# def init_app():
-#     app.logger.info("Starting app...")
-#     app.logger.info(Fore.GREEN + """
-                    
-#     | | / / / _ \ | | / /_   _|
-#     | |/ / / /_\ \| |/ /  | |  
-#     |    \ |  _  ||    \  | |  
-#     | |\  \| | | || |\  \_| |_ 
-#     \_| \_/\_| |_/\_| \_/\___/ ver 1.1.0
-    
-#     A product by Team Rocket Dev 🚀
-#     Software is lincensed under MIT License
-#                 """)
-
 
 
 #Account management Routes
@@ -539,41 +523,70 @@ def faq_status():
 @app.route('/user_chat')
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
-    if staffStatus:
-        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+
+    if staffStatus: 
+        user_tickets = {k: v for k, v in all_tickets.items() if v.get('staff_id') == current_user}
     else:
-        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+        user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
+
+    return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+
+
 
 
 @app.route('/user_chat/<ticket_id>', methods=['GET', 'POST'])
 def staffChat(ticket_id):
     all_tickets = pyredb.child("tickets").get().val() or {}
+
+
+    if staffStatus: 
+        user_tickets = {k: v for k, v in all_tickets.items() if v.get('staff_id') == current_user}
+    else:
+        user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
+
+    ticket_data = user_tickets.get(ticket_id, None)
+
+    # Extract the specific ticket's data using a dictionary comprehension
+    # ticket_data = next((data for id, data in user_chat_data if id == ticket_id), None)
+
+    # Check if the user has permission to view the ticket
+    if not user_tickets:
+        return abort(403) 
+
+    if staffStatus:  # if not the right staff
+        if ticket_data['staff_id'] != current_user:
+            return abort(403) 
+    else:  # If not a user
+        if ticket_data['user_id'] != current_user:
+            return abort(403) 
+
     ticket_messages = pyredb.child(f"messages/{ticket_id}").get().val() or {}
-
     langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
-
     selected_language = session.get('language', 'en')
 
     for msg_id, msg_data in ticket_messages.items():
         translated_text = translator.translate(msg_data['content'], dest=selected_language).text
         msg_data['content'] = translated_text
 
-    if staffStatus:
-        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, is_staff=staffStatus, langs=langs)
-    else:
-        return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs, is_staff=staffStatus)
+    return render_template('customer_support/user_chat.html', tickets=user_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, is_staff=staffStatus, langs=langs)
+
 
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
+    ticket = pyredb.child(f"tickets/{ticket_id}").get().val()
+
+    if not ticket or (username != ticket['user_id'] and username != ticket['staff_id']):
+        return abort(403)
+
     message_content = request.form.get('message')
     data = {
-        "user": username,  
-        "staff_id": "456",
+        "sender": username,
+        "recipient": ticket['user_id'] if username != ticket['user_id'] else ticket['staff_id'],
         "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
         "content": message_content
     }
-    pyredb.child(f"messages/{ticket_id}").push(data) 
+    pyredb.child(f"messages/{ticket_id}").push(data)
     return redirect(url_for('staffChat', ticket_id=ticket_id))
 
 
@@ -594,7 +607,6 @@ def set_language(ticket_id):
 
     langs = [(lang_code, lang_name) for lang_code, lang_name in LANGUAGES.items()]
 
-    # return render_template('customer_support/user_chat.html', tickets=all_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, langs=langs)
     return redirect(url_for('staffChat', ticket_id=ticket_id))
 
 
@@ -857,8 +869,6 @@ def staffTicketDashboard():
         abort(403)
 
     staff_members = staffRetrieval()
-
-   
 
     all_tickets = pyredb.child("tickets").get().val() or {}
 
