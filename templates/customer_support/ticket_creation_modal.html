@@ -8,22 +8,22 @@
       <div class="modal-body">
         <form method="POST" action="/new_ticket" enctype="multipart/form-data">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Subject</label>
-            <input type="text" class="form-control bg-dark text-light" id="recipient-name" name="subject">
+            <label for="recipient-name" class="col-form-label" >Subject</label>
+            <input type="text" class="form-control bg-dark text-light" id="recipient-name" name="subject" required>
           </div>
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Description</label>
-            <textarea class="form-control bg-dark text-light" id="message-text" name="description"></textarea>
+            <textarea class="form-control bg-dark text-light" id="message-text" name="description" required></textarea>
           </div>
           <div class="row">
             <div class="col-5">
-              <select class="form-select bg-dark text-light" id="autoSizingSelect" name="topic">
-                <option selected class="disabled">Add Topic</option>
+              <select class="form-select bg-dark text-light" id="autoSizingSelect" name="topic" required>
+                <option value="" disabled selected>Add Topic</option>
                 <option value="billing">Billing Issues</option>
                 <option value="technical">Technical Issues</option>
                 <option value="listing">Listing & Account Issues</option>
                 <option value="other">Other</option>
-              </select>
+            </select>            
             </div>
             <div class="col-7">
               <div class="mb-3">

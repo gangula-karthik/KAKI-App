@@ -26,7 +26,7 @@
             <div class="card bg-dark text-white custom-card">
                 <div class="card-body">
                     <h5 class="card-title">Satisfaction</h5>
-                    <p class="card-text">85%</p> <!-- Replace with actual data -->
+                    <p class="card-text">{{ sentiments }} / 5</p> <!-- Replace with actual data -->
                 </div>
             </div>
         </div>
@@ -83,47 +83,95 @@
     <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
-                <th scope="col">Ticket ID</th>
                 <th scope="col">Subject</th>
                 <th scope="col">Status</th>
-                <th scope="col">Time Opened</th>
-                <th scope="col">Time Closed</th>
+                <th scope="col">Opened</th>
+                <th scope="col">Closed</th>
                 <th scope="col">Assigned</th>
-                <th scope="col">Raised By</th>
+                <th scope="col">Raised</th>
                 <th scope="col">Priority</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
             <!-- Replace with actual data -->
+        <tbody>
+            {% for ticket in tickets %}
             <tr>
-                <td>1</td>
-                <td contenteditable="true">Subject 1</td>
+                <td>{{ ticket.subject }}</td>
                 <td>
-                    <select class="form-select form-select-sm bg-dark text-white status-select">
-                        <option selected>Open</option>
-                        <option>In Progress</option>
-                        <option>Resolved</option>
+                    <select class="form-select form-select-sm bg-dark text-white status-select"
+                        data-ticket-id="{{ ticket.ticket_id }}" onchange="updateStatus(this)">
+                        <option value="open" {% if ticket.status=='open' %}selected{% endif %}>Open</option>
+                        <option value="in progress" {% if ticket.status=='in progress' %}selected{% endif %}>In Progress
+                        </option>
+                        <option value="resolved" {% if ticket.status=='resolved' %}selected{% endif %}>Resolved</option>
                     </select>
                 </td>
-                <td contenteditable="true">2023-07-30 10:00</td>
-                <td contenteditable="true">null</td>
+                <td>{{ ticket.opened_at }}</td>
+                <td>{{ ticket.closed_at }}</td> <!-- Placeholder for now -->
                 <td>
-                    <select class="form-select form-select-sm bg-dark text-white assigned-select">
-                        <option selected>John Doe</option>
-                        <option>Jane Smith</option>
-                        <!-- Add more staff names as needed -->
+                    <select class="form-select form-select-sm bg-dark text-white assigned-select"
+                        data-ticket-id="{{ ticket.ticket_id }}" onchange="updateAssigned(this)">
+                        <option value="none" {% if not ticket.staff_id %}selected{% endif %}>None</option>
+                        {% for staff in staff_members %}
+                        <option value="{{ staff.name }}" {% if ticket.staff_id==staff.name %}selected{% endif %}>{{
+                            staff.name }}</option>
+                        {% endfor %}
                     </select>
+
+
+
                 </td>
-                <td contenteditable="true">Jane Smith</td>
-                <td contenteditable="true">High</td>
-                <td><button class="btn btn-primary">Message</button></td>
+                <td>{{ ticket.user_id }}</td> <!-- Placeholder for now -->
+                <td>
+                    {% if ticket.subject_sentiment <= -0.5 %} High {% elif ticket.subject_sentiment < 0.5 %} Medium {%
+                        else %} Low {% endif %} </td>
+                        <!-- Placeholder for now -->
+                <td><a target="_blank" href="{{ url_for('staffChat', ticket_id=ticket.ticket_id) }}"
+                        class="btn btn-primary">Message</a></td>
             </tr>
-            <!-- More rows as needed -->
+            {% endfor %}
         </tbody>
+
     </table>
 </div>
 
+
+<script>
+    function updateStatus(selectElement) {
+        const ticketId = selectElement.dataset.ticketId;
+        const newStatus = selectElement.value;
+
+        fetch(`/update-status/${ticketId}`, {
+            method: 'POST',
+            body: JSON.stringify({ status: newStatus }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(() => {
+                location.reload();
+            });
+    }
+
+    function updateAssigned(selectElement) {
+        const ticketId = selectElement.dataset.ticketId;
+        const newAssigned = selectElement.value;
+
+        fetch(`/update-assigned/${ticketId}`, {
+            method: 'POST',
+            body: JSON.stringify({ assigned: newAssigned }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(() => {
+                location.reload();
+            });
+    }
+
+</script>
 
 
 
