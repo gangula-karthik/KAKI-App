@@ -463,9 +463,9 @@ def eventTest():
     events = retreive_data_event()
     names = retreive_event_name(events)
     if staffStatus: 
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
-    else:
         return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=False)
+    else:
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
 # Changed the template to my own so that i can see the layout
 
 

@@ -46,35 +46,12 @@
     <div class="row">
         <div class="col-md-6">
             <div class="input-group mb-3">
-                <span class="input-group-text bg-dark text-white" id="search-addon">
-                    <i class="fas fa-search"></i>
-                </span>
-                <input type="text" class="form-control" placeholder="Search" aria-label="Search"
-                    aria-describedby="search-addon">
+                <input type="text" class="form-control search-ticket-subject" placeholder="Search by Ticket Subject"
+                    aria-label="Search by Ticket Subject" aria-describedby="search-addon">
             </div>
         </div>
         <div class="col-md-6 d-flex justify-content-end dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="filterButton" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Filter
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="filterButton">
-                <li>
-                    <h6 class="dropdown-header">Filter by Status:</h6>
-                </li>
-                <li><a class="dropdown-item" href="#">Open</a></li>
-                <li><a class="dropdown-item" href="#">In Progress</a></li>
-                <li><a class="dropdown-item" href="#">Resolved</a></li>
-                <li>
-                    <div class="dropdown-divider"></div>
-                </li>
-                <li>
-                    <h6 class="dropdown-header">Filter by Assigned:</h6>
-                </li>
-                <li><a class="dropdown-item" href="#">John Doe</a></li>
-                <li><a class="dropdown-item" href="#">Jane Smith</a></li>
-                <!-- Add more staff names as needed -->
-            </ul>
+
         </div>
     </div>
 </div>
@@ -94,10 +71,8 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Replace with actual data -->
-        <tbody>
             {% for ticket in tickets %}
-            <tr>
+            <tr class="ticket-row">
                 <td>{{ ticket.subject }}</td>
                 <td>
                     <select class="form-select form-select-sm bg-dark text-white status-select"
@@ -109,7 +84,7 @@
                     </select>
                 </td>
                 <td>{{ ticket.opened_at }}</td>
-                <td>{{ ticket.closed_at }}</td> <!-- Placeholder for now -->
+                <td>{{ ticket.closed_at }}</td>
                 <td>
                     <select class="form-select form-select-sm bg-dark text-white assigned-select"
                         data-ticket-id="{{ ticket.ticket_id }}" onchange="updateAssigned(this)">
@@ -123,11 +98,10 @@
 
 
                 </td>
-                <td>{{ ticket.user_id }}</td> <!-- Placeholder for now -->
+                <td>{{ ticket.user_id }}</td>
                 <td>
                     {% if ticket.subject_sentiment <= -0.5 %} High {% elif ticket.subject_sentiment < 0.5 %} Medium {%
                         else %} Low {% endif %} </td>
-                        <!-- Placeholder for now -->
                 <td><a target="_blank" href="{{ url_for('staffChat', ticket_id=ticket.ticket_id) }}"
                         class="btn btn-primary">Message</a></td>
             </tr>
@@ -170,6 +144,23 @@
                 location.reload();
             });
     }
+    document.querySelector('.search-ticket-subject').addEventListener('input', function () {
+        let searchTerm = this.value.toLowerCase();  // Convert to lowercase for case-insensitive search
+        let rows = document.querySelectorAll('.ticket-row');
+
+        rows.forEach(row => {
+            let ticketSubject = row.querySelector('td:nth-child(1)').textContent.toLowerCase();  // Assuming the subject is in the first column. Adjust the child index if necessary.
+            if (ticketSubject.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+
+
+
 
 </script>
 
