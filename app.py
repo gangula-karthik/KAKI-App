@@ -113,11 +113,16 @@ def index():
 
         # Rest of your login logic (similar to your existing code)
         email = request.form['user_email']
+        print(email)
         password = request.form['user_pwd']
+        print(password)
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
+            print(user)
             # Get the Firebase token ID
             token_id = user['idToken']
+            local_id = user['localId']
+            print(token_id)
             # Save the token ID in the session
             session['user_token'] = token_id
 
@@ -145,10 +150,13 @@ def index():
             else:
                 print("Email already verified.")
             
-            # session['username'] = pyredb.child("Users").child("Consumer").child(token_id).child("username").val()
+            
+            session["username"] = pyredb.child("Users").child("Consumer").child(local_id).child("username").val()
+    
+
+            print(session['username'])
             # session['status'] = pyredb.child("Users").child("Consumer").child(token_id).child("status").val()
             # print(session['status'])
-            # print(session['username'])
 
             return redirect('/staff/users')
             # return redirect('/dashboard')
