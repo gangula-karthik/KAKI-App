@@ -60,8 +60,8 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Matt' # I need this to be retrieved from the session
-user_status = 'Staff' # I need this to be retrieved from the session
+current_user = session.get('username', None) # I need this to be retrieved from the session
+user_status = session.get('status', None) # I need this to be retrieved from the session
 staffStatus = user_status == "Staff"
 
 
@@ -140,16 +140,18 @@ def index():
                         break
                     else:
                         print("Email not verified. Waiting...")
-                        time.sleep(5)  # Add a 5-second delay before checking again
+                        time.sleep(3)
             else:
                 print("Email already verified.")
+            
+            session['username'] = pyredb.child("Users").child("Consumer").child(token_id).child("username").val()
+            session['status'] = pyredb.child("Users").child("Consumer").child(token_id).child("status").val()
 
             return redirect('/staff/users')
             # return redirect('/dashboard')
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
-
     return render_template('account_management/login.html')
 
 @app.route('/dashboard')
