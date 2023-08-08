@@ -300,7 +300,7 @@ def get_individual_with_most_points_in_community(community, year, month):
 
     if not community_individuals:
 
-        return "Earn some points"
+        return "No one in the community has points yet. Be the first."
 
     max_points = 0
     top_individual = None
