@@ -180,3 +180,128 @@ def get_top_communities_for_specific_month_and_year(month, year, num_top):
     top_communities = sorted_communities[:num_top]
 
     return top_communities
+
+def get_community_data_from_firebase(community_name):
+    community_ref = db.reference(f"/CommunityPoints/{community_name}")
+    community_data = community_ref.get()
+
+    if community_data is None:
+        return {}  # Return an empty dictionary if no data found
+
+    return community_data
+def get_last_five_months_of_specified_year(community_name, year, current_month):
+    community_data = get_community_data_from_firebase(community_name)  # Replace with Firebase data retrieval
+
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+              "November", "December"]
+
+    result = []
+
+    for i in range(5, -1, -1):
+        month_index = (months.index(current_month) - i) % 12
+        month = months[month_index]
+
+        if year in community_data and month in community_data[year]:
+            points = community_data[year][month]["points"]
+        else:
+            points = 0
+
+        result.append(points)
+
+    return result
+
+def get_all_individuals():
+    individuals_ref = db.reference("/IndividualPoints")
+    individuals_data = individuals_ref.get()
+
+    if individuals_data is None:
+        return []  # Return an empty list if no individual data found
+
+    return list(individuals_data.keys())
+
+def get_individual_data_from_firebase(individual_name):
+    individual_ref = db.reference(f"/IndividualPoints/{individual_name}")
+    individual_data = individual_ref.get()
+
+    if individual_data is None:
+        return {}  # Return an empty dictionary if no data found
+
+    return individual_data
+def get_individual_points_for_month(individual_name, year, month):
+    individual_data = get_individual_data_from_firebase(individual_name)  # Replace with Firebase data retrieval
+
+    if year in individual_data and month in individual_data[year]:
+        points = individual_data[year][month]["points"]
+    else:
+        points = 0
+
+    return points
+
+
+def get_top_individuals_by_points(year, month, community, limit=5):
+    individuals_data = db.reference("/IndividualPoints").get()
+
+    individual_points = {}
+
+    for individual, months_data in individuals_data.items():
+        if community and months_data.get("community") != community:
+            continue  # Skip individuals not in the specified community
+
+        if year in months_data and month in months_data.get(year, {}):
+            total_points = months_data[year][month]["points"]
+            individual_points[individual] = total_points
+
+    # Sort individuals by points in descending order
+    sorted_individuals = sorted(individual_points.items(), key=lambda x: x[1], reverse=True)
+
+    # Return the top 'limit' individuals
+    top_individuals = sorted_individuals[:limit]
+
+    return top_individuals
+
+def get_individual_points_over_past_months(individual_name, year, current_month):
+    individual_data = get_individual_data_from_firebase(individual_name)  # Replace with Firebase data retrieval
+
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+              "November", "December"]
+
+    result = []
+
+    for i in range(5, -1, -1):
+        month_index = (months.index(current_month) - i) % 12
+        month = months[month_index]
+
+        if year in individual_data and month in individual_data[year]:
+            points = individual_data[year][month]["points"]
+        else:
+            points = 0
+
+        result.append(points)
+
+    return result
+
+def get_individual_activities(individual_name, year, month):
+    individual_data = get_individual_data_from_firebase(individual_name)  # Replace with Firebase data retrieval
+
+    if year in individual_data and month in individual_data[year]:
+        activities = individual_data[year][month]["activities"]
+    else:
+        activities = 0
+
+    return activities
+
+def get_individual_with_most_points_in_community(community, year, month):
+    individuals_data = db.reference("/IndividualPoints").get()
+    community_individuals = [individual for individual, data in individuals_data.items() if data.get("community") == community]
+
+    max_points = 0
+    top_individual = None
+
+    for individual in community_individuals:
+        if year in individuals_data[individual] and month in individuals_data[individual][year]:
+            points = individuals_data[individual][year][month]["points"]
+            if points > max_points:
+                max_points = points
+                top_individual = individual
+
+    return top_individual
