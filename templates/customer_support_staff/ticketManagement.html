@@ -83,87 +83,77 @@
     <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
-                <th scope="col">Ticket ID</th>
                 <th scope="col">Subject</th>
                 <th scope="col">Status</th>
-                <th scope="col">Time Opened</th>
-                <th scope="col">Time Closed</th>
+                <th scope="col">Opened</th>
+                <th scope="col">Closed</th>
                 <th scope="col">Assigned</th>
-                <th scope="col">Raised By</th>
+                <th scope="col">Raised</th>
                 <th scope="col">Priority</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
             <!-- Replace with actual data -->
+        <tbody>
+            {% for ticket in tickets %}
             <tr>
-                <td>1</td>
-                <td contenteditable="true">Subject 1</td>
+                <td>{{ ticket.subject }}</td>
                 <td>
-                    <select class="form-select form-select-sm bg-dark text-white status-select">
-                        <option selected>Open</option>
-                        <option>In Progress</option>
-                        <option>Resolved</option>
+                    <select class="form-select form-select-sm bg-dark text-white status-select"
+                        data-ticket-id="{{ ticket.ticket_id }}" onchange="updateStatus(this)">
+                        <option value="open" {% if ticket.status=='open' %}selected{% endif %}>Open</option>
+                        <option value="in progress" {% if ticket.status=='in progress' %}selected{% endif %}>In Progress
+                        </option>
+                        <option value="resolved" {% if ticket.status=='resolved' %}selected{% endif %}>Resolved</option>
                     </select>
                 </td>
-                <td >2023-07-30 10:00</td>
-                <td >null</td>
+                <td>{{ ticket.opened_at }}</td>
+                <td>null</td> <!-- Placeholder for now -->
                 <td>
-                    <select class="form-select form-select-sm bg-dark text-white assigned-select">
-                        <option selected>John Doe</option>
+                    <select class="form-select form-select-sm bg-dark text-white assigned-select"
+                        data-ticket-id="{{ ticket.ticket_id }}" onchange="updateAssigned(this)">
+                        <!-- You can extend this dropdown based on your data -->
+                        <option>John Doe</option>
                         <option>Jane Smith</option>
-                        <!-- Add more staff names as needed -->
                     </select>
                 </td>
-                <td contenteditable="true">Jane Smith</td>
-                <td contenteditable="true">High</td>
+                <td>Jane Smith</td> <!-- Placeholder for now -->
+                <td>High</td> <!-- Placeholder for now -->
                 <td><button class="btn btn-primary">Message</button></td>
             </tr>
-            <!-- More rows as needed -->
+            {% endfor %}
         </tbody>
+
     </table>
 </div>
 
 
 <script>
+    function updateStatus(selectElement) {
+        const ticketId = selectElement.dataset.ticketId;
+        const newStatus = selectElement.value;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Listen for changes in select elements
-        document.querySelectorAll('.status-select, .assigned-select').forEach(selectElem => {
-            selectElem.addEventListener('change', handleTableChange);
-        });
-
-        // Listen for changes in contenteditable elements
-        document.querySelectorAll('[contenteditable="true"]').forEach(editableElem => {
-            editableElem.addEventListener('blur', handleTableChange);
-        });
-    });
-
-    function handleTableChange(event) {
-        const row = event.target.closest('tr');
-        const ticketId = row.querySelector('td:first-child').textContent;
-        const data = {
-            ticketId: ticketId,
-            column: event.target.getAttribute('name') || event.target.closest('td').getAttribute('data-column-name'),
-            newValue: event.target.value || event.target.textContent
-        };
-
-        // Send data to Flask
-        fetch('/update_ticket', {
+        fetch(`/update-status/${ticketId}`, {
             method: 'POST',
+            body: JSON.stringify({ status: newStatus }),
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Ticket updated successfully');
-                } else {
-                    console.error('Error updating ticket');
-                }
-            });
+            }
+        });
+    }
+
+    function updateAssigned(selectElement) {
+        const ticketId = selectElement.dataset.ticketId;
+        const newAssigned = selectElement.value;
+
+        fetch(`/update-assigned/${ticketId}`, {
+            method: 'POST',
+            body: JSON.stringify({ assigned: newAssigned }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 
 </script>

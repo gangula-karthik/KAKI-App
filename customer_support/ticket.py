@@ -115,6 +115,22 @@ class Ticket:
             "Opened At": self.opened_at,
             "Closed At": self.closed_at
         }, indent=4)
+    
+
+
+def updateStatus(ticket_id, status):
+    status = status.lower()
+    db.child(f'/tickets/{ticket_id}').update({"status": status})
+    print("Status updated successfully.")
+    if status == "resolved":
+        closed_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        db.child(f'/tickets/{ticket_id}').update({"closed_at": closed_at})
+        print("Ticket close time has been updated successfully.")
+
+def updateStaffID(ticket_id, staff_id):
+    db.child(f'/tickets/{ticket_id}').update({"staff_id": staff_id})
+    print("Staff ID updated successfully.")
+
 
 
 topicList = ['billing', 'technical', 'listing', 'other']

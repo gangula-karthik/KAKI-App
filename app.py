@@ -12,6 +12,7 @@ from customer_support.ticket import *
 from customer_support.imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
+import threading
 from dotenv import load_dotenv
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 from Report_generation.Admin_classes import *
@@ -681,6 +682,26 @@ def get_ticket(ticket_id):
     return ticket[0]
 
 
+@app.route('/update-status/<ticket_id>', methods=['POST'])
+def update_status(ticket_id):
+    data = request.get_json()
+    new_status = data.get('status')
+
+    t1 = threading.Thread(target=updateStatus, args=(ticket_id, new_status))
+    t1.start()
+    
+    return jsonify({"message": "Status updated successfully!"}), 200
+
+
+@app.route('/update-assigned/<ticket_id>', methods=['POST'])
+def update_assigned(ticket_id):
+    data = request.get_json()
+    new_assigned = data.get('assigned')
+
+    t1 = threading.Thread(target=updateStaffID, args=(ticket_id, new_assigned))
+    
+    return jsonify({"message": "Assigned person updated successfully!"}), 200
+
 
 @app.route('/delete_ticket/<ticket_id>', methods=['POST'])
 def delete_ticket(ticket_id):
@@ -854,7 +875,7 @@ def staffTicketDashboard():
 
     avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
 
-    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time)
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval())
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
