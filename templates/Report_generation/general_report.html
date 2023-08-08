@@ -31,9 +31,9 @@
 </div>
 
 <div class = "Line_graph_transaction_report">
-    <canvas id = "Line3"></canvas>
-<!-- <h6 style="text-align: center;">Total number of community events:</h6>-->
-<!--    <h3 style="text-align: center;"> {{ Total_community }}</h3>-->
+<!--    <canvas id = "Line3"></canvas>-->
+ <h6 style="text-align: center;">All time total number of community events:</h6>
+    <h3 style="text-align: center;"> {{ Total_community }}</h3>
 </div>
 </div>
 <div>
@@ -115,38 +115,38 @@
    </script>
 
 
-<script>
-      var chrt3 = document.getElementById("Line3").getContext("2d");
-      var chartId3 = new Chart(chrt3, {
-         type: 'line',
-         data: {
+<!--<script>-->
+<!--      var chrt3 = document.getElementById("Line3").getContext("2d");-->
+<!--      var chartId3 = new Chart(chrt3, {-->
+<!--         type: 'line',-->
+<!--         data: {-->
 
-            labels: {{ listMonths | tojson }},
+<!--            labels: {{ listMonths | tojson }},-->
 
-            datasets: [{
-               label: "online tutorial subjects",
-               data: {{ Total_community | tojson }},
-               backgroundColor: ['Green'],
-               borderColor: ['black'],
-               borderWidth: 2,
-               pointRadius: 5,
-            }],
-         },
-         options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins:{
-               title:{
-                  display: true,
-                  text: "Community events over the months",
-                  color: '#FFFFFF',
-                  font:{
-                  size:20,},
-                  }
-            }
-         },
-      });
-   </script>
+<!--            datasets: [{-->
+<!--               label: "online tutorial subjects",-->
+<!--               data: {{ Total_community | tojson }},-->
+<!--               backgroundColor: ['Green'],-->
+<!--               borderColor: ['black'],-->
+<!--               borderWidth: 2,-->
+<!--               pointRadius: 5,-->
+<!--            }],-->
+<!--         },-->
+<!--         options: {-->
+<!--            maintainAspectRatio: false,-->
+<!--            responsive: true,-->
+<!--            plugins:{-->
+<!--               title:{-->
+<!--                  display: true,-->
+<!--                  text: "Community events over the months",-->
+<!--                  color: '#FFFFFF',-->
+<!--                  font:{-->
+<!--                  size:20,},-->
+<!--                  }-->
+<!--            }-->
+<!--         },-->
+<!--      });-->
+<!--   </script>-->
 
 
 <script>

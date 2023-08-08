@@ -141,11 +141,13 @@ def index():
                         time.sleep(5)  # Add a 5-second delay before checking again
             else:
                 print("Email already verified.")
-            return redirect('/supportStaffOverview')
+
+            return redirect('/staff/users')
             # return redirect('/dashboard')
         except:
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
+
     return render_template('account_management/login.html')
 
 @app.route('/dashboard')
@@ -233,6 +235,7 @@ def forget_password():
         r_email = 'Error sending password reset email'
         return render_template('account_management/forget_password.html', exist_message=r_email)
     
+
 
 @app.route('/add_user_credentials', methods=['GET', 'POST'])
 def add_user_credentials():
@@ -448,35 +451,35 @@ def eventTest():
     events = retreive_data_event()
     names = retreive_event_name(events)
     if staffStatus: 
-        return render_template('/Report_generation/event_list.html', username=current_user,events = names, staffStatus=False)
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
     else:
-        return render_template('/Report_generation/event_list.html', username=current_user,events = names, staffStatus=True)
+        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=False)
 # Changed the template to my own so that i can see the layout
 
 
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('homefeed.html', username=current_user)
+    return render_template('homefeed.html', user_name=current_user)
 
 @app.route('/myposts', methods=['GET'])
 def mypost():
-    return render_template('homefeed.html', username=current_user)
+    return render_template('homefeed.html', user_name=current_user)
 
 @app.route('/bookmarks', methods=['GET'])
 def bookmarks():
-    return render_template('homefeed.html', username=current_user)
+    return render_template('homefeed.html', user_name=current_user)
 
 @app.route('/chat', methods=['GET'])
 def chat():
-    return render_template('customer_support/user_chat.html', username=current_user)
+    return render_template('customer_support/user_chat.html', user_name=current_user)
 
 @app.route('/noticeboard', methods=['GET'])
 def noticeboard():
-    return render_template('notices.html', username=current_user)
+    return render_template('notices.html', user_name=current_user)
 
 @app.route('/friend_request', methods=['GET'])
 def friendRequest():
-    return render_template('friend_request.html', username=current_user)
+    return render_template('friend_request.html', user_name=current_user)
 
 
 # customer support routes
@@ -502,7 +505,7 @@ def customerOverview():
     if future.done():
         faqs = future.result()
         messages = get_flashed_messages()
-        return render_template('customer_support/support_overview.html', username=current_user, messages=messages, faqs=faqs)
+        return render_template('customer_support/support_overview.html', user_name=current_user, messages=messages, faqs=faqs)
     else:
         return render_template('customer_support/loading.html'), 202
 
@@ -679,7 +682,7 @@ def update_ticket(ticket_id):
 @app.route('/ticket_search', methods=['GET'])
 def search():
     query = request.args.get('query')
-    return redirect(url_for('userTickets', query=query, username=current_user))
+    return redirect(url_for('userTickets', query=query, user_name=current_user))
 
 def ticketRetrieval():
     allTickets = pyredb.child("tickets").get()
@@ -734,7 +737,7 @@ def delete_ticket(ticket_id):
 def myTickets():
     tickets = ticketRetrieval()
     myTickets = [i for i in tickets if i['user_id'] == current_user]
-    return render_template('customer_support/my_tickets.html', username=current_user,data=myTickets)
+    return render_template('customer_support/my_tickets.html', user_name=current_user,data=myTickets)
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
@@ -743,11 +746,7 @@ def userTickets():
         tickets = semanticSearch(query)
     else:
         tickets = ticketRetrieval()
-    
-    if staffStatus:
-        return render_template('customer_support/ticket_discussion.html', username=current_user, data=tickets, is_staff=staffStatus)
-    else:
-        return render_template('customer_support/ticket_discussion.html', username=current_user, data=tickets)
+    return render_template('customer_support/ticket_discussion.html', user_name=current_user, data=tickets)
 
 
 def getComments(): 
@@ -769,7 +768,7 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=staffStatus)
+    return render_template('customer_support/ticket_comments.html', user_name=current_user, data=ticket, comments=commList, is_staff=False)
 
 
 @app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
@@ -834,7 +833,7 @@ def kakiGPT():
 
         return jsonify({'bot_response': bot_response})
 
-    return render_template('customer_support/kakigpt.html', username=current_user, chat_history=chat_history)
+    return render_template('customer_support/kakigpt.html', user_name=current_user, chat_history=chat_history)
 
 
 
@@ -848,7 +847,7 @@ def forbidden(e):
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
     if staffStatus:
-        return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus)
+        return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
     else: 
         return abort(403)
     
@@ -904,7 +903,7 @@ def staffTicketDashboard():
 
     avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
 
-    return render_template('customer_support_staff/ticketManagement.html', username=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members, is_staff=staffStatus)
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
@@ -917,7 +916,7 @@ def Individual_report():
     list_data = get_individual_points_over_past_months('John Doe', current_year, month)
     activities = get_individual_activities('John Doe', current_year,month)
 
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, staffStatus=False)
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=False)
 
 import datetime
 @app.route('/Report_generation/Community_report')
@@ -929,7 +928,7 @@ def Community_report():
     leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
     list_data = get_last_five_months_of_specified_year('bishan_toa_payoh',current_year,month)
     top_g = get_individual_with_most_points_in_community('bishan_toa_payoh',current_year,month)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = '69', staffStatus = False)
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = '69', is_staff=False)
 
 
 @app.route('/save_data/com', methods=['POST'])
@@ -1033,7 +1032,10 @@ def Transactions_report():
     # total_count = total_count_transactions()
     # total_cost = sum_cost_in_route()
     # total_received = sum_retrieve_in_route()
-    return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = [6,9,6,9,6,9], Total_received = [6,9,6,9,6,9], Total_number = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths,staffStatus=False)
+    total_count = count_transactions_past_6_months_for_buyer(current_year, month, 'John Doe')
+    total_received =sum_product_costs_past_6_months_for_seller(current_year, month, 'John Doe')
+    total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, 'John Doe')
+    return render_template('/Report_generation/Transactions_report.html', user_name=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=False)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
@@ -1041,7 +1043,7 @@ def Saved_report():
 
 
     details = retrieve_report_name(reports)
-    return render_template('/Report_generation/saved_reports.html', username=current_user, reports = details, staffStatus=False)
+    return render_template('/Report_generation/saved_reports.html', user_name=current_user, reports = details, is_staff=False)
 
 
 @app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
@@ -1058,7 +1060,7 @@ def view_report(report_type,Report_id):
         most_contributed = data['most_contributed']
 
 
-        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed)
+        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed,is_staff=False)
     elif report_type == "Individual":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
@@ -1069,7 +1071,7 @@ def view_report(report_type,Report_id):
         activities = data['activities']
 
 
-        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities)
+        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=False)
 
     elif report_type == "Transaction":
         current_month = data['current_month']
@@ -1079,7 +1081,7 @@ def view_report(report_type,Report_id):
         total_received = data['Total_received']
         total_number = data['NoTransactionData']
 
-        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number)
+        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=False)
 
 @app.route('/delete/data', methods=['POST'])
 def delete_report():
@@ -1107,7 +1109,7 @@ def event_list():
     events = retreive_data_event()
     names = retreive_event_name(events)
 
-    return render_template('/Report_generation/event_list.html', username=current_user,events = names, staffStatus=True)
+    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, is_staff=True)
 
 @app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
@@ -1115,7 +1117,7 @@ def Event_details(report):
     details = retrieve_event_from_name(events, report)
 
 
-    return render_template('/Report_generation/Event_details.html', username=current_user,details = details,staffStatus=True)
+    return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details,is_staff=True)
 
 
 
@@ -1125,9 +1127,9 @@ def update(event_name):
     event_details = retrieve_event_from_name(events, event_name)
     update_user_form = CreateUserForm(request.form)
     if staffStatus == 'staff':
-        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, staffStatus=True)
+        return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,event=event_details, is_staff=True)
     else:
-        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,
+        return render_template('/Report_generation/update.html', user_name=current_user, form=update_user_form,
                                event=event_details, staffStatus=False)
 
 
@@ -1163,8 +1165,9 @@ def general_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
-
-    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=True)
+    count_trans = count_transactions_past_6_months(current_year, month)
+    count_event = count_events()
+    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = count_event, Total_users = [6,9,6,9,6,9], Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=True)
 
     
 
@@ -1261,7 +1264,7 @@ def MyProducts(product_id):
     ]
    # product = next((p for p in products if p['id'] == product_id), None)
     #if product:
-    return render_template('/transaction_handling/MyProducts.html', username=current_user)
+    return render_template('/transaction_handling/MyProducts.html', user_name=current_user)
     #return "Product not found"
 
 @app.route('/transaction_handling/marketplace')
@@ -1272,7 +1275,7 @@ def marketplace():
     # for i in allProducts.each():
     #     res.append(i.val())
     
-    return render_template('/transaction_handling/marketplace.html', products = products, username = current_user)
+    return render_template('/transaction_handling/marketplace.html', products = products, user_name = current_user)
 
 
 
@@ -1343,7 +1346,42 @@ def delete_product(product_id):
 
 @app.route('/transaction_handling/services')
 def services():
-    return render_template('transaction_handling/services.html', username=current_user, is_staff=staffStatus)
+    return render_template('transaction_handling/services.html')
+
+
+@app.route('/update_service/<product_id>', methods=['POST'])
+def update_product(product_id):
+    # Retrieve form data
+
+
+    # change all these
+    product_name = request.form.get('updatedProductName')
+    product_description = request.form.get('updatedProductDescription')
+    product_price = request.form.get('updatedProductPrice')
+    product_condition = request.form.get('updatedProductCondition')
+
+    # Construct the data dictionarys
+    data = {
+        "product_name": product_name,
+        "product_description": product_description,
+        "product_price": product_price,
+        "product_condition": product_condition,
+        "seller": current_user  # Assuming current_user is a global or session variable
+    }
+
+    print(data)
+
+    # Update the product in Firebase
+    pyredb.child(f"products/{product_id}").update(data)
+
+    return redirect(url_for('service'))
+
+
+@app.route('/delete_service/<string:product_id>', methods=['POST'])
+def delete_product(product_id):
+    pyredb.child('products').child(product_id).remove()
+    flash('Product has been deleted')
+    return redirect(url_for('service'))
 
 
 if __name__ == '__main__':
