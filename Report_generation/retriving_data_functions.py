@@ -287,9 +287,20 @@ def get_individual_activities(individual_name, year, month):
 
     return activities
 
+
 def get_individual_with_most_points_in_community(community, year, month):
     individuals_data = db.reference("/IndividualPoints").get()
-    community_individuals = [individual for individual, data in individuals_data.items() if data.get("community") == community]
+
+    if not individuals_data:
+        print("No data found for individuals.")
+        return None
+
+    community_individuals = [individual for individual, data in individuals_data.items() if
+                             data.get("community") == community]
+
+    if not community_individuals:
+
+        return "Earn some points"
 
     max_points = 0
     top_individual = None
@@ -297,6 +308,7 @@ def get_individual_with_most_points_in_community(community, year, month):
     for individual in community_individuals:
         if year in individuals_data[individual] and month in individuals_data[individual][year]:
             points = individuals_data[individual][year][month]["points"]
+            print(f"Individual: {individual}, Points: {points}")
             if points > max_points:
                 max_points = points
                 top_individual = individual
