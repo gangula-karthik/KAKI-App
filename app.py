@@ -36,6 +36,7 @@ from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
 from googletrans import LANGUAGES, Translator
+import datetime
 
 translator = Translator()
 
@@ -114,6 +115,7 @@ def index():
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
             # Get the Firebase token ID
+            print(user)
             token_id = user['idToken']
             # Save the token ID in the session
             session['user_token'] = token_id
@@ -260,14 +262,20 @@ def add_user_credentials():
 
         if token_id is None:
             return "User token ID not found. Please log in first."
-        # Add the "status" field with the value "User" to the data
+        # Get the current month and year
+        current_month = datetime.datetime.now().strftime('%B')
+        current_year = datetime.datetime.now().year
+
+        # Add the "status", "month", and "year" fields to the data
         data = {
             "email": email,
             "name": name,
             "username": username,
             "birthdate": birthdate,
             "town": town,
-            "status": "User"  # Add the "status" field with the value "User"
+            "status": "User",
+            "month": current_month,
+            "year": current_year
         }
         # Use the token ID as the key in the database
         pyredb.child("Users").child("Consumer").child(token_id).set(data)
@@ -299,7 +307,7 @@ def add_user_credentials():
                         break
                     else:
                         print("Email not verified. Waiting...")
-                        time.sleep(5)  # Add a 5-second delay before checking again
+                        time.sleep(3)  # Add a 5-second delay before checking again
             else:
                 print("Email already verified.")
         except Exception as e:
