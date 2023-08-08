@@ -14,6 +14,7 @@ class events_report():
         self.__time__ = None
         self.__overall_in_charge__ = None
         self.__dateposted__ = None
+        self.__community__ = None
 
     # ... (getter and setter methods as before)
     # Getter methods
@@ -60,6 +61,12 @@ class events_report():
     def set_dateposted(self, dateposted):
         self.__dateposted__ = dateposted
 
+    def get_community(self):
+        return self.__community__
+
+    def set_community(self, community):
+        self.__community__ = community
+
     def save_to_firebase(self):
         report_data = {
             "event_name": self.__event_name__,
@@ -69,6 +76,7 @@ class events_report():
             "time": self.__time__,
             "overall_in_charge": self.__overall_in_charge__,
             "date_posted": self.__dateposted__,
+            "community": self.__community__,
         }
 
         # Save the report data to Firebase Realtime Database
@@ -91,6 +99,7 @@ class events_report():
             events_report_instance.__time__ = report_ref.get("time")
             events_report_instance.__overall_in_charge__ = report_ref.get("overall_in_charge")
             events_report_instance.__dateposted__ = report_ref.get("date_posted")
+            events_report_instance.__community__ = report_ref.get("community")
             return events_report_instance
         else:
             return None
@@ -101,7 +110,7 @@ class events_report():
             setattr(self, attribute, value)
 
         # Save the updated report data to Firebase Realtime Database
-        ref = db.reference("Events")
+        ref = db.reference("/Events")
         report_ref = ref.child(self.__event_name__)
         report_data = {
             "event_name": self.__event_name__,
@@ -111,6 +120,7 @@ class events_report():
             "time": self.__time__,
             "overall_in_charge": self.__overall_in_charge__,
             "date_posted": self.__dateposted__,
+            "community": self.__community__,
         }
         report_ref.update(report_data)
 

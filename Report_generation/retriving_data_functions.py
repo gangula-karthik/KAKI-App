@@ -445,6 +445,20 @@ def count_events(path = '/Events'):
         return len(data)
     else:
         return 0
+
+def count_events_com(community,path='/Events', ):
+    data = db.reference(path).get()
+
+    if community:
+        filtered_data = [event for event in data if event.get("community") == community]
+        return len(filtered_data)
+    else:
+        if isinstance(data, dict):
+            return len(data)
+        elif isinstance(data, list):
+            return len(data)
+        else:
+            return 0
 def count_signups_per_year_month(year, month):
     users_data = db.reference("/Users/Consumer").get()
 

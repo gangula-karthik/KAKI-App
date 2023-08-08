@@ -179,8 +179,15 @@ def extract_event_by_name(event_name):
         # Get a reference to the "Events" location in the database
         ref = db.reference("/Events")
 
-        # Retrieve the event data with the given event_name
-        event_data = ref.child(event_name).get()
+        # Retrieve all event data
+        all_events = ref.get()
+
+        # Search for the event with the given event_name
+        event_data = None
+        for event_uid, event_info in all_events.items():
+            if event_info.get("event_name") == event_name:
+                event_data = event_info
+                break
 
         # If the event with the given event_name is not found, return None
         if event_data is None:

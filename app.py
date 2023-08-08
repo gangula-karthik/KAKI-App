@@ -991,7 +991,8 @@ def Community_report():
     leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
     list_data = get_last_five_months_of_specified_year(town,current_year,month)
     top_g = get_individual_with_most_points_in_community(town,current_year,month)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = '69', is_staff=False)
+    count_activities = count_events_com(town)
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = count_activities, is_staff=False)
 
 
 @app.route('/save_data/com', methods=['POST'])
