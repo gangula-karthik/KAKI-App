@@ -997,7 +997,7 @@ def Community_report():
 @app.route('/save_data/com', methods=['POST'])
 def save_data_com():
     data = request.json
-    report = get_com()
+    report = get_com(name)
     check = check_existing(report,data)
 
     logging.info(f"Received data: {data}")
@@ -1018,7 +1018,7 @@ def save_data_com():
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
-        report_c.save_to_firebase()
+        report_c.save_to_firebase(name)
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
@@ -1029,7 +1029,7 @@ def save_data_com():
 def save_data_indi():
 
     data = request.json
-    report = get_indi()
+    report = get_indi(name)
     check = check_existing(report,data)
 
     logging.info(f"Received data: {data}")
@@ -1051,7 +1051,7 @@ def save_data_indi():
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
-        report_i.save_to_firebase()
+        report_i.save_to_firebase(name)
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
@@ -1061,7 +1061,7 @@ def save_data_trans():
 
 
     data = request.json
-    report = get_trans()
+    report = get_trans(name)
     check = check_existing(report,data)
 
     logging.info(f"Received data: {data}")
@@ -1081,7 +1081,7 @@ def save_data_trans():
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
-        report_trans.save_to_firebase()
+        report_trans.save_to_firebase(name)
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
@@ -1102,7 +1102,7 @@ def Transactions_report():
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
-    reports = get_all_reports()
+    reports = get_all_reports(name)
 
 
     details = retrieve_report_name(reports)
@@ -1111,7 +1111,7 @@ def Saved_report():
 
 @app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
-    report = get_all_reports()
+    report = get_all_reports(name)
     data = retrieve_ByID(report,Report_id)
     if report_type == "Community":
         leaderboard = data['leaderboard']
@@ -1136,7 +1136,7 @@ def view_report(report_type,Report_id):
 
         return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=False)
 
-    elif report_type == "Transaction":
+    elif report_type == "Transactions":
         current_month = data['current_month']
         current_year = data['current_year']
         list_month = data['listMonths']
@@ -1149,23 +1149,23 @@ def view_report(report_type,Report_id):
 @app.route('/delete/data', methods=['POST'])
 def delete_report():
     report_id = str(request.json)
-    report = get_all_reports()
+    report = get_all_reports(name)
     details = retrieve_ByID(report, report_id)
     report_type = details['report_type']
 
 
     if report_type == "Community":
-        delete_Com_from_firebase(report_id)
+        delete_Com_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 
 
     elif report_type == "Individual":
-        delete_Indi_from_firebase(report_id)
+        delete_Indi_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 
 
     elif report_type == "Transaction":
-        delete_Trans_from_firebase(report_id)
+        delete_Trans_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 @app.route('/event_lists', methods=['GET'])
 def event_list():
