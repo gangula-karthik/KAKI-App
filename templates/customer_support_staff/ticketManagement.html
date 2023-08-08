@@ -109,18 +109,27 @@
                     </select>
                 </td>
                 <td>{{ ticket.opened_at }}</td>
-                <td>null</td> <!-- Placeholder for now -->
+                <td>{{ ticket.closed_at }}</td> <!-- Placeholder for now -->
                 <td>
                     <select class="form-select form-select-sm bg-dark text-white assigned-select"
                         data-ticket-id="{{ ticket.ticket_id }}" onchange="updateAssigned(this)">
-                        <!-- You can extend this dropdown based on your data -->
-                        <option>John Doe</option>
-                        <option>Jane Smith</option>
+                        <option value="none" {% if not ticket.staff_id %}selected{% endif %}>None</option>
+                        {% for staff in staff_members %}
+                        <option value="{{ staff.name }}" {% if ticket.staff_id==staff.name %}selected{% endif %}>{{
+                            staff.name }}</option>
+                        {% endfor %}
                     </select>
+
+
+
                 </td>
-                <td>Jane Smith</td> <!-- Placeholder for now -->
-                <td>High</td> <!-- Placeholder for now -->
-                <td><button class="btn btn-primary">Message</button></td>
+                <td>{{ ticket.user_id }}</td> <!-- Placeholder for now -->
+                <td>
+                    {% if ticket.subject_sentiment <= -0.5 %} High {% elif ticket.subject_sentiment < 0.5 %} Medium {%
+                        else %} Low {% endif %} </td>
+                        <!-- Placeholder for now -->
+                <td><a target="_blank" href="{{ url_for('staffChat', ticket_id=ticket.ticket_id) }}"
+                        class="btn btn-primary">Message</a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -140,7 +149,10 @@
             headers: {
                 'Content-Type': 'application/json'
             }
-        });
+        })
+            .then(() => {
+                location.reload();
+            });
     }
 
     function updateAssigned(selectElement) {
@@ -153,7 +165,10 @@
             headers: {
                 'Content-Type': 'application/json'
             }
-        });
+        })
+            .then(() => {
+                location.reload();
+            });
     }
 
 </script>

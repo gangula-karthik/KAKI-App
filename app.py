@@ -699,6 +699,7 @@ def update_assigned(ticket_id):
     new_assigned = data.get('assigned')
 
     t1 = threading.Thread(target=updateStaffID, args=(ticket_id, new_assigned))
+    t1.start()
     
     return jsonify({"message": "Assigned person updated successfully!"}), 200
 
@@ -836,10 +837,20 @@ def convert_to_scale(score, old_min=-1, old_max=1, new_min=1, new_max=5):
     return ((score - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
 
 
+def staffRetrieval():
+    users = pyredb.child("Users/Consumer").get()
+    staff = [i.val() for i in users.each() if i.val()['status'] == 'Staff']
+    print("All tickets retrieved")
+    return staff
+
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
     if not staffStatus:
         abort(403)
+
+    staff_members = staffRetrieval()
+
+   
 
     all_tickets = pyredb.child("tickets").get().val() or {}
 
@@ -875,7 +886,7 @@ def staffTicketDashboard():
 
     avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
 
-    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval())
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
