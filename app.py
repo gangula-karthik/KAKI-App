@@ -96,7 +96,7 @@ def index():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
-        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  
+        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
         data = {
@@ -113,35 +113,33 @@ def index():
 
         # Rest of your login logic (similar to your existing code)
         email = request.form['user_email']
-        print(email)
         password = request.form['user_pwd']
-        print(password)
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
-            print(user)
+
             # Get the Firebase token ID
             token_id = user['idToken']
             local_id = user['localId']
-            print(token_id)
+
             # Save the token ID in the session
             session['user_token'] = token_id
 
-            firebase_user = auth.get_user(user['localId'])
+            firebase_user = auth.get_user(local_id)
             email_verified = firebase_user.email_verified
             if not email_verified:
                 # Update user's custom claims to indicate pending email verification
-                auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
+                auth.set_custom_user_claims(local_id, {'emailVerified': False})
 
                 # Send the email verification
                 pyreauth.send_email_verification(user['idToken'])
                 print("Verification email sent. Waiting for email verification...")
                 # Wait until the email is verified
                 while True:
-                    firebase_user = auth.get_user(user['localId'])
+                    firebase_user = auth.get_user(local_id)
                     email_verified = firebase_user.email_verified
                     if email_verified:
                         # Update user's custom claims to indicate email verification completed
-                        auth.set_custom_user_claims(user['localId'], {'emailVerified': True})
+                        auth.set_custom_user_claims(local_id, {'emailVerified': True})
                         print("Email verified.")
                         break
                     else:
@@ -150,17 +148,29 @@ def index():
             else:
                 print("Email already verified.")
             
-            
-            session["username"] = pyredb.child("Users").child("Consumer").child(local_id).child("username").val()
-    
+            # Fetch username and status from the Realtime Database
+            try:
+                username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
+                status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
 
-            print(session['username'])
-            # session['status'] = pyredb.child("Users").child("Consumer").child(token_id).child("status").val()
-            # print(session['status'])
+                if username:
+                    session["username"] = username
+                    print("Username:", session["username"])
+                else:
+                    print("Username not found in the database.")
+
+                if status:
+                    session["status"] = status
+                    print("Status:", session["status"])
+                else:
+                    print("Status not found in the database.")
+            except Exception as db_exception:
+                print("Error fetching data from the Realtime Database:", str(db_exception))
 
             return redirect('/staff/users')
             # return redirect('/dashboard')
-        except:
+        except Exception as auth_exception:
+            print("Authentication failed:", str(auth_exception))
             unsuccessful = 'Please check your credentials'
             return render_template('account_management/login.html', umessage=unsuccessful)
     return render_template('account_management/login.html')
