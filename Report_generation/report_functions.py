@@ -177,7 +177,7 @@ def retrieve_event_from_name(dictionary, target):
 def extract_event_by_name(event_name):
     try:
         # Get a reference to the "Events" location in the database
-        ref = db.reference("Events")
+        ref = db.reference("/Events")
 
         # Retrieve the event data with the given event_name
         event_data = ref.child(event_name).get()
@@ -289,21 +289,4 @@ def sort_by_community_points(top_n):
     return sorted_items[:top_n]
 
 
-def sum_retrieve_in_route():
-    # Get a reference to the Firestore database
-    ref = db.reference("/products")
 
-    list_items = ref.get()
-
-    # Calculate the sum of the 'cost' column
-    total_cost = 0
-    for item in list_items:
-        inst = list_items[item]
-        if inst['seller']=='leap':
-
-            mon = float(inst['product_price'])
-            total_cost += mon
-        else:
-            continue
-
-    return total_cost

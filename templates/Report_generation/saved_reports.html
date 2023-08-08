@@ -34,6 +34,7 @@ margin-top:2px;
 {% block content %}
 <h1>Saved Reports</h1>
 <div>
+            {% if reports %}
             {% for report in reports %}
             <div  class="saved_cards">
                     <a class='link_report' href="/Report_generation/{{report.report_type}}/{{ report.Report_id }}">{{report.name}}</a>
@@ -41,6 +42,9 @@ margin-top:2px;
             </div>
 
             {% endfor %}
+    {% else %}
+    <p>No reports available.</p>
+{% endif %}
 </div>
 {% endblock %}
 
