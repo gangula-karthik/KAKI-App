@@ -60,8 +60,8 @@ app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
-current_user = 'Matt' # I need this to be retrieved from the session
-user_status = 'Staff' # I need this to be retrieved from the session
+current_user = 'Leap' # I need this to be retrieved from the session
+user_status = 'User' # I need this to be retrieved from the session
 staffStatus = user_status == "Staff"
 
 
@@ -535,12 +535,16 @@ def faq_status():
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
 
-    if staffStatus: 
-        user_tickets = {k: v for k, v in all_tickets.items() if v.get('staff_id') == current_user}
+    # If the person accessing is staff, filter the tickets assigned to them
+    if staffStatus:  # Assuming staffStatus returns True for staff members
+        user_tickets = {k: v for k, v in all_tickets.items() if v.get('assigned_to') == current_user}
+
+    # If the person accessing is a regular user, filter the tickets created by them
     else:
         user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
 
     return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+
 
 
 
