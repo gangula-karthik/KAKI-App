@@ -1422,7 +1422,7 @@ def s_handle_modal_submission():
     pyredb.child("services").push(data)
 
     # Redirect to a page or return a response
-    return redirect(url_for('services'))
+    return redirect(url_for('show_all_services'))
 
 
 @app.route('/transaction_handling/services', methods=['GET'])
