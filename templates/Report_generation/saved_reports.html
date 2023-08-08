@@ -43,7 +43,13 @@ margin-top:2px;
 
             {% endfor %}
     {% else %}
-    <p>No reports available.</p>
+    <div class="container d-flex align-items-center justify-content-center" style="height: 70vh;">
+    <div class="text-center">
+      <h1 style="font-size: 4rem;">💀</h1>
+      <h3 style="font-size: 3rem;">Well, this is awkward</h3>
+      <h6>Looks like there is nothing right now. To save a report click the save button under the respective reports.</h6>
+    </div>
+  </div>
 {% endif %}
 </div>
 {% endblock %}
