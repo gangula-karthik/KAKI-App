@@ -161,3 +161,22 @@ def get_last_six_months():
         today -= timedelta(days=1)
 
     return last_six_months
+
+
+def get_top_communities_for_specific_month_and_year(month, year, num_top):
+    communities_data = db.reference("/CommunityPoints").get()
+
+    community_points = {}
+
+    for community, months_data in communities_data.items():
+        if year in months_data and month in months_data.get(year, {}):
+            total_points = months_data[year][month]["points"]
+            community_points[community] = total_points
+
+    # Sort communities by points in descending order
+    sorted_communities = sorted(community_points.items(), key=lambda x: x[1], reverse=True)
+
+    # Return the top 'num_top' communities
+    top_communities = sorted_communities[:num_top]
+
+    return top_communities

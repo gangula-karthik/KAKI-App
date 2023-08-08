@@ -276,17 +276,23 @@ def sort_by_individual_points(top_n):
     # Return the top products based on the desired number (top_n)
     return sorted_items[:top_n]
 
-def sort_by_community_points(top_n):
-    # Get a reference to the Firestore database
-    ref = db.reference("/this is the route to the community")
 
-    list_items = ref.get()
+def get_top_communities(num_top):
+    communities_data = db.reference("/CommunityPoints").get()
 
-    # Sort the items in descending order based on 'product_price' (cost)
-    sorted_items = sorted(list_items.values(), key=lambda x: float(x['this is the name of the column of the points']), reverse=True)
+    community_points = {}
 
-    # Return the top products based on the desired number (top_n)
-    return sorted_items[:top_n]
+    for community, months_data in communities_data.items():
+        total_points = sum(month_data["points"] for month_data in months_data.values())
+        community_points[community] = total_points
+
+    # Sort communities by total points in descending order
+    sorted_communities = sorted(community_points.items(), key=lambda x: x[1], reverse=True)
+
+    # Return the top 'num_top' communities
+    top_communities = sorted_communities[:num_top]
+
+    return top_communities
 
 
 

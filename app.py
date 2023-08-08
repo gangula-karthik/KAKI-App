@@ -875,15 +875,7 @@ def Community_report():
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
-    leaderboard_data = [
-        {"name": "Player 1", "score": 100},
-        {"name": "Player 2", "score": 36},
-        {"name": "Player 3", "score": 72},
-        {"name": "Player 4", "score": 60},
-        {"name": "Player 5", "score": 69}
-    ]
-    leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-
+    leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
     return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', staffStatus = False)
 
 
