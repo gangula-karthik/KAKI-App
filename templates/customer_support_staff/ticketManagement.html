@@ -26,7 +26,7 @@
             <div class="card bg-dark text-white custom-card">
                 <div class="card-body">
                     <h5 class="card-title">Satisfaction</h5>
-                    <p class="card-text">85%</p> <!-- Replace with actual data -->
+                    <p class="card-text">{{ sentiments }} / 5</p> <!-- Replace with actual data -->
                 </div>
             </div>
         </div>
@@ -106,8 +106,8 @@
                         <option>Resolved</option>
                     </select>
                 </td>
-                <td contenteditable="true">2023-07-30 10:00</td>
-                <td contenteditable="true">null</td>
+                <td >2023-07-30 10:00</td>
+                <td >null</td>
                 <td>
                     <select class="form-select form-select-sm bg-dark text-white assigned-select">
                         <option selected>John Doe</option>
@@ -124,6 +124,49 @@
     </table>
 </div>
 
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Listen for changes in select elements
+        document.querySelectorAll('.status-select, .assigned-select').forEach(selectElem => {
+            selectElem.addEventListener('change', handleTableChange);
+        });
+
+        // Listen for changes in contenteditable elements
+        document.querySelectorAll('[contenteditable="true"]').forEach(editableElem => {
+            editableElem.addEventListener('blur', handleTableChange);
+        });
+    });
+
+    function handleTableChange(event) {
+        const row = event.target.closest('tr');
+        const ticketId = row.querySelector('td:first-child').textContent;
+        const data = {
+            ticketId: ticketId,
+            column: event.target.getAttribute('name') || event.target.closest('td').getAttribute('data-column-name'),
+            newValue: event.target.value || event.target.textContent
+        };
+
+        // Send data to Flask
+        fetch('/update_ticket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Ticket updated successfully');
+                } else {
+                    console.error('Error updating ticket');
+                }
+            });
+    }
+
+</script>
 
 
 

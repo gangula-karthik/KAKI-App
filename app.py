@@ -809,6 +809,10 @@ def staffSupportOverview():
         return render_template('customer_support_staff/staffOverview.html', user_name=current_user)
     else: 
         return abort(403)
+    
+
+def convert_to_scale(score, old_min=-1, old_max=1, new_min=1, new_max=5):
+    return ((score - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
 
 
 @app.route('/ticketDashboard', methods=['GET'])
@@ -820,18 +824,23 @@ def staffTicketDashboard():
 
     backlog_count = sum(1 for ticket in all_tickets.values() if ticket.get('status') != 'resolved')
 
-    sentiments = {'positive': 0, 'neutral': 0, 'negative': 0}
+    total_compound_score = 0
+    total_tickets_with_sentiment = 0
+
+    total_scaled_score = 0
     total_tickets_with_sentiment = 0
 
     for ticket in all_tickets.values():
-        sentiment = ticket.get('subject_sentiment')
-        if sentiment in sentiments:
-            sentiments[sentiment] += 1
+        compound_score = ticket.get('subject_sentiment', None)
+        
+        if compound_score is not None:
+            scaled_score = convert_to_scale(compound_score)
+            total_scaled_score += scaled_score
             total_tickets_with_sentiment += 1
 
-    # Convert counts to percentages
-    for sentiment, count in sentiments.items():
-        sentiments[sentiment] = (count / total_tickets_with_sentiment) * 100 if total_tickets_with_sentiment else 0
+    # Calculate the average scaled score
+    average_scaled_score = round(total_scaled_score / total_tickets_with_sentiment if total_tickets_with_sentiment else 0, 2)
+
 
 
     total_resolution_time = 0
@@ -840,15 +849,12 @@ def staffTicketDashboard():
         if ticket.get('status') == 'resolved':
             opened_at = datetime.datetime.strptime(ticket['opened_at'], '%Y-%m-%d %H:%M:%S')
             closed_at = datetime.datetime.strptime(ticket['closed_at'], '%Y-%m-%d %H:%M:%S')
-            # resolved_at = datetime.datetime.strptime(ticket['resolved_at'], '%Y-%m-%d %H:%M:%S')
-            # total_resolution_time += (resolved_at - opened_at).total_seconds()
-            # For now, I'll use the current time as a placeholder
             total_resolution_time += (closed_at - opened_at).total_seconds() // 3600
             resolved_tickets_count += 1
 
     avg_resolution_time = total_resolution_time / resolved_tickets_count if resolved_tickets_count else 0
 
-    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=sentiments, avg_resolution_time=avg_resolution_time)
+    return render_template('customer_support_staff/ticketManagement.html', user_name=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time)
 
 # report generation routes
 @app.route('/Report_generation/Individual_report')
