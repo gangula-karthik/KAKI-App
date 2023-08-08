@@ -219,6 +219,7 @@ def dashboard():
 def logout():
     # Clear the session on logout
     session.pop('user_email', None)
+    session.pop('chat_history', None) # clearing chat history
     return redirect('/')
 
 
