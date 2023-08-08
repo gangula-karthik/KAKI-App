@@ -15,7 +15,7 @@
 {% block content %}
 <div class="Graphs" id ="Content">
 
-<h1 class = "title_report">My {{ current_year}} {{ current_month }} Transactions</h1>
+<h1 class = "title_report">{{ current_year}} {{ current_month }} general report</h1>
 <div class = 'cards_for_trans'>
 <div class = "Line_graph_transaction_report">
     <canvas id = "Line1"></canvas>
@@ -56,7 +56,7 @@
             labels: {{ listMonths | tojson }},
 
             datasets: [{
-               label: "online tutorial subjects",
+               label: "Number of transactions",
                data: {{ Total_numberT | tojson }},
                backgroundColor: ['Green'],
                borderColor: ['black'],
@@ -90,7 +90,7 @@
             labels: {{ listMonths | tojson }},
 
             datasets: [{
-               label: "online tutorial subjects",
+               label: "Count of user sign up",
                data: {{ Total_users | tojson}},
                backgroundColor: ['Green'],
                borderColor: ['black'],
@@ -104,7 +104,7 @@
             plugins:{
                title:{
                   display: true,
-                  text: "Total users over the month",
+                  text: "Count of user sign up each month",
                   color: '#FFFFFF',
                   font:{
                   size:20,},

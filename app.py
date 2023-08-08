@@ -1184,7 +1184,8 @@ def general_report():
     ListMonths = get_last_six_months()
     count_trans = count_transactions_past_6_months(current_year, month)
     count_event = count_events()
-    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = count_event, Total_users = [6,9,6,9,6,9], Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=True)
+    sign_up = count_signups_per_year_month(current_year,month)
+    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = count_event, Total_users = sign_up, Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=True)
 
     
 
