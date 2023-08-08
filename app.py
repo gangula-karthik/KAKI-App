@@ -537,12 +537,16 @@ def faq_status():
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
 
-    if staffStatus: 
-        user_tickets = {k: v for k, v in all_tickets.items() if v.get('staff_id') == current_user}
+    # If the person accessing is staff, filter the tickets assigned to them
+    if staffStatus:  # Assuming staffStatus returns True for staff members
+        user_tickets = {k: v for k, v in all_tickets.items() if v.get('assigned_to') == current_user}
+
+    # If the person accessing is a regular user, filter the tickets created by them
     else:
         user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
 
     return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+
 
 
 
@@ -1319,52 +1323,9 @@ def show_all_products():
 
 
 
-# @app.route('/update_product/<product_id>', methods=['POST'])
-# def update_product(product_id):
-#     # Retrieve form data
-#     product_name = request.form.get('updatedProductName')
-#     product_description = request.form.get('updatedProductDescription')
-#     product_price = request.form.get('updatedProductPrice')
-#     product_condition = request.form.get('updatedProductCondition')
-
-#     # Construct the data dictionarys
-#     data = {
-#         "product_name": product_name,
-#         "product_description": product_description,
-#         "product_price": product_price,
-#         "product_condition": product_condition,
-#         "seller": current_user  # Assuming current_user is a global or session variable
-#     }
-
-#     print(data)
-
-#     # Update the product in Firebase
-#     pyredb.child(f"products/{product_id}").update(data)
-
-#     return redirect(url_for('marketplace'))
-    
-    
-
-# @app.route('/delete_product/<string:product_id>', methods=['POST'])
-# def delete_product(product_id):
-
-
-
-#     pyredb.child('products').child(product_id).remove()
-#     flash('Product has been deleted')
-#     return redirect(url_for('marketplace'))
-
-@app.route('/transaction_handling/services')
-def services():
-    return render_template('transaction_handling/services.html')
-
-
-@app.route('/update_service/<product_id>', methods=['POST'])
+@app.route('/update_product/<product_id>', methods=['POST'])
 def update_product(product_id):
     # Retrieve form data
-
-
-    # change all these
     product_name = request.form.get('updatedProductName')
     product_description = request.form.get('updatedProductDescription')
     product_price = request.form.get('updatedProductPrice')
@@ -1384,14 +1345,54 @@ def update_product(product_id):
     # Update the product in Firebase
     pyredb.child(f"products/{product_id}").update(data)
 
-    return redirect(url_for('service'))
+    return redirect(url_for('marketplace'))
+    
+    
 
-
-@app.route('/delete_service/<string:product_id>', methods=['POST'])
+@app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
     pyredb.child('products').child(product_id).remove()
     flash('Product has been deleted')
-    return redirect(url_for('service'))
+    return redirect(url_for('marketplace'))
+
+@app.route('/transaction_handling/services')
+def services():
+    return render_template('transaction_handling/services.html')
+
+
+# @app.route('/update_service/<product_id>', methods=['POST'])
+# def update_product(product_id):
+#     # Retrieve form data
+#
+#
+#     # change all these
+#     product_name = request.form.get('updatedProductName')
+#     product_description = request.form.get('updatedProductDescription')
+#     product_price = request.form.get('updatedProductPrice')
+#     product_condition = request.form.get('updatedProductCondition')
+#
+#     # Construct the data dictionarys
+#     data = {
+#         "product_name": product_name,
+#         "product_description": product_description,
+#         "product_price": product_price,
+#         "product_condition": product_condition,
+#         "seller": current_user  # Assuming current_user is a global or session variable
+#     }
+#
+#     print(data)
+#
+#     # Update the product in Firebase
+#     pyredb.child(f"products/{product_id}").update(data)
+#
+#     return redirect(url_for('service'))
+#
+#
+# @app.route('/delete_service/<string:product_id>', methods=['POST'])
+# def delete_product(product_id):
+#     pyredb.child('products').child(product_id).remove()
+#     flash('Product has been deleted')
+#     return redirect(url_for('service'))
 
 
 if __name__ == '__main__':
