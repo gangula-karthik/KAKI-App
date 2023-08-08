@@ -120,17 +120,17 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">service Details</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Service Details</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="POST" action="{{ url_for('s_handle_modal_submission') }}">
             <div class="modal-body">
-              <label for="serviceName" class="form-label">service Name</label>
+              <label for="serviceName" class="form-label">Service Name</label>
               <input type="text" class="form-control" id="serviceName" name="serviceName">
 
-              <label for="serviceDescription" class="form-label">service Description</label>
+              <label for="serviceDescription" class="form-label">Service Description</label>
               <input type="text" class="form-control" id="serviceDescription" name="serviceDescription">
-              <label for="serviceDescription" class="form-label">service Price</label>
+              <label for="serviceDescription" class="form-label">Service Price</label>
               <div class="input-group mb-3">
                 <span class="input-group-text">$</span>
                 <input type="text" name="servicePrice" class="form-control">
@@ -138,7 +138,7 @@
 
 
               <div>
-                <label for="serviceCondition" class="form-label">service Condition</label> <br>
+                <label for="serviceCondition" class="form-label">Service Condition</label> <br>
                 <input type="radio" class="form-check-input" id="serviceConditionNew" name="serviceCondition"
                   value="New" {{ 'checked' if service_condition=='New' }}>
                 <label class="form-check-label" for="serviceConditionNew">New</label><br>
@@ -172,7 +172,7 @@
         <label for="serviceDescription">service Description:</label>
         <textarea id="serviceDescription" required></textarea><br>
 
-        <label for="servicePrice">service Price ($):</label>
+        <label for="servicePrice">Service Price ($):</label>
         <input type="number" id="servicePrice" required><br>
 
         <label for="serviceImage">service Image URL:</label>
@@ -186,6 +186,11 @@
   <div class="container">
     {% for service in services %}
     <div class="card text-bg-dark position-relative " style="width: 23rem;">
+      {% if is_staff %}
+      <button class="btn btn-danger position-absolute top-0 end-0 m-2" data-toggle="modal" data-target="#flagModal" onclick="openFlagModal('{{ service[0] }}')">
+        <i class="fas fa-flag"></i>
+      </button>
+      {% endif %}
       <img src="#" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title"><strong>{{ service[1].service_name }}</strong></h5>
@@ -203,8 +208,60 @@
         </form>
       </div>
     </div>
-
     {% endfor %}
+</div>
+  <!-- Flag Reason Modal -->
+<!-- Inside your HTML body, near the top -->
+<div class="modal fade" id="flagModal" tabindex="-1" aria-labelledby="flagModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="flagModalLabel">Flag Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="flagForm">
+                    <div class="mb-3">
+                        <label for="flagReason" class="form-label">Reason for Flagging</label>
+                        <textarea class="form-control" id="flagReason" name="flagReason" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitFlag()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flag Reason Modal -->
+<div class="modal fade" id="flagModal" tabindex="-1" aria-labelledby="flagModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="flagModalLabel">Flag Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="flagForm">
+          <div class="mb-3">
+            <label for="flagReason" class="form-label">Reason for Flagging</label>
+            <textarea class="form-control" id="flagReason" name="flagReason" rows="3" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitFlag()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 
 
     <div class="modal fade" id="exampleModalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
@@ -220,23 +277,23 @@
           <div class="modal-body">
             <form method="POST" id="editForm" action="/update_service/placeholder">
               <div class="mb-3">
-                <label for="updatedserviceName" class="form-label">Updated service Name:</label>
+                <label for="updatedserviceName" class="form-label">Updated Service Name:</label>
                 <input type="text" class="form-control" id="updatedserviceName" name="updatedServiceName" required>
               </div>
 
               <div class="mb-3">
-                <label for="updatedserviceDescription" class="form-label">Updated service Description:</label>
+                <label for="updatedserviceDescription" class="form-label">Updated Service Description:</label>
                 <input type="text" class="form-control" id="updatedserviceDescription" name="updatedServiceDescription"
                   required>
               </div>
 
               <div class="mb-3">
-                <label for="updatedservicePrice" class="form-label">Updated service Price:</label>
+                <label for="updatedservicePrice" class="form-label">Updated Service Price:</label>
                 <input type="text" class="form-control" id="updatedservicePrice" name="updatedServicePrice" required>
               </div>
 
               <div class="mb-3">
-                <label for="updatedserviceCondition" class="form-label">Updated service Condition:</label>
+                <label for="updatedserviceCondition" class="form-label">Updated Service Condition:</label>
                 <input type="text" class="form-control" id="updatedserviceCondition" name="updatedServiceCondition"
                   required>
               </div>
@@ -251,6 +308,35 @@
       </div>
     </div>
   </div>
+  <!-- Place this script at the bottom of your HTML, before the </body> tag -->
+<script>
+function openFlagModal(serviceId) {
+    // Set the value of the service ID input field
+    document.getElementById('serviceIdInput').value = serviceId;
+
+    // Open the flag modal
+    const flagModal = new bootstrap.Modal(document.getElementById('flagModal'));
+    flagModal.show();
+}
+
+function submitFlag() {
+    const flagReason = document.getElementById('flagReason').value;
+    const serviceId = document.getElementById('serviceIdInput').value;
+
+    // Handle flagging logic here, including submitting the reason and service ID
+    console.log('Flagged service:', serviceId);
+    console.log('Flag reason:', flagReason);
+
+    // Close the modal
+    const flagModal = new bootstrap.Modal(document.getElementById('flagModal'));
+    flagModal.hide();
+
+    // Display success message
+    window.alert('Successfully Flagged');
+}
+</script>
+
+
 
   <script>
 

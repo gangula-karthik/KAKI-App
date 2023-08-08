@@ -1429,7 +1429,7 @@ def s_handle_modal_submission():
 def show_all_services():
     services = pyredb.child("services").get().val()
     services = [(id, serviceInfo) for id, serviceInfo in services.items()]
-    return render_template('transaction_handling/services.html', services=services)
+    return render_template('transaction_handling/services.html', services=services , is_staff=staffStatus)
 
 @app.route('/update_service/<service_id>', methods=['POST'])
 def update_service(service_id):
