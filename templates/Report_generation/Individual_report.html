@@ -80,8 +80,8 @@ overflow-y:scroll;
             {% for entry in leaderboard %}
             <tr class = "leaderboard_row">
                 <td class="rank-column">{{ loop.index }}</td>
-                <td class="name-column">{{ entry.name }}</td>
-                <td class="score-column">{{ entry.score }}</td>
+                <td class="name-column">{{ entry[0] }}</td>
+                <td class="score-column">{{ entry[1] }}</td>
             </tr>
 
             {% endfor %}

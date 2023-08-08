@@ -60,7 +60,7 @@ executor = Executor(app)
 app.secret_key = 'karthik123'
 socketio = SocketIO(app)
 current_user = 'Leap'
-staffStatus = True
+staffStatus = False
 
 
 app.config['UPLOAD_FOLDER'] = "/uploads"
@@ -892,19 +892,14 @@ def staffTicketDashboard():
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
     now = datetime.datetime.now()
-    month = now.strftime("%B")
-    current_year = now.year
+    month = str(now.strftime("%B"))
+    current_year = str(now.year)
     ListMonths = get_last_six_months()
-    leaderboard_data = [
-    {"name": "Player 1", "score": 100},
-    {"name": "Player 2", "score": 36},
-    {"name": "Player 3", "score": 72},
-    {"name": "Player 4", "score": 60},
-    {"name": "Player 5", "score": 69}
-]
-    leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
+    leaderboard_data = get_top_individuals_by_points(current_year,month,'bishan_toa_payoh')
+    list_data = get_individual_points_over_past_months('John Doe', current_year, month)
+    activities = get_individual_activities('John Doe', current_year,month)
 
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = '69', staffStatus=False)
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, staffStatus=False)
 
 import datetime
 @app.route('/Report_generation/Community_report')
@@ -913,16 +908,10 @@ def Community_report():
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
-    leaderboard_data = [
-        {"name": "Player 1", "score": 100},
-        {"name": "Player 2", "score": 36},
-        {"name": "Player 3", "score": 72},
-        {"name": "Player 4", "score": 60},
-        {"name": "Player 5", "score": 69}
-    ]
-    leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = [5,6,7,8,9,10], current_year=current_year,listMonths = ListMonths, most_contributed = 'Nameless', number_of_activities = '69', staffStatus = False)
+    leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
+    list_data = get_last_five_months_of_specified_year('bishan_toa_payoh',current_year,month)
+    top_g = get_individual_with_most_points_in_community('bishan_toa_payoh',current_year,month)
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, user_name=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = '69', staffStatus = False)
 
 
 @app.route('/save_data/com', methods=['POST'])
@@ -1099,21 +1088,17 @@ def delete_report():
 def event_list():
     events = retreive_data_event()
     names = retreive_event_name(events)
-    if staffStatus == 'staff':
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
-    else:
-        return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=False)
+
+    return render_template('/Report_generation/event_list.html', user_name=current_user,events = names, staffStatus=True)
 
 @app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
     events = retreive_data_event()
     details = retrieve_event_from_name(events, report)
 
-    if staffStatus == 'staff':
-        return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details,staffStatus=True)
-    else:
-        return render_template('/Report_generation/Event_details.html', user_name=current_user, details=details,
-                               staffStatus=False)
+
+    return render_template('/Report_generation/Event_details.html', user_name=current_user,details = details,staffStatus=True)
+
 
 
 @app.route('/Report_generation/update.html/<event_name>', methods = ['GET', 'POST'])
@@ -1161,10 +1146,7 @@ def general_report():
     current_year = now.year
     ListMonths = get_last_six_months()
 
-    if staffStatus == 'staff':
-        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=True)
-    else:
-        return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=False)
+    return render_template('/Report_generation/general_report.html', user_name=current_user,current_month = month, Total_community = [6,9,6,9,6,9], Total_users = [6,9,6,9,6,9], Total_numberT = [6,9,6,9,6,9],current_year=current_year,listMonths = ListMonths, staffStatus=True)
 
     
 

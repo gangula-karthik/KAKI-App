@@ -11,10 +11,12 @@ body {
 
   .card {
     background: #373741;
-    border-radius: 5px;
+    border-radius: 8px;
     border: 0;
     margin-bottom: 20px;
   }
+
+  
 
   .user-avatar img {
     width: 90px;
