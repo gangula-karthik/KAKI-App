@@ -289,6 +289,10 @@ def forget_password():
 
 @app.route('/add_user_credentials', methods=['GET', 'POST'])
 def add_user_credentials():
+    global current_user
+    global staffStatus
+    global name
+    global town
     if request.method == 'POST':
         name = request.form['name']
         username = request.form['username']
@@ -335,9 +339,40 @@ def add_user_credentials():
             # Get the Firebase token ID
             token_id = user['idToken']
             local_id = user['localId']
+            
             print(token_id)
             # Save the token ID in the session
             session['user_token'] = token_id
+            try:
+                username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
+                status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
+                town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
+                name = pyredb.child("Users").child("Consumer").child(local_id).child("name").get().val()
+                if username:
+                    session["username"] = username
+                    current_user = session["username"]
+                    print("Username:", session["username"])
+                else:
+                    print("Username not found in the database.")
+
+                if status:
+                    session["status"] = status
+                    staffStatus = session["status"] == "Staff"
+                    print("Status:", session["status"])
+                else:
+                    print("Status not found in the database.")
+
+                if status:
+                    session["town"] = status
+                    staffStatus = session["town"] == "Staff"
+                    print("Status:", session["town"])
+                else:
+                    print("Status not found in the database.")
+
+                session["town"] = town
+                session["name"] = name
+            except Exception as db_exception:
+                print("Error fetching data from the Realtime Database:", str(db_exception))
 
             firebase_user = auth.get_user(user['localId'])
             email_verified = firebase_user.email_verified
