@@ -22,40 +22,22 @@
         </div>
         <div class="card-body">
             <div class="row">
+                {% for staff in staff_data[:3] %}
                 <div class="col">
-                    <h1 class="text-center">&#129351;</h1>
+                    <h1 class="text-center">
+                        {% if loop.index == 1 %}&#129351;{% elif loop.index == 2 %}&#129352;{% elif loop.index == 3 %}&#129353;{% endif %}
+                    </h1>
                     <div class="card text-center bg-dark mb-3">
                         <div class="card-body">
-                            <h5 class="card-title text-light">John Doe</h5>
-                            <p class="text-light">Points: 1000</p>
-                            <p class="text-light">Total Queries Resolved: 500</p>
-                            <span class="badge bg-success rounded-pill">Rank 1</span>
+                            <h5 class="card-title text-light">{{ staff.id }}</h5>
+                            <p class="text-light">Points: {{ staff.points }}</p>
+                            <p class="text-light">Total Queries Resolved: {{ staff.queries_resolved }}</p>
+                            <span class="badge {% if loop.index == 1 %}bg-success{% elif loop.index == 2 %}bg-info{% elif loop.index == 3 %}bg-warning{% endif %} rounded-pill">Rank {{ staff.rank }}</span>
                         </div>
                     </div>
                 </div>
-                <div class="col">
-                    <h1 class="text-center">&#129352;</h1>
-                    <div class="card text-center bg-dark mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title text-light">Jane Smith</h5>
-                            <p class="text-light">Points: 900</p>
-                            <p class="text-light">Total Queries Resolved: 450</p>
-                            <span class="badge bg-info rounded-pill">Rank 2</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <h1 class="text-center">&#129353;</h1>
-                    <div class="card text-center bg-dark mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title text-light">Bob Johnson</h5>
-                            <p class="text-light">Points: 850</p>
-                            <p class="text-light">Total Queries Resolved: 425</p>
-                            <span class="badge bg-warning rounded-pill">Rank 3</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                {% endfor %}
+            </div>            
         </div>
     </div>
 </div>

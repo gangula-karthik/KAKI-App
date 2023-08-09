@@ -36,7 +36,6 @@ from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
 from googletrans import LANGUAGES, Translator
-import datetime
 
 translator = Translator()
 
@@ -308,8 +307,8 @@ def add_user_credentials():
         if token_id is None:
             return "User token ID not found. Please log in first."
         # Get the current month and year
-        current_month = datetime.datetime.now().strftime('%B')
-        current_year = datetime.datetime.now().year
+        current_month = datetime.now().strftime('%B')
+        current_year = datetime.now().year
 
         # Add the "status", "month", and "year" fields to the data
         data = {
@@ -653,7 +652,7 @@ def send_message(ticket_id, username):
     data = {
         "sender": username,
         "recipient": ticket['user_id'] if username != ticket['user_id'] else ticket['staff_id'],
-        "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
+        "timestamp": datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
         "content": message_content
     }
     pyredb.child(f"messages/{ticket_id}").push(data)
@@ -845,7 +844,7 @@ def ticketComments(ticket_ID):
 @app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
 def set_comment(ticket_ID):
     comment = request.form.get('commentText')
-    comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    comment_date = datetime.now().strftime("%Y-%m-%d")
     comment_by = session['username']
     comment_data = {
         "comment": comment,
@@ -920,11 +919,65 @@ def forbidden(e):
 def staffSupportOverview():
     current_user = session['username']
     staffStatus = session['status'] == "Staff"
-    if staffStatus:
-        return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus)
-    else: 
-        return abort(403)
+
+    if not staffStatus:
+        abort(403)
+
+    all_tickets = pyredb.child("tickets").get().val() or {}
+
+    all_staff_points = pyredb.child("staff_leaderboard").get().val() or {}
+    sorted_staff = sorted(all_staff_points.items(), key=lambda x: x[1], reverse=True)
+
+    staff_data = []
+    for staff_id, _ in sorted_staff:
+        staff_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == staff_id and v['status'] == 'resolved'}
+        points = sum([staff_points(ticket) for ticket in staff_tickets.values()])
+        queries_resolved = len(staff_tickets)
+        rank = next((idx + 1 for idx, (s_id, _) in enumerate(sorted_staff) if s_id == staff_id), None)
+        
+        staff_info = {
+            'id': staff_id,
+            'points': points,
+            'queries_resolved': queries_resolved,
+            'rank': rank
+        }
+
+        staff_data.append(staff_info)
+        if staff_id not in all_staff_points:
+            pyredb.child("staff_leaderboard").child(staff_id).set(staff_info)
+        else:
+            pyredb.child("staff_leaderboard").child(staff_id).update(staff_info)
+
+    return render_template('customer_support_staff/staffOverview.html', 
+                            username=current_user, 
+                            is_staff=staffStatus, 
+                            staff_data=staff_data)
+
+
+
+def staff_points(ticket):
+    points = 0
+
+    if ticket['status'] != 'resolved':
+        return 0
     
+    points += 10
+    opened_at = datetime.strptime(ticket['opened_at'], "%Y-%m-%d %H:%M:%S")
+    closed_at = datetime.strptime(ticket['closed_at'], "%Y-%m-%d %H:%M:%S")
+    time_taken = closed_at - opened_at
+
+    if time_taken.total_seconds() <= 12 * 3600:  
+        points += 10
+    elif time_taken.total_seconds() <= 24 * 3600: 
+        points += 5
+    else:
+        points += 2
+
+    if ticket['subject_sentiment'] < 0:
+        points += 5
+
+    return points
+
 
 def convert_to_scale(score, old_min=-1, old_max=1, new_min=1, new_max=5):
     return ((score - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
@@ -970,8 +1023,8 @@ def staffTicketDashboard():
     resolved_tickets_count = 0
     for ticket in all_tickets.values():
         if ticket.get('status') == 'resolved':
-            opened_at = datetime.datetime.strptime(ticket['opened_at'], '%Y-%m-%d %H:%M:%S')
-            closed_at = datetime.datetime.strptime(ticket['closed_at'], '%Y-%m-%d %H:%M:%S')
+            opened_at = datetime.strptime(ticket['opened_at'], '%Y-%m-%d %H:%M:%S')
+            closed_at = datetime.strptime(ticket['closed_at'], '%Y-%m-%d %H:%M:%S')
             total_resolution_time += (closed_at - opened_at).total_seconds() // 3600
             resolved_tickets_count += 1
 
@@ -984,7 +1037,7 @@ def staffTicketDashboard():
 # report generation routes
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
@@ -994,10 +1047,10 @@ def Individual_report():
 
     return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=staffStatus)
 
-import datetime
+
 @app.route('/Report_generation/Community_report')
 def Community_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
@@ -1102,7 +1155,7 @@ def save_data_trans():
 
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
 def Transactions_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
@@ -1238,7 +1291,7 @@ def update_event():
 
 @app.route('/Report_generation/general_report', methods=['GET'])
 def general_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
