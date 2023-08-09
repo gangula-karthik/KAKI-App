@@ -1,6 +1,5 @@
 # FIX PS ALERTS 
 # FIX CHAT SECTION
-# FIX LEADERBOARD GENERATION WHEN THERE IS NO TICKETS
 
 
 import logging
@@ -784,10 +783,9 @@ def message_stream_handler(ticket_id):
     return inner
 
 
-
-
 @app.route('/user_chat')
 def listTickets():
+    current_user = session['username']
     all_tickets = pyredb.child("tickets").get().val() or {}
 
     current_user = session['username']
@@ -809,6 +807,7 @@ def listTickets():
 
     return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus, message=message)
 
+message_streams = {}
 
 
 
@@ -852,6 +851,7 @@ def staffChat(ticket_id):
 
 
 
+
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
 
@@ -859,6 +859,10 @@ def send_message(ticket_id, username):
 
     if not ticket or (username != ticket['user_id'] and username != ticket['staff_id']):
         return abort(403)
+
+    if 'staff_id' not in ticket or not ticket['staff_id']:
+        flash('Staff is reviewing the tickets, Please message later.', 'warning')
+        return redirect(url_for('staffChat', ticket_id=ticket_id))
 
     message_content = request.form.get('message')
     data = {
@@ -898,6 +902,7 @@ def allowed_file(filename):
 
 @app.route('/new_ticket', methods=['POST'])
 def new_ticket():
+    current_user = session['username']
     subject = request.form.get('subject')
     description = request.form.get('description')
     topic = request.form.get('topic')
@@ -914,12 +919,11 @@ def new_ticket():
         firebase_storage_client.upload(file, filename) # passing file object directly
         url = firebase_storage_client.get_url(filename)
         
-        # create new ticket and add image url
         ticket.addImages(url)
 
     flash('Ticket has been submitted 🚀')
     
-    messages = get_flashed_messages()  # Get the flashed messages
+    messages = get_flashed_messages()
     return redirect(url_for('customerOverview'))
 
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
@@ -1013,6 +1017,7 @@ def delete_ticket(ticket_id):
 
 @app.route('/my_tickets', methods=['GET'])
 def myTickets():
+    current_user = session['username']
     tickets = ticketRetrieval()
     myTickets = [i for i in tickets if i['user_id'] == current_user]
     return render_template('customer_support/my_tickets.html', username=current_user,data=myTickets)

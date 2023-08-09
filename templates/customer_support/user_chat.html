@@ -23,6 +23,21 @@
 
     {% block content %}
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} d-flex align-items-center" role="alert">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+
+        <span>{{ message }}</span>
+        <button type="button" class="ml-auto btn-close" data-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
+
 
     <div class="container-fluid main-screen">
         <div class="row">
