@@ -513,9 +513,64 @@ def eventTest():
 # Changed the template to my own so that i can see the layout
 
 
+
+
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('homefeed.html', username=current_user)
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+    all_posts = pyredb.child("social_media_posts").get().val() or {}
+    all_posts = [(id, postInfo) for id, postInfo in all_posts.items()]
+    print(all_posts)
+    return render_template('homefeed.html', username=current_user, posts=all_posts, is_staff=staffStatus)
+
+
+@app.route('/upload_post', methods=['POST'])
+def upload_post():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+    post_name = request.form['post-name']
+    post_content = request.form['post-description']
+    post_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    post_data = {
+        "post_name": post_name,
+        "post_content": post_content,
+        "post_date": post_date
+    }
+
+    post_ref = pyredb.child("social_media_posts").push(post_data)
+    post_id = post_ref['name']
+
+    image = request.files['post-images']
+    if image:
+        filename = secure_filename(image.filename)
+        local_image_path = os.path.join("temp", filename)
+        image.save(local_image_path)
+        storage_path = f"social_media_posts/{post_id}/{filename}"
+        pyrestorage.child(storage_path).put(local_image_path)
+        post_image_url = pyrestorage.child(storage_path).get_url(None)
+        pyredb.child("social_media_posts").child(post_id).update({"post_image": post_image_url})
+        os.remove(local_image_path)
+
+    return redirect(url_for('home'))
+
+
+@app.route('/delete_post/<post_id>', methods=['POST'])
+def delete_post(post_id):
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+    if not current_user:
+        abort(403)
+
+    try:
+        pyredb.child("social_media_posts").child(post_id).remove()
+        flash('Post deleted successfully!', 'success')
+    except Exception as e:
+        flash(f'Error deleting post: {str(e)}', 'danger')
+    return redirect(url_for('home'))
+
+
 
 @app.route('/myposts', methods=['GET'])
 def mypost():
