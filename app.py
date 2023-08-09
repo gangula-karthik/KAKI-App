@@ -1473,6 +1473,8 @@ def event_list():
 
 @app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
+    staffStatus = session['status'] == "Staff"
+    current_user = session['username']
     events = retreive_data_event()
     details = retrieve_event_from_name(events, report)
 
@@ -1483,6 +1485,8 @@ def Event_details(report):
 
 @app.route('/Report_generation/update.html/<event_name>', methods = ['GET', 'POST'])
 def update(event_name):
+    staffStatus = session['status'] == "Staff"
+    current_user = session['username']
     events = retreive_data_event()
     event_details = retrieve_event_from_name(events, event_name)
     update_user_form = CreateUserForm(request.form)
