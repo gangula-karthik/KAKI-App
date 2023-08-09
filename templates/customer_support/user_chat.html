@@ -8,12 +8,12 @@
 </head>
 
 <style>
-
     .custom-container {
-    border-radius: 15px; /* Adjust this value for the desired roundness */
-    padding: 20px; /* 20px top and bottom, 0px left and right */
-}
-
+        border-radius: 15px;
+        /* Adjust this value for the desired roundness */
+        padding: 20px;
+        /* 20px top and bottom, 0px left and right */
+    }
 </style>
 
 <body>
@@ -135,6 +135,15 @@
             </div>
         </div>
     </div>
+
+
+    {% if message %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endif %}
+
+
 
 
 

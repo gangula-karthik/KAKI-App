@@ -218,8 +218,9 @@ def dashboard():
 @app.route('/logout')
 def logout():
     # Clear the session on logout
-    session.pop('user_email', None)
-    session.pop('chat_history', None) # clearing chat history
+    # session.pop('user_email', None)
+    # session.pop('chat_history', None)
+    session.clear() # removes entire session
     return redirect('/')
 
 
@@ -584,20 +585,23 @@ def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
 
     current_user = session['username']
-    print("'"+current_user+"'")
     staffStatus = session['status'] == "Staff"
-    print(staffStatus)
 
-    # If the person accessing is staff, filter the tickets assigned to them
-    if staffStatus:  # Assuming staffStatus returns True for staff members
-        user_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == current_user}
-        print(user_tickets)
+    if staffStatus: 
+        try:
+            user_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == current_user}
+        except:
+            flash('Internal server errors, check back later', 'danger')
 
-    # If the person accessing is a regular user, filter the tickets created by them
     else:
         user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
 
-    return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+
+    message = None
+    if 'message' in session:
+        message = session.pop('message')
+
+    return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus, message=message)
 
 
 
@@ -804,6 +808,8 @@ def myTickets():
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     query = request.args.get('query')
     if query:
         tickets = semanticSearch(query)
@@ -818,6 +824,8 @@ def getComments():
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
 def ticketComments(ticket_ID):
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     tickets = ticketRetrieval()
     if tickets is None:
         return "Error: tickets could not be retrieved."
@@ -831,20 +839,21 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=False)
+    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=staffStatus)
 
 
 @app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
 def set_comment(ticket_ID):
     comment = request.form.get('commentText')
     comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
-    comment_by = current_user
+    comment_by = session['username']
     comment_data = {
         "comment": comment,
         "ticket_id": ticket_ID,
         "date": comment_date,
         "comment_by": comment_by
     }
+    print()
     comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
     if comment_req == 200: 
         flash('Comment has been added 🚀', 'success')
@@ -909,6 +918,8 @@ def forbidden(e):
 
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     if staffStatus:
         return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus)
     else: 
@@ -927,6 +938,8 @@ def staffRetrieval():
 
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     if not staffStatus:
         abort(403)
 
