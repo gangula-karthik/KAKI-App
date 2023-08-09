@@ -329,7 +329,7 @@ class Trans_Report:
             "current_month": self.__current_month__,
             "current_year": self.__current_year__,
             "listMonths": self.__listMonths__,
-            "report_type": 'Transaction',
+            "report_type": 'Transactions',
         }
 
         ref = db.reference(f'/Users//Saved_report/{name}/Transactions')

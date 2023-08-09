@@ -1394,6 +1394,8 @@ def view_report(report_type,Report_id):
     staffStatus = session['status'] == "Staff"
     report = get_all_reports(name)
     data = retrieve_ByID(report,Report_id)
+    print(data)
+    print('=========================================================================')
 
 
     if report_type == "Community":
@@ -1421,21 +1423,21 @@ def view_report(report_type,Report_id):
         return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=staffStatus)
 
     elif report_type == "Transactions":
-        print(data)
-        current_month = data['current_month']
-        print(current_month)
+
+        month = data['current_month']
+
         current_year = data['current_year']
-        print(current_year)
-        list_month = data['listMonths']
-        print(list_month)
+
+        ListMonths = data['listMonths']
+
         total_spent = data['Total_spent']
-        print(total_spent)
+
         total_received = data['Total_received']
-        print(total_received)
-        total_number = data['NoTransactionData']
+
+        total_count = data['NoTransactionData']
 
 
-        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=staffStatus)
+        return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=staffStatus)
 
 @app.route('/delete/data', methods=['POST'])
 def delete_report():
