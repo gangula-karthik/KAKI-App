@@ -4,9 +4,11 @@
 
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect, abort
 import colorlog
 from colorama import Fore
+from concurrent.futures import Future
 from datetime import datetime
 import pyrebase
 import calendar
@@ -734,7 +736,6 @@ def friendRequest():
 
 # customer support routes
 
-# Global variable to keep track of the future
 future = None
 
 @app.route('/support_overview', methods=['GET'])
@@ -771,8 +772,6 @@ def faq_status():
         return jsonify({'status': 'done', 'faqs': faqs})
     else:
         return jsonify({'status': 'pending'})
-
-
 
 
 def message_stream_handler(ticket_id):

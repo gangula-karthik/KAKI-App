@@ -12,7 +12,6 @@ from langchain import HuggingFaceHub
 from langchain import PromptTemplate, LLMChain, OpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.summarize import load_summarize_chain
-from celery import Celery
 import logging
 
 try:
@@ -54,7 +53,7 @@ template = """Question: {question}
 
 Using this information about helpdesk tickets: {formatted_template}
 
-Give a concise and general answer to the questions. DO NOT mention the ticket ids at all. Give the most important tickets or answers that apply to the most important ticket in your opinion. Reply as a customer support agent who is providing high quality support to the customers. Your main objective is to help users solve their problems.
+Give a concise answer to the question around 3 to 4 lines. DO NOT mention the ticket ids at all. Give the most important tickets or answers that apply to the most important ticket in your opinion. Reply as a customer support agent who is providing high quality support to the customers. Your main objective is to help users solve their problems.
 
 Answer: Let's think step by step."""
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
