@@ -535,22 +535,33 @@ def upload_post():
     
     files = request.files.getlist('post-images')
     post_images_urls = []
+
+    # Initialize Firebase storage
+    storage = pyrebase.initialize_app(config).storage()
+
     for file in files:
         if file:
             filename = secure_filename(file.filename)
+            storage_path = f"social_media_posts/{filename}"
             
-            firebase_storage_client = FirebaseStorageClient(config, "social_media_posts")
-            firebase_storage_client.upload(file, filename)
-            image_url = firebase_storage_client.get_url(filename)
+            # Upload the file to Firebase storage
+            storage.child(storage_path).put(file)
+
+            # Get the download URL
+            image_url = storage.child(storage_path).get_url(None)
             post_images_urls.append(image_url)
 
     post_data = {
         "post_name": post_name,
         "post_content": post_content,
         "post_date": post_date,
-        "post_images": post_images_urls
+        "post_images": post_images_urls, 
+        "likes": 0,
+        "dislikes": 0,
+        "post_author": current_user
     }
 
+    # Push the post data to Firebase Realtime Database
     pyredb.child("social_media_posts").push(post_data)
 
     return redirect(url_for('home'))
@@ -558,27 +569,62 @@ def upload_post():
 
 
 
+
+
+@app.route('/like_post/<post_id>', methods=['POST'])
+def like_post(post_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    post_ref = pyredb.child("social_media_posts").child(post_id)
+    post_data = post_ref.get().val()
+
+
+    if current_user not in post_data['liked_by']:
+        post_ref.update({"likes": post_data['likes'] + 1})
+        post_ref.child('liked_by').push(current_user)
+        if current_user in post_data['disliked_by']:
+            post_ref.child('disliked_by').remove(current_user)
+            post_ref.update({"dislikes": post_data['dislikes'] - 1})
+
+    return redirect(url_for('home'))
+
+@app.route('/dislike_post/<post_id>', methods=['POST'])
+def dislike_post(post_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    post_ref = pyredb.child("social_media_posts").child(post_id)
+    post_data = post_ref.get().val()
+
+    if current_user not in post_data['disliked_by']:
+        post_ref.update({"dislikes": post_data['dislikes'] + 1})
+        post_ref.child('disliked_by').push(current_user)
+        if current_user in post_data['liked_by']:
+            post_ref.child('liked_by').remove(current_user)
+            post_ref.update({"likes": post_data['likes'] - 1})
+
+    return redirect(url_for('home'))
+
 @app.route('/delete_post/<post_id>', methods=['POST'])
 def delete_post(post_id):
     current_user = session['username']
-    staffStatus = session['status'] == "Staff"
     if not current_user:
         abort(403)
 
     try:
-        # Retrieve the post data
-        post_data = pyredb.child("social_media_posts").child(post_id).get().val()
-        if post_data and "post_image" in post_data:
-            image_url = post_data["post_image"]
-            filename = image_url.split('/')[-1]
-            firebase_storage_client = FirebaseStorageClient(config, "social_media_posts")
-            firebase_storage_client.delete(filename)
-
-        pyredb.child("social_media_posts").child(post_id).remove()
-        flash('Post and associated image deleted successfully!', 'success')
+        post_ref = pyredb.child("social_media_posts").child(post_id)
+        post_ref.remove()
+        flash('Post deleted successfully!', 'success')
     except Exception as e:
         flash(f'Error deleting post: {str(e)}', 'danger')
     return redirect(url_for('home'))
+
+
+
+
 
 
 
