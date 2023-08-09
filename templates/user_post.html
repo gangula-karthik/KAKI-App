@@ -127,31 +127,43 @@
 
         <div class="d-flex justify-content-between align-items-end mt-3">
             <div class="d-flex align-items-center">
-                <!-- Assuming you have routes and methods to handle post deletion and editing -->
-                <form method="POST" action="/delete_post/{{ post_id }}" class="me-2 delete-form">
-                    <button type="submit" class="btn btn-outline-danger delete-button" data-id="{{ post_id }}"><i
-                            class="fa-solid fa-trash-can"></i> Delete Post</button>
+                <form method="POST" action="{{ url_for('delete_post', post_id=post_id) }}" class="me-2 delete-form">
+                    <button type="submit" class="btn btn-outline-danger delete-button" data-id="{{ post_id }}">
+                        <i class="fa-solid fa-trash-can"></i> Delete Post
+                    </button>
                 </form>
 
                 <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#editModal"
-                    data-id="{{ post_id }}"><i class="fa-solid fa-pen-nib"></i>
-                    Edit</button>
+                    data-id="{{ post_id }}">
+                    <i class="fa-solid fa-pen-nib"></i> Edit
+                </button>
             </div>
             <div class="d-flex align-items-center">
-                <form method="POST" action="/like_post/{{ post_id }}">
-                    <button  class="btn btn-outline-primary"  type="submit">Like</button>
+                <form method="POST" action="{{ url_for('react_to_post', action='like', post_id=post_id) }}">
+                    <button class="btn btn-outline-primary {% if current_user in post_data.get('liked_by', {}) %}active{% endif %}" type="submit">
+                        Like 
+                        <span class="badge bg-primary">{{ post_data.get('liked_by', {})|length }}</span>
+                    </button>
                 </form>
-
-                <form method="POST" action="/dislike_post/{{ post_id }}">
-                    <button class="btn btn-outline-primary" type="submit">Dislike</button>
+                
+                <form method="POST" action="{{ url_for('react_to_post', action='dislike', post_id=post_id) }}">
+                    <button class="btn btn-outline-danger {% if current_user in post_data.get('disliked_by', {}) %}active{% endif %}" type="submit">
+                        Dislike 
+                        <span class="badge bg-danger">{{ post_data.get('disliked_by', {})|length }}</span>
+                    </button>
                 </form>
+                
+                
 
-                <a class="btn btn-outline-primary" href="/comments/{{ post_id }}"><i class="fa-solid fa-comments"></i>
-                    Comment</a>
+
+                <a class="btn btn-outline-primary" href="{{ url_for('view_social_comments', post_id=post_id) }}">
+                    <i class="fa-solid fa-comments"></i> Comment
+                </a>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <script>

@@ -1,7 +1,3 @@
-# FIX PS ALERTS 
-# FIX CHAT SECTION
-
-
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect, abort
@@ -620,47 +616,45 @@ def upload_post():
         "post_author": current_user
     }
 
-    # Push the post data to Firebase Realtime Database
     pyredb.child("social_media_posts").push(post_data)
 
     return redirect(url_for('home'))
 
 
-@app.route('/like_post/<post_id>', methods=['POST'])
-def like_post(post_id):
+@app.route('/react_to_post/<action>/<post_id>', methods=['POST'])
+def react_to_post(action, post_id):
     current_user = session['username']
     if not current_user:
         abort(403)
+    post_data = pyredb.child(f"social_media_posts/{post_id}").get().val()
 
-    post_ref = pyredb.child("social_media_posts").child(post_id)
-    post_data = post_ref.get().val()
+    # Check if user has already liked the post
+    has_liked = current_user in post_data.get('liked_by', {})
+    # Check if user has already disliked the post
+    has_disliked = current_user in post_data.get('disliked_by', {})
 
-    if current_user not in post_data.get('liked_by', {}):
-        post_ref.update({"likes": post_data['likes'] + 1})
-        post_ref.child('liked_by').update({current_user: True})
-        if current_user in post_data.get('disliked_by', {}):
-            post_ref.child('disliked_by').child(current_user).remove()
-            post_ref.update({"dislikes": post_data['dislikes'] - 1})
-
-    return redirect(url_for('home'))
-
-@app.route('/dislike_post/<post_id>', methods=['POST'])
-def dislike_post(post_id):
-    current_user = session['username']
-    if not current_user:
-        abort(403)
-
-    post_ref = pyredb.child("social_media_posts").child(post_id)
-    post_data = post_ref.get().val()
-
-    if current_user not in post_data.get('disliked_by', {}):
-        post_ref.update({"dislikes": post_data['dislikes'] + 1})
-        post_ref.child('disliked_by').update({current_user: True})
-        if current_user in post_data.get('liked_by', {}):
-            post_ref.child('liked_by').child(current_user).remove()
-            post_ref.update({"likes": post_data['likes'] - 1})
+    if action == 'like':
+        if not has_liked:
+            pyredb.child(f"social_media_posts/{post_id}/liked_by").update({current_user: True})
+            if has_disliked:
+                pyredb.child(f"social_media_posts/{post_id}/disliked_by").child(current_user).remove()
+    elif action == 'dislike':
+        if not has_disliked:
+            pyredb.child(f"social_media_posts/{post_id}/disliked_by").update({current_user: True})
+            if has_liked:
+                pyredb.child(f"social_media_posts/{post_id}/liked_by").child(current_user).remove()
+    else:
+        abort(400, description="Invalid action.")
 
     return redirect(url_for('home'))
+
+
+
+
+
+
+
+
 
 
 @app.route('/add_social_comment/<post_id>', methods=['POST'])
