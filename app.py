@@ -1244,7 +1244,7 @@ def Individual_report():
     list_data = get_individual_points_over_past_months(name, current_year, month)
     activities = get_individual_activities(name, current_year,month)
 
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=staffStatus)
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '0', number_of_activities = activities, is_staff=staffStatus)
 
 
 @app.route('/Report_generation/Community_report')
