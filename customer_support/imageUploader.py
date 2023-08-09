@@ -1,5 +1,6 @@
 import pyrebase
 from dotenv import load_dotenv
+import urllib
 
 class FirebaseStorageClient():
     def __init__(self, config, bucket):
@@ -12,8 +13,10 @@ class FirebaseStorageClient():
         return "success"
 
     def get_url(self, filename):
-        url = f"https://firebasestorage.googleapis.com/v0/b/{self.bucket}/o/{filename}?alt=media"
+        encoded_filename = urllib.parse.quote(filename)
+        url = f"https://firebasestorage.googleapis.com/v0/b/kaki-db097.appspot.com/o/{self.bucket}%2F{encoded_filename}?alt=media"
         return url
+
 
 
 if __name__ == "__main__":

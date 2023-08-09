@@ -39,6 +39,21 @@
     }
 </style>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="notifications">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+
+
+
 <div class="card mt-4 mx-auto" id="upload-card">
     <div class="card-body">
         <h5 class="card-title d-flex justify-content-between">
@@ -92,9 +107,9 @@
         {% if post_data.get('post_images') %}
         <div id="postImagesCarousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
-                {% for image in post_data['post_images'] %}
+                {% for image_url in post_data['post_images'] %}
                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                    <img class="d-block w-100" src="{{ image }}" alt="Slide Image">
+                    <img class="d-block w-100" src="{{ image_url }}" alt="Slide Image">
                 </div>
                 {% endfor %}
             </div>
@@ -134,4 +149,18 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let alerts = document.querySelectorAll('.alert');
+
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                alert.style.display = 'none';  // Hide the alert
+            }, 900);
+        });
+    });
+</script>
+
 {% endfor %}

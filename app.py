@@ -528,32 +528,34 @@ def home():
 @app.route('/upload_post', methods=['POST'])
 def upload_post():
     current_user = session['username']
-    staffStatus = session['status'] == "Staff"
+
     post_name = request.form['post-name']
     post_content = request.form['post-description']
     post_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    files = request.files.getlist('post-images')
+    post_images_urls = []
+    for file in files:
+        if file:
+            filename = secure_filename(file.filename)
+            
+            firebase_storage_client = FirebaseStorageClient(config, "social_media_posts")
+            firebase_storage_client.upload(file, filename)
+            image_url = firebase_storage_client.get_url(filename)
+            post_images_urls.append(image_url)
 
     post_data = {
         "post_name": post_name,
         "post_content": post_content,
-        "post_date": post_date
+        "post_date": post_date,
+        "post_images": post_images_urls
     }
 
-    post_ref = pyredb.child("social_media_posts").push(post_data)
-    post_id = post_ref['name']
-
-    image = request.files['post-images']
-    if image:
-        filename = secure_filename(image.filename)
-        local_image_path = os.path.join("temp", filename)
-        image.save(local_image_path)
-        storage_path = f"social_media_posts/{post_id}/{filename}"
-        pyrestorage.child(storage_path).put(local_image_path)
-        post_image_url = pyrestorage.child(storage_path).get_url(None)
-        pyredb.child("social_media_posts").child(post_id).update({"post_image": post_image_url})
-        os.remove(local_image_path)
+    pyredb.child("social_media_posts").push(post_data)
 
     return redirect(url_for('home'))
+
+
 
 
 @app.route('/delete_post/<post_id>', methods=['POST'])
@@ -564,8 +566,16 @@ def delete_post(post_id):
         abort(403)
 
     try:
+        # Retrieve the post data
+        post_data = pyredb.child("social_media_posts").child(post_id).get().val()
+        if post_data and "post_image" in post_data:
+            image_url = post_data["post_image"]
+            filename = image_url.split('/')[-1]
+            firebase_storage_client = FirebaseStorageClient(config, "social_media_posts")
+            firebase_storage_client.delete(filename)
+
         pyredb.child("social_media_posts").child(post_id).remove()
-        flash('Post deleted successfully!', 'success')
+        flash('Post and associated image deleted successfully!', 'success')
     except Exception as e:
         flash(f'Error deleting post: {str(e)}', 'danger')
     return redirect(url_for('home'))
