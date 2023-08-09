@@ -424,6 +424,8 @@ def delete_account():
 
 @app.route('/staff/users')
 def show_all_users():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     try:
         # Get all user data from the Realtime Database (assuming the user's data is stored in 'Users/Consumer' node)
         all_users_data = pyredb.child("Users").child("Consumer").get().val()
@@ -1334,6 +1336,10 @@ def delete_report():
         return jsonify({"status": "success"})
 @app.route('/event_lists', methods=['GET'])
 def event_list():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+    if not staffStatus:
+        abort(403)
     events = retreive_data_event()
     names = retreive_event_name(events)
 
@@ -1389,6 +1395,10 @@ def update_event():
 
 @app.route('/Report_generation/general_report', methods=['GET'])
 def general_report():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+    if not staffStatus:
+        abort(403)
     now = datetime.now()
     month = now.strftime("%B")
     current_year = now.year
@@ -1498,6 +1508,9 @@ def MyProducts(product_id):
 
 @app.route('/transaction_handling/marketplace')
 def marketplace():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+
     allProducts = pyredb.child("products").get().val()
 
     products = [(id, productInfo) for id, productInfo in allProducts.items()]
@@ -1604,9 +1617,11 @@ def s_handle_modal_submission():
 
 @app.route('/transaction_handling/services', methods=['GET'])
 def show_all_services():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     services = pyredb.child("services").get().val()
     services = [(id, serviceInfo) for id, serviceInfo in services.items()]
-    return render_template('transaction_handling/services.html', services=services , is_staff=staffStatus)
+    return render_template('transaction_handling/services.html', services=services, username=current_user, is_staff=staffStatus)
 
 @app.route('/update_service/<service_id>', methods=['POST'])
 def update_service(service_id):
