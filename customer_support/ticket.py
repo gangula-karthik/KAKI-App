@@ -61,6 +61,7 @@ class Ticket:
     
     def addImages(self, image_url):
         self.images.append(image_url)
+        db.child(f'/tickets/{self.ticket_id}/images').set(self.images)
     
         
     def deleteTicket(self):

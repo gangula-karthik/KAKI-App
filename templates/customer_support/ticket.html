@@ -8,8 +8,6 @@
   }
 </style>
 
-
-
 <div class="card mt-4 mx-auto" id="ticket-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
@@ -29,7 +27,34 @@
 ">{{ ticket.status }}</span>
     </h5>
     <p class="card-text">{{ ticket.descriptions }}</p>
-    <div class="d-flex justify-content-between align-items-end">
+
+    <!-- Displaying Images -->
+    {% if ticket.images and ticket.images|length == 1 %}
+    <!-- Display single image -->
+    <img src="{{ ticket.images[0] }}" class="img-fluid mt-2" alt="Ticket Image">
+    {% elif ticket.images and ticket.images|length > 1 %}
+    <!-- Display carousel for multiple images -->
+    <div id="ticketCarousel{{ ticket.ticket_id }}" class="carousel slide mt-2" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for image_url in ticket.images %}
+        <div class="carousel-item {% if loop.first %}active{% endif %}">
+          <img src="{{ image_url }}" class="d-block w-100" alt="Ticket Image">
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#ticketCarousel{{ ticket.ticket_id }}" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#ticketCarousel{{ ticket.ticket_id }}" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+    {% endif %}
+
+    <!-- Ticket actions -->
+    <div class="d-flex justify-content-between align-items-end mt-2">
       <div>
         <small class="text-info"> {{ ticket.user_id }}</small>
       </div>
@@ -49,6 +74,7 @@
     </div>
   </div>
 </div>
+
 
 
 <script>

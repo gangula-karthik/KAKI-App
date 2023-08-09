@@ -649,12 +649,12 @@ def react_to_post(action, post_id):
     return redirect(url_for('home'))
 
 
-def upload_files_to_storage(files):
+def upload_files_to_storage(parent, files):
     post_images_urls = []
     for file in files:
         if file:
             filename = secure_filename(file.filename)
-            storage_path = f"social_media_posts/{filename}"
+            storage_path = f"{parent}/{filename}"
             pyrestorage.child(storage_path).put(file)
             image_url = pyrestorage.child(storage_path).get_url(None)
             post_images_urls.append(image_url)
@@ -940,60 +940,87 @@ def new_ticket():
     subject = request.form.get('subject')
     description = request.form.get('description')
     topic = request.form.get('topic')
-    file = request.files.get('file')
+    files = request.files.getlist('file')
 
     ticket = Ticket(current_user, subject, description, topic)
 
-    if file:
-        # get the file name, this doesn't include the path
-        filename = secure_filename(file.filename)
-        
-        # upload the file to firebase storage
-        firebase_storage_client = FirebaseStorageClient(config, "ticket_images")
-        firebase_storage_client.upload(file, filename) # passing file object directly
-        url = firebase_storage_client.get_url(filename)
-        
-        ticket.addImages(url)
+    if files:
+        image_urls = upload_files_to_storage("ticket_images", files)
+        res = []
+        for url in image_urls:
+            res.append(url)
+            ticket.addImages(url)
+        print(res)
+
 
     flash('Ticket has been submitted 🚀')
     
     messages = get_flashed_messages()
     return redirect(url_for('customerOverview'))
 
+
+# @app.route('/new_ticket', methods=['POST'])
+# def new_ticket():
+#     current_user = session['username']
+#     subject = request.form.get('subject')
+#     description = request.form.get('description')
+#     topic = request.form.get('topic')
+#     file = request.files.get('file')
+
+#     ticket = Ticket(current_user, subject, description, topic)
+
+#     if file:
+#         # get the file name, this doesn't include the path
+#         filename = secure_filename(file.filename)
+        
+#         # upload the file to firebase storage
+#         firebase_storage_client = FirebaseStorageClient(config, "ticket_images")
+#         firebase_storage_client.upload(file, filename) # passing file object directly
+#         url = firebase_storage_client.get_url(filename)
+        
+#         ticket.addImages(url)
+
+#     flash('Ticket has been submitted 🚀')
+    
+#     messages = get_flashed_messages()
+#     return redirect(url_for('customerOverview'))
+
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
 def update_ticket(ticket_id):
-    # Retrieve the existing ticket
     ticket = [i for i in ticketRetrieval() if i['ticket_id'] == ticket_id][0]
+    print(ticket)
     if not ticket:
         flash('Ticket not found')
         return redirect(url_for('customerOverview'))
     
-    # Get the new data from the form
     subject = request.form.get('subject')
     description = request.form.get('description')
     topic = request.form.get('topic')
-    file = request.files.get('file')
+    files = request.files.getlist('file') 
 
     updateSubject(ticket_id, subject)
     updateDescriptions(ticket_id, description)
     updateTopic(ticket_id, topic)
 
-    if file:
-        # get the file name, this doesn't include the path
-        filename = secure_filename(file.filename)
+    if files:
+        # Upload each file to Firebase Storage and get the new URLs
+        image_urls = upload_files_to_storage("ticket_images", files)
         
-        # upload the file to firebase storage
-        firebase_storage_client = FirebaseStorageClient(config, "ticket_images")
-        firebase_storage_client.upload(file, filename) # passing file object directly
-        url = firebase_storage_client.get_url(filename)
+        # Iterate through each URL
+        res = []
+        for url in image_urls:
+            res.append(url)
         
-        # update ticket image url
-        ticket.updateImages(url)
+        # Update the /images route in Pyrebase Realtime Database with the new list
+        pyredb.child(f"tickets/{ticket_id}/images").set(res)
+
+        print(res)
 
     flash('Ticket has been updated 🚀')
-    
-    messages = get_flashed_messages()  # Get the flashed messages
+    messages = get_flashed_messages() 
     return redirect(url_for('myTickets'))
+
+
 
 @app.route('/ticket_search', methods=['GET'])
 def search():
@@ -1041,6 +1068,7 @@ def update_assigned(ticket_id):
 
 @app.route('/delete_ticket/<ticket_id>', methods=['POST'])
 def delete_ticket(ticket_id):
+    current_user = session['username']
     AllowedIds = [i["ticket_id"] for i in ticketRetrieval() if i['user_id'] == current_user]
     if ticket_id not in AllowedIds:
         return jsonify({'error': 'System Error, Try again'}), 404
