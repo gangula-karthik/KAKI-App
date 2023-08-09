@@ -32,7 +32,7 @@ p {
 	line-height: 20px;
 	letter-spacing: 0.5px;
 	margin: 20px 0 30px;
-	color: #A2A3A7;
+	color: #ffffff;
 }
 
 span {
@@ -163,9 +163,9 @@ input {
 	}
 	
 	.overlay {
-	background: #FF4B2B;
-	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
-	background: linear-gradient(to right, #FF4B2B, #FF416C);
+	background: #03fcfc;
+	background: -webkit-linear-gradient(to right, #03fcfc, #a4f709);
+	background: linear-gradient(to right, #03fcfc, #a4f709);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;
@@ -246,7 +246,7 @@ input {
 	}
 	
 	footer i {
-	color: #FF4B2B;
+	color: #03fcfc;
 	}
 	
 	footer a {
