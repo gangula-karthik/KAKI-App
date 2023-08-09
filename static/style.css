@@ -32,7 +32,7 @@ p {
 	line-height: 20px;
 	letter-spacing: 0.5px;
 	margin: 20px 0 30px;
-	color: #ffffff;
+	color: #A2A3A7;
 }
 
 span {
@@ -49,8 +49,8 @@ a {
 
 button {
 	border-radius: 20px;
-	border: 1px solid #FF4B2B;
-	background-color: #FF4B2B;
+	border: 1px solid #03e99c;
+	background-color: #03e99c;
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
@@ -164,8 +164,8 @@ input {
 	
 	.overlay {
 	background: #03fcfc;
-	background: -webkit-linear-gradient(to right, #03fcfc, #a4f709);
-	background: linear-gradient(to right, #03fcfc, #a4f709);
+	background: -webkit-linear-gradient(to right, #03fcfc, #03e99c);
+	background: linear-gradient(to right, #03fcfc, #03e99c);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;
