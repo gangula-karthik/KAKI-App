@@ -1486,11 +1486,9 @@ def update(event_name):
     events = retreive_data_event()
     event_details = retrieve_event_from_name(events, event_name)
     update_user_form = CreateUserForm(request.form)
-    if staffStatus == 'staff':
-        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, is_staff=staffStatus)
-    else:
-        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,
-                               event=event_details, staffStatus=False)
+
+    return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, is_staff=staffStatus)
+
 
 
 @app.route('/updateEvent', methods=['POST'])

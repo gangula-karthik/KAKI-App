@@ -175,39 +175,23 @@ def retrieve_event_from_name(dictionary, target):
     return 'error'
 
 def extract_event_by_name(event_name):
-    try:
-        # Get a reference to the "Events" location in the database
-        ref = db.reference("/Events")
-
-        # Retrieve all event data
-        all_events = ref.get()
-
-        # Search for the event with the given event_name
-        event_data = None
-        for event_uid, event_info in all_events.items():
-            if event_info.get("event_name") == event_name:
-                event_data = event_info
-                break
-
-        # If the event with the given event_name is not found, return None
-        if event_data is None:
-            return None
-
-        return event_data
-
-    except Exception as e:
-        print("Error occurred:", str(e))
-        return None
+    ref = db.reference("Events")
+    event_ref = ref.child(event_name)
+    event_snapshot = event_ref.get()
+    return event_snapshot
 
 def update_event(event_obj, new_values):
     attributes_to_update = [
+        'event_name',
         'venue',
         'event_date',
         'time',
         'overall_in_charge',
         'dateposted',
         'event_location',
-        'event_description'
+        'event_description',
+        'community',
+
     ]
 
     for attribute in attributes_to_update:
