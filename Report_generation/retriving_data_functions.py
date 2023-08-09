@@ -438,7 +438,6 @@ def count_transactions_past_6_months(year, month):
 
 def count_events(path = '/Events'):
     data = db.reference(path).get()
-
     if isinstance(data, dict):
         return len(data)
     elif isinstance(data, list):
@@ -448,9 +447,9 @@ def count_events(path = '/Events'):
 
 def count_events_com(community,path='/Events', ):
     data = db.reference(path).get()
-
     if community:
-        filtered_data = [event for event in data if event.get("community") == community]
+        print(data)
+        filtered_data = [event[1] for event in data.items() if event[1]['community'] == community]
         return len(filtered_data)
     else:
         if isinstance(data, dict):

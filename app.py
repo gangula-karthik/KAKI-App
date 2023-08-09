@@ -1,3 +1,9 @@
+# FIX PS ALERTS 
+# FIX CHAT SECTION
+# FIX COMMUNITY REPORT
+# FIX LEADERBOARD GENERATION WHEN THERE IS NO TICKETS
+
+
 import logging
 from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect, abort
 import colorlog
@@ -295,6 +301,7 @@ def add_user_credentials():
     global town
     if request.method == 'POST':
         name = request.form['name']
+        print("form response: ", name)
         username = request.form['username']
         birthdate = request.form['birthdate']
         town = request.form['town']
@@ -348,6 +355,7 @@ def add_user_credentials():
                 status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
                 town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
                 name = pyredb.child("Users").child("Consumer").child(local_id).child("name").get().val()
+                print("pyrebase response: ", name)
                 if username:
                     session["username"] = username
                     current_user = session["username"]
@@ -371,6 +379,7 @@ def add_user_credentials():
 
                 session["town"] = town
                 session["name"] = name
+                print("session response: ", session["name"])
             except Exception as db_exception:
                 print("Error fetching data from the Realtime Database:", str(db_exception))
 
@@ -653,8 +662,8 @@ def dislike_post(post_id):
     return redirect(url_for('home'))
 
 
-@app.route('/add_comment/<post_id>', methods=['POST'])
-def add_comment(post_id):
+@app.route('/add_social_comment/<post_id>', methods=['POST'])
+def add_social_comment(post_id):
     current_user = session['username']
     if not current_user:
         abort(403)
@@ -673,8 +682,8 @@ def add_comment(post_id):
     return redirect(url_for('view_comments', post_id=post_id))
 
 
-@app.route('/view_comments/<post_id>', methods=['GET'])
-def view_comments(post_id):
+@app.route('/view_social_comments/<post_id>', methods=['GET'])
+def view_social_comments(post_id):
     post_ref = pyredb.child("social_media_posts").child(post_id)
     post_data = post_ref.get().val()
 
@@ -682,8 +691,8 @@ def view_comments(post_id):
 
     return render_template('comments_page.html', comments=comments)
 
-@app.route('/delete_comment/<post_id>/<comment_id>', methods=['POST'])
-def delete_comment(post_id, comment_id):
+@app.route('/delete_social_comment/<post_id>/<comment_id>', methods=['POST'])
+def delete_social_comment(post_id, comment_id):
     current_user = session['username']
     if not current_user:
         abort(403)
@@ -731,6 +740,8 @@ future = None
 @app.route('/support_overview', methods=['GET'])
 def customerOverview():
     global future
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     try:
         tickets = pyredb.child('tickets').get().val()
         if not tickets:
@@ -746,9 +757,9 @@ def customerOverview():
     if future.done():
         faqs = future.result()
         messages = get_flashed_messages()
-        return render_template('customer_support/support_overview.html', username=current_user, messages=messages, faqs=faqs)
+        return render_template('customer_support/support_overview.html', username=current_user, messages=messages, faqs=faqs, is_staff=staffStatus)
     else:
-        return render_template('customer_support/loading.html'), 202
+        return render_template('customer_support/loading.html', username=current_user ), 202
 
 
 
@@ -1221,6 +1232,10 @@ def staffTicketDashboard():
 # report generation routes
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
+    name = session['name']
+    town = session['town']
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     now = datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
@@ -1234,6 +1249,10 @@ def Individual_report():
 
 @app.route('/Report_generation/Community_report')
 def Community_report():
+    name = session['name']
+    town = session['town']
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     now = datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
@@ -1248,6 +1267,7 @@ def Community_report():
 @app.route('/save_data/com', methods=['POST'])
 def save_data_com():
     data = request.json
+    name = session['name']
     report = get_com(name)
     check = check_existing(report,data)
 
@@ -1280,6 +1300,7 @@ def save_data_com():
 def save_data_indi():
 
     data = request.json
+    name = session['name']
     report = get_indi(name)
     check = check_existing(report,data)
 
@@ -1312,6 +1333,7 @@ def save_data_trans():
 
 
     data = request.json
+    name = session['name']
     report = get_trans(name)
     check = check_existing(report,data)
 
@@ -1340,6 +1362,7 @@ def save_data_trans():
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
 def Transactions_report():
     now = datetime.now()
+    name = session['name']
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
@@ -1347,23 +1370,32 @@ def Transactions_report():
     # total_cost = sum_cost_in_route()
     # total_received = sum_retrieve_in_route()
     total_count = count_transactions_past_6_months_for_buyer(current_year, month, name)
-    total_received =sum_product_costs_past_6_months_for_seller(current_year, month, name)
+    total_received = sum_product_costs_past_6_months_for_seller(current_year, month, name)
     total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, name)
     return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=staffStatus)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
+    name = session['name']
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     reports = get_all_reports(name)
-
-
+    print(reports)
     details = retrieve_report_name(reports)
-    return render_template('/Report_generation/saved_reports.html', username=current_user, reports = details, is_staff=False)
+    print("==================================================")
+    print(details)
+    return render_template('/Report_generation/saved_reports.html', username=current_user, reports = details, is_staff=staffStatus)
 
 
 @app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
+    name = session['name']
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     report = get_all_reports(name)
     data = retrieve_ByID(report,Report_id)
+
+
     if report_type == "Community":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
@@ -1374,7 +1406,8 @@ def view_report(report_type,Report_id):
         most_contributed = data['most_contributed']
 
 
-        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed,is_staff=staffStatus)
+        return render_template('/Report_generation/Community_report.html', username=current_user, leaderboard = leaderboard, current_month = current_month, current_year = current_year, listMonths = listMonths, line_data=line_data,number_of_activities = number_of_activities, most_contributed=most_contributed, is_staff=staffStatus)
+    
     elif report_type == "Individual":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
@@ -1388,18 +1421,26 @@ def view_report(report_type,Report_id):
         return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=staffStatus)
 
     elif report_type == "Transactions":
+        print(data)
         current_month = data['current_month']
+        print(current_month)
         current_year = data['current_year']
+        print(current_year)
         list_month = data['listMonths']
+        print(list_month)
         total_spent = data['Total_spent']
+        print(total_spent)
         total_received = data['Total_received']
+        print(total_received)
         total_number = data['NoTransactionData']
+
 
         return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=staffStatus)
 
 @app.route('/delete/data', methods=['POST'])
 def delete_report():
     report_id = str(request.json)
+    name = session['name']
     report = get_all_reports(name)
     details = retrieve_ByID(report, report_id)
     report_type = details['report_type']
