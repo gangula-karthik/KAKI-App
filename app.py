@@ -616,10 +616,6 @@ def upload_post():
     return redirect(url_for('home'))
 
 
-
-
-
-
 @app.route('/like_post/<post_id>', methods=['POST'])
 def like_post(post_id):
     current_user = session['username']
@@ -629,12 +625,11 @@ def like_post(post_id):
     post_ref = pyredb.child("social_media_posts").child(post_id)
     post_data = post_ref.get().val()
 
-
-    if current_user not in post_data['liked_by']:
+    if current_user not in post_data.get('liked_by', {}):
         post_ref.update({"likes": post_data['likes'] + 1})
-        post_ref.child('liked_by').push(current_user)
-        if current_user in post_data['disliked_by']:
-            post_ref.child('disliked_by').remove(current_user)
+        post_ref.child('liked_by').update({current_user: True})
+        if current_user in post_data.get('disliked_by', {}):
+            post_ref.child('disliked_by').child(current_user).remove()
             post_ref.update({"dislikes": post_data['dislikes'] - 1})
 
     return redirect(url_for('home'))
@@ -648,14 +643,56 @@ def dislike_post(post_id):
     post_ref = pyredb.child("social_media_posts").child(post_id)
     post_data = post_ref.get().val()
 
-    if current_user not in post_data['disliked_by']:
+    if current_user not in post_data.get('disliked_by', {}):
         post_ref.update({"dislikes": post_data['dislikes'] + 1})
-        post_ref.child('dislikes').push(current_user)
-        if current_user in post_data['liked_by']:
-            post_ref.child('likes').remove(current_user)
+        post_ref.child('disliked_by').update({current_user: True})
+        if current_user in post_data.get('liked_by', {}):
+            post_ref.child('liked_by').child(current_user).remove()
             post_ref.update({"likes": post_data['likes'] - 1})
 
     return redirect(url_for('home'))
+
+
+@app.route('/add_comment/<post_id>', methods=['POST'])
+def add_comment(post_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    comment_content = request.form['comment-content']
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    comment_data = {
+        "username": current_user,
+        "content": comment_content,
+        "timestamp": timestamp
+    }
+
+    pyredb.child("social_media_posts").child(post_id).child("comments").push(comment_data)
+
+    return redirect(url_for('view_comments', post_id=post_id))
+
+
+@app.route('/view_comments/<post_id>', methods=['GET'])
+def view_comments(post_id):
+    post_ref = pyredb.child("social_media_posts").child(post_id)
+    post_data = post_ref.get().val()
+
+    comments = post_data.get('comments', {})
+
+    return render_template('comments_page.html', comments=comments)
+
+@app.route('/delete_comment/<post_id>/<comment_id>', methods=['POST'])
+def delete_comment(post_id, comment_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    pyredb.child("social_media_posts").child(post_id).child("comments").child(comment_id).remove()
+
+    return redirect(url_for('view_comments', post_id=post_id))
+
+
 
 @app.route('/delete_post/<post_id>', methods=['POST'])
 def delete_post(post_id):
