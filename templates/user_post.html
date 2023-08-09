@@ -37,6 +37,16 @@
     #upload-card .btn:hover {
         background-color: #0c84d2;
     }
+
+    .grouped-left {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .grouped-right {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 </style>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -126,56 +136,117 @@
 
 
         <div class="d-flex justify-content-between align-items-end mt-3">
-            <div class="d-flex align-items-center">
-                <form method="POST" action="{{ url_for('delete_post', post_id=post_id) }}" class="me-2 delete-form">
-                    <button type="submit" class="btn btn-outline-danger delete-button" data-id="{{ post_id }}">
+            {% if username == post_data['post_author'] %}
+            <div class="btn-group" role="group">
+                <form method="POST" action="{{ url_for('delete_post', post_id=post_id) }}" class="delete-form">
+                    <button type="submit" class="btn btn-outline-danger delete-button grouped-left"
+                        data-id="{{ post_id }}">
                         <i class="fa-solid fa-trash-can"></i> Delete Post
                     </button>
                 </form>
-
-                <button class="btn btn-outline-info edit-button me-2" data-bs-toggle="modal" data-bs-target="#editModal"
-                    data-id="{{ post_id }}">
-                    <i class="fa-solid fa-pen-nib"></i> Edit
+                <button class="btn btn-outline-info edit-button grouped-right" data-bs-toggle="modal"
+                    data-bs-target="#editModal" data-id="{{ post_id }}" data-post-id="{{ post_id }}">
+                    <i class="fa-solid fa-pen-nib"></i> Edit Post {{ post_id }}
                 </button>
+
             </div>
+            {% endif %}
+
+
+
+
             <div class="d-flex align-items-center">
-                <form method="POST" action="{{ url_for('react_to_post', action='like', post_id=post_id) }}">
-                    <button class="btn btn-outline-primary {% if current_user in post_data.get('liked_by', {}) %}active{% endif %}" type="submit">
-                        Like 
+                <form method="POST" action="{{ url_for('react_to_post', action='like', post_id=post_id) }}"
+                    class="me-2">
+                    <button
+                        class="btn btn-outline-primary {% if current_user in post_data.get('liked_by', {}) %}active{% endif %}"
+                        type="submit">
+                        Like
                         <span class="badge bg-primary">{{ post_data.get('liked_by', {})|length }}</span>
                     </button>
                 </form>
-                
-                <form method="POST" action="{{ url_for('react_to_post', action='dislike', post_id=post_id) }}">
-                    <button class="btn btn-outline-danger {% if current_user in post_data.get('disliked_by', {}) %}active{% endif %}" type="submit">
-                        Dislike 
+
+                <form method="POST" action="{{ url_for('react_to_post', action='dislike', post_id=post_id) }}"
+                    class="me-2">
+                    <button
+                        class="btn btn-outline-danger {% if current_user in post_data.get('disliked_by', {}) %}active{% endif %}"
+                        type="submit">
+                        Dislike
                         <span class="badge bg-danger">{{ post_data.get('disliked_by', {})|length }}</span>
                     </button>
                 </form>
-                
-                
 
-
-                <a class="btn btn-outline-primary" href="{{ url_for('view_social_comments', post_id=post_id) }}">
-                    <i class="fa-solid fa-comments"></i> Comment
-                </a>
             </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('update_post', post_id=post_id) }}" method="post" enctype="multipart/form-data">
+
+
+                <div class="modal-body">
+                    <input type="hidden" id="editPostId" name="post_id">
+                    <div class="mb-3">
+                        <label for="postTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="postTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="postContent" class="form-label">Content</label>
+                        <textarea class="form-control" id="postContent" name="content" rows="4" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="update-post-images" class="form-label">Post Image</label>
+                        <input type="file" class="form-control" id="update-post-images" name="update-post-images"
+                            multiple accept="image/*">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Post</button>
+                    </div>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let alerts = document.querySelectorAll('.alert');
 
-        alerts.forEach(function (alert) {
-            setTimeout(function () {
-                alert.style.display = 'none';  // Hide the alert
-            }, 900);
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select all edit buttons
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        // Loop through each button and add a click event listener
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Get the post_id from the button's data attribute
+                const postId = button.getAttribute('data-post-id');
+
+                // Set the form action
+                const form = document.querySelector('#editModal form');
+                form.action = `/update_post/${postId}`;
+
+                // Set the hidden input value
+                const hiddenInput = document.getElementById('editPostId');
+                hiddenInput.value = postId;
+            });
         });
     });
-</script>
 
-{% endfor %}
+
+</script>

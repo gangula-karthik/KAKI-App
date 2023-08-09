@@ -649,7 +649,47 @@ def react_to_post(action, post_id):
     return redirect(url_for('home'))
 
 
+def upload_files_to_storage(files):
+    post_images_urls = []
+    for file in files:
+        if file:
+            filename = secure_filename(file.filename)
+            storage_path = f"social_media_posts/{filename}"
+            pyrestorage.child(storage_path).put(file)
+            image_url = pyrestorage.child(storage_path).get_url(None)
+            post_images_urls.append(image_url)
+    return post_images_urls
 
+
+@app.route('/update_post/<post_id>', methods=['POST'])
+def update_post(post_id):
+    if not post_id:
+        flash('Invalid post ID!', 'error')
+        return redirect(url_for('home'))
+
+    post_data = pyredb.child(f'social_media_posts/{post_id}').get().val()
+
+    if not post_data:
+        flash('Post not found!', 'error')
+        return redirect(url_for('home'))
+
+    title = request.form.get('title')
+    content = request.form.get('content')
+    files = request.files.getlist('update-post-images')
+    
+    updates = {
+        'post_name': title,
+        'post_content': content
+    }
+
+    post_images_urls = upload_files_to_storage(files)
+    if post_images_urls:
+        updates['post_images'] = post_images_urls  
+
+    pyredb.child(f'social_media_posts/{post_id}').update(updates)
+    flash('Post updated successfully!', 'success')
+
+    return redirect(url_for('home'))
 
 
 
