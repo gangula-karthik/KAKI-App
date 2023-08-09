@@ -223,9 +223,10 @@ def dashboard():
 
 @app.route('/logout')
 def logout():
-    # Clear the session on logout
-    # session.pop('user_email', None)
-    # session.pop('chat_history', None)
+    global message_streams
+    for ticket_id, stream in message_streams.items():
+        stream.close()
+    message_streams = {}
     session.clear() # removes entire session
     return redirect('/')
 
@@ -774,6 +775,18 @@ def faq_status():
 
 
 
+def message_stream_handler(ticket_id):
+    def inner(message):
+        # Here you can update the global state or notify the frontend about the change
+        print(f"Ticket ID: {ticket_id}")
+        print(message["event"])
+        print(message["path"])
+        print(message["data"])
+    return inner
+
+
+
+
 @app.route('/user_chat')
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
@@ -803,9 +816,14 @@ def listTickets():
 
 @app.route('/user_chat/<ticket_id>', methods=['GET', 'POST'])
 def staffChat(ticket_id):
+
+    global message_streams
     current_user = session['username']
     print(current_user)
     staffStatus = session['status'] == "Staff"
+
+    if ticket_id not in message_streams:
+        message_streams[ticket_id] = pyredb.child(f"messages/{ticket_id}").stream(message_stream_handler(ticket_id))
 
     all_tickets = pyredb.child("tickets").get().val() or {}
 
@@ -1120,10 +1138,23 @@ def staffSupportOverview():
 
     all_tickets = pyredb.child("tickets").get().val() or {}
 
+    if not all_tickets:
+        print("No tickets found!")
+        return render_template('customer_support_staff/staffOverview.html', 
+                               username=current_user, 
+                               is_staff=staffStatus, 
+                               staff_data=[], 
+                               points=0, 
+                               rank='N/A', 
+                               queries_resolved=0)
+
     staff_data_dict = {}
 
     for ticket_id, ticket in all_tickets.items():
-        staff_id = ticket['staff_id']
+        staff_id = ticket.get('staff_id')
+        if not staff_id:
+            continue 
+
         points = staff_points(ticket)
         if staff_id not in staff_data_dict:
             staff_data_dict[staff_id] = {
@@ -1133,7 +1164,7 @@ def staffSupportOverview():
             }
 
         staff_data_dict[staff_id]['points'] += points
-        if ticket['status'] == 'resolved':
+        if ticket.get('status') == 'resolved':
             staff_data_dict[staff_id]['queries_resolved'] += 1
 
     sorted_staff_data = sorted(staff_data_dict.values(), key=lambda x: x['points'], reverse=True)
@@ -1144,7 +1175,14 @@ def staffSupportOverview():
         staff_info['rank'] = idx
         pyredb.child("staff_leaderboard").child(staff_info['id']).set(staff_info)
 
-    return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus, staff_data=sorted_staff_data, points=user_data.get('points', 0), rank=user_data.get('rank', 'N/A'), queries_resolved=user_data.get('queries_resolved', 0))
+    return render_template('customer_support_staff/staffOverview.html', 
+                           username=current_user, 
+                           is_staff=staffStatus, 
+                           staff_data=sorted_staff_data, 
+                           points=user_data.get('points', 0), 
+                           rank=user_data.get('rank', 'N/A'), 
+                           queries_resolved=user_data.get('queries_resolved', 0))
+
 
 
 
@@ -1706,7 +1744,6 @@ def update_product(product_id):
 @app.route('/delete_product/<string:product_id>', methods=['POST'])
 def delete_product(product_id):
     pyredb.child('products').child(product_id).remove()
-    flash('Product has been deleted')
     return redirect(url_for('marketplace'))
 
 # @app.route('/transaction_handling/services')
@@ -1778,7 +1815,6 @@ def update_service(service_id):
 @app.route('/delete_service/<string:service_id>', methods=['POST'])
 def delete_service(service_id):
     pyredb.child('services').child(service_id).remove()
-    flash('Service has been deleted')
     return redirect(url_for('show_all_services'))
 
 
