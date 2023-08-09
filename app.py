@@ -992,7 +992,7 @@ def Individual_report():
     list_data = get_individual_points_over_past_months(name, current_year, month)
     activities = get_individual_activities(name, current_year,month)
 
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=False)
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=staffStatus)
 
 import datetime
 @app.route('/Report_generation/Community_report')
@@ -1005,7 +1005,7 @@ def Community_report():
     list_data = get_last_five_months_of_specified_year(town,current_year,month)
     top_g = get_individual_with_most_points_in_community(town,current_year,month)
     count_activities = count_events_com(town)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = count_activities, is_staff=False)
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = count_activities, is_staff=staffStatus)
 
 
 @app.route('/save_data/com', methods=['POST'])
@@ -1112,7 +1112,7 @@ def Transactions_report():
     total_count = count_transactions_past_6_months_for_buyer(current_year, month, name)
     total_received =sum_product_costs_past_6_months_for_seller(current_year, month, name)
     total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, name)
-    return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=False)
+    return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=staffStatus)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
@@ -1137,7 +1137,7 @@ def view_report(report_type,Report_id):
         most_contributed = data['most_contributed']
 
 
-        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed,is_staff=False)
+        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed,is_staff=staffStatus)
     elif report_type == "Individual":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
@@ -1148,7 +1148,7 @@ def view_report(report_type,Report_id):
         activities = data['activities']
 
 
-        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=False)
+        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=staffStatus)
 
     elif report_type == "Transactions":
         current_month = data['current_month']
@@ -1158,7 +1158,7 @@ def view_report(report_type,Report_id):
         total_received = data['Total_received']
         total_number = data['NoTransactionData']
 
-        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=False)
+        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=staffStatus)
 
 @app.route('/delete/data', methods=['POST'])
 def delete_report():
@@ -1186,7 +1186,7 @@ def event_list():
     events = retreive_data_event()
     names = retreive_event_name(events)
 
-    return render_template('/Report_generation/event_list.html', username=current_user,events = names, is_staff=True)
+    return render_template('/Report_generation/event_list.html', username=current_user,events = names, is_staff=staffStatus)
 
 @app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
@@ -1194,7 +1194,7 @@ def Event_details(report):
     details = retrieve_event_from_name(events, report)
 
 
-    return render_template('/Report_generation/Event_details.html', username=current_user,details = details,is_staff=True)
+    return render_template('/Report_generation/Event_details.html', username=current_user,details = details,is_staff=staffStatus)
 
 
 
@@ -1204,7 +1204,7 @@ def update(event_name):
     event_details = retrieve_event_from_name(events, event_name)
     update_user_form = CreateUserForm(request.form)
     if staffStatus == 'staff':
-        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, is_staff=True)
+        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, is_staff=staffStatus)
     else:
         return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,
                                event=event_details, staffStatus=False)
@@ -1245,7 +1245,7 @@ def general_report():
     count_trans = count_transactions_past_6_months(current_year, month)
     count_event = count_events()
     sign_up = count_signups_per_year_month(current_year,month)
-    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = count_event, Total_users = sign_up, Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=True)
+    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = count_event, Total_users = sign_up, Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=staffStatus)
 
     
 
