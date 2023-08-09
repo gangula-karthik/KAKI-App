@@ -80,7 +80,7 @@ class Indi_Report:
     # Add getter and setter methods for other attributes as needed
 
     # Method to save Indi_Report to Firebase
-    def save_to_firebase(self):
+    def save_to_firebase(self,name):
         report_data = {
             "Report_id": self.__report_id__,
             "leaderboard": self.__leaderboard__,
@@ -96,30 +96,30 @@ class Indi_Report:
 
         }
 
-        ref = db.reference("Users/Saved_report/Individual/")
+        ref = db.reference(f'/Users//Saved_report/{name}/Individual')
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     # Method to load Indi_Report from Firebase using report_id
-    @classmethod
-    def load_from_firebase(cls, target_report_id):
-        ref = db.reference("/Users/Saved_report/Individual")
-        report_data = ref.get()
-        for report_id, data in report_data.items():
-            if data.get('Report_id') == target_report_id:
-                return data
+    # @classmethod
+    # def load_from_firebase(cls, target_report_id,name):
+    #     ref = db.reference(f'/Users//Saved_report/{name}/Individual')
+    #     report_data = ref.get()
+    #     for report_id, data in report_data.items():
+    #         if data.get('Report_id') == target_report_id:
+    #             return data
+    #
+    #     return None
+    #
+    # # Method to update specific attribute of the report in Firebase
+    # def update_to_firebase(self, attribute_name, new_value,name):
+    #     ref = db.reference(f'/Users//Saved_report/{name}/Individual')
+    #     report_ref = ref.child(self.__report_id__)
+    #     report_ref.update({attribute_name: new_value})
 
-        return None
-
-    # Method to update specific attribute of the report in Firebase
-    def update_to_firebase(self, attribute_name, new_value):
-        ref = db.reference("/Users/Saved_report/Individual")
-        report_ref = ref.child(self.__report_id__)
-        report_ref.update({attribute_name: new_value})
-
-    def delete_from_firebase(self):
+    def delete_from_firebase(self,name):
         if self.__report_id__:
-            ref = db.reference("/Users/Saved_report/Individual")
+            ref = db.reference(f'/Users//Saved_report/{name}/Individual')
             report_data = ref.get()
 
             for report_id, data in report_data.items():
@@ -207,7 +207,7 @@ class Com_Report:
     # Add getter and setter methods for other attributes as needed
 
     # Method to save Com_Report to Firebase
-    def save_to_firebase(self):
+    def save_to_firebase(self,name):
         report_data = {
             "Report_id": self.__report_id__,
             "leaderboard": self.__leaderboard__,
@@ -222,31 +222,31 @@ class Com_Report:
             "report_type": 'Community',
         }
 
-        ref = db.reference("/Users/Saved_report/Community")
+        ref = db.reference(f'/Users//Saved_report/{name}/Community')
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     # Method to load Com_Report from Firebase using report_id
-    @classmethod
-    def load_from_firebase(cls, target_report_id):
-        ref = db.reference("/Users/Saved_report/Community")
-        report_data = ref.get()
-        for report_id, data in report_data.items():
-            if data.get('Report_id') == target_report_id:
-                return data
-
-        return None
+    # @classmethod
+    # def load_from_firebase(cls, target_report_id):
+    #     ref = db.reference(f'/Users//Saved_report/{name}/Community')
+    #     report_data = ref.get()
+    #     for report_id, data in report_data.items():
+    #         if data.get('Report_id') == target_report_id:
+    #             return data
+    #
+    #     return None
 
     # Method to update specific attribute of the report in Firebase
-    def update_to_firebase(self, attribute_name, new_value):
-        ref = db.reference("/Users/Saved_report/Community")
-        report_ref = ref.child(self.__report_id__)
-        report_ref.update({attribute_name: new_value})
+    # def update_to_firebase(self, attribute_name, new_value):
+    #     ref = db.reference(f'/Users//Saved_report/{name}/Community')
+    #     report_ref = ref.child(self.__report_id__)
+    #     report_ref.update({attribute_name: new_value})
 
 
-    def delete_from_firebase(self):
+    def delete_from_firebase(self,name):
         if self.__report_id__:
-            ref = db.reference("/Users/Saved_report/Community")
+            ref = db.reference(f'/Users//Saved_report/{name}/Community')
             report_data = ref.get()
 
             for report_id, data in report_data.items():
@@ -320,7 +320,7 @@ class Trans_Report:
         self.__listMonths__ = list_months
 
     # Method to save Trans_Report to Firebase
-    def save_to_firebase(self):
+    def save_to_firebase(self,name):
         report_data = {
             "Report_id": self.__report_id__,
             "Total_spent": self.__Total_spent__,
@@ -332,30 +332,30 @@ class Trans_Report:
             "report_type": 'Transaction',
         }
 
-        ref = db.reference("/Users/Saved_report/Transactions")
+        ref = db.reference(f'/Users//Saved_report/{name}/Transactions')
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     # Method to load Trans_Report from Firebase using report_id
-    @classmethod
-    def load_from_firebase(cls, target_report_id):
-        ref = db.reference("/Users/Saved_report/Transactions")
-        report_data = ref.get()
-        for report_id, data in report_data.items():
-            if data.get('Report_id') == target_report_id:
-                return data
+    # @classmethod
+    # def load_from_firebase(cls, target_report_id):
+    #     ref = db.reference(f'/Users//Saved_report/{name}/Transactions')
+    #     report_data = ref.get()
+    #     for report_id, data in report_data.items():
+    #         if data.get('Report_id') == target_report_id:
+    #             return data
+    #
+    #     return None
+    #
+    # # Method to update specific attribute of the report in Firebase
+    # def update_to_firebase(self, attribute_name, new_value):
+    #     ref = db.reference("f'/Users//Saved_report/{name}/Transactions'")
+    #     report_ref = ref.child(self.__report_id__)
+    #     report_ref.update({attribute_name: new_value})
 
-        return None
-
-    # Method to update specific attribute of the report in Firebase
-    def update_to_firebase(self, attribute_name, new_value):
-        ref = db.reference("/Users/Saved_report/Transactions")
-        report_ref = ref.child(self.__report_id__)
-        report_ref.update({attribute_name: new_value})
-
-    def delete_from_firebase(self):
+    def delete_from_firebase(self,name):
         if self.__report_id__:
-            ref = db.reference("/Users/Saved_report/Transactions")
+            ref = db.reference(f'/Users//Saved_report/{name}/Transactions')
             report_data = ref.get()
 
             for report_id, data in report_data.items():

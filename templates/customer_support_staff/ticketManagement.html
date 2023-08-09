@@ -90,8 +90,8 @@
                         data-ticket-id="{{ ticket.ticket_id }}" onchange="updateAssigned(this)">
                         <option value="none" {% if not ticket.staff_id %}selected{% endif %}>None</option>
                         {% for staff in staff_members %}
-                        <option value="{{ staff.name }}" {% if ticket.staff_id==staff.name %}selected{% endif %}>{{
-                            staff.name }}</option>
+                        <option value="{{ staff.username }}" {% if ticket.staff_id==staff.username %}selected{% endif %}>{{
+                            staff.username }}</option>
                         {% endfor %}
                     </select>
 

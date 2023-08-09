@@ -36,7 +36,6 @@ from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
 from googletrans import LANGUAGES, Translator
-import datetime
 
 translator = Translator()
 
@@ -218,7 +217,9 @@ def dashboard():
 @app.route('/logout')
 def logout():
     # Clear the session on logout
-    session.pop('user_email', None)
+    # session.pop('user_email', None)
+    # session.pop('chat_history', None)
+    session.clear() # removes entire session
     return redirect('/')
 
 
@@ -306,8 +307,8 @@ def add_user_credentials():
         if token_id is None:
             return "User token ID not found. Please log in first."
         # Get the current month and year
-        current_month = datetime.datetime.now().strftime('%B')
-        current_year = datetime.datetime.now().year
+        current_month = datetime.now().strftime('%B')
+        current_year = datetime.now().year
 
         # Add the "status", "month", and "year" fields to the data
         data = {
@@ -512,17 +513,116 @@ def eventTest():
 # Changed the template to my own so that i can see the layout
 
 
+
+
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('homefeed.html', username=current_user)
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+    all_posts = pyredb.child("social_media_posts").get().val() or {}
+    all_posts = [(id, postInfo) for id, postInfo in all_posts.items()]
+    print(all_posts)
+    return render_template('homefeed.html', username=current_user, posts=all_posts, is_staff=staffStatus)
 
-@app.route('/myposts', methods=['GET'])
-def mypost():
-    return render_template('homefeed.html', username=current_user)
 
-@app.route('/bookmarks', methods=['GET'])
-def bookmarks():
-    return render_template('homefeed.html', username=current_user)
+@app.route('/upload_post', methods=['POST'])
+def upload_post():
+    current_user = session['username']
+
+    post_name = request.form['post-name']
+    post_content = request.form['post-description']
+    post_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    files = request.files.getlist('post-images')
+    post_images_urls = []
+
+    # Initialize Firebase storage
+    storage = pyrebase.initialize_app(config).storage()
+
+    for file in files:
+        if file:
+            filename = secure_filename(file.filename)
+            storage_path = f"social_media_posts/{filename}"
+            
+            # Upload the file to Firebase storage
+            storage.child(storage_path).put(file)
+
+            # Get the download URL
+            image_url = storage.child(storage_path).get_url(None)
+            post_images_urls.append(image_url)
+
+    post_data = {
+        "post_name": post_name,
+        "post_content": post_content,
+        "post_date": post_date,
+        "post_images": post_images_urls, 
+        "likes": 0,
+        "dislikes": 0,
+        "post_author": current_user
+    }
+
+    # Push the post data to Firebase Realtime Database
+    pyredb.child("social_media_posts").push(post_data)
+
+    return redirect(url_for('home'))
+
+
+
+
+
+
+@app.route('/like_post/<post_id>', methods=['POST'])
+def like_post(post_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    post_ref = pyredb.child("social_media_posts").child(post_id)
+    post_data = post_ref.get().val()
+
+
+    if current_user not in post_data['liked_by']:
+        post_ref.update({"likes": post_data['likes'] + 1})
+        post_ref.child('liked_by').push(current_user)
+        if current_user in post_data['disliked_by']:
+            post_ref.child('disliked_by').remove(current_user)
+            post_ref.update({"dislikes": post_data['dislikes'] - 1})
+
+    return redirect(url_for('home'))
+
+@app.route('/dislike_post/<post_id>', methods=['POST'])
+def dislike_post(post_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    post_ref = pyredb.child("social_media_posts").child(post_id)
+    post_data = post_ref.get().val()
+
+    if current_user not in post_data['disliked_by']:
+        post_ref.update({"dislikes": post_data['dislikes'] + 1})
+        post_ref.child('dislikes').push(current_user)
+        if current_user in post_data['liked_by']:
+            post_ref.child('likes').remove(current_user)
+            post_ref.update({"likes": post_data['likes'] - 1})
+
+    return redirect(url_for('home'))
+
+@app.route('/delete_post/<post_id>', methods=['POST'])
+def delete_post(post_id):
+    current_user = session['username']
+    if not current_user:
+        abort(403)
+
+    try:
+        post_ref = pyredb.child("social_media_posts").child(post_id)
+        post_ref.remove()
+        flash('Post deleted successfully!', 'success')
+    except Exception as e:
+        flash(f'Error deleting post: {str(e)}', 'danger')
+    return redirect(url_for('home'))
+
+
 
 @app.route('/chat', methods=['GET'])
 def chat():
@@ -582,15 +682,24 @@ def faq_status():
 def listTickets():
     all_tickets = pyredb.child("tickets").get().val() or {}
 
-    # If the person accessing is staff, filter the tickets assigned to them
-    if staffStatus:  # Assuming staffStatus returns True for staff members
-        user_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == current_user}
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
 
-    # If the person accessing is a regular user, filter the tickets created by them
+    if staffStatus: 
+        try:
+            user_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == current_user}
+        except:
+            flash('Internal server errors, check back later', 'danger')
+
     else:
         user_tickets = {k: v for k, v in all_tickets.items() if v['user_id'] == current_user}
 
-    return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus)
+
+    message = None
+    if 'message' in session:
+        message = session.pop('message')
+
+    return render_template('customer_support/user_chat.html', tickets=user_tickets, messages={}, ticket_id=None, username=current_user, is_staff=staffStatus, message=message)
 
 
 
@@ -598,6 +707,10 @@ def listTickets():
 
 @app.route('/user_chat/<ticket_id>', methods=['GET', 'POST'])
 def staffChat(ticket_id):
+    current_user = session['username']
+    print(current_user)
+    staffStatus = session['status'] == "Staff"
+
     all_tickets = pyredb.child("tickets").get().val() or {}
 
     user_tickets = {k: v for k, v in all_tickets.items() if v.get('user_id') == current_user or v.get('staff_id') == current_user}
@@ -628,6 +741,7 @@ def staffChat(ticket_id):
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
 def send_message(ticket_id, username):
+
     ticket = pyredb.child(f"tickets/{ticket_id}").get().val()
 
     if not ticket or (username != ticket['user_id'] and username != ticket['staff_id']):
@@ -637,7 +751,7 @@ def send_message(ticket_id, username):
     data = {
         "sender": username,
         "recipient": ticket['user_id'] if username != ticket['user_id'] else ticket['staff_id'],
-        "timestamp": datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
+        "timestamp": datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
         "content": message_content
     }
     pyredb.child(f"messages/{ticket_id}").push(data)
@@ -792,6 +906,8 @@ def myTickets():
 
 @app.route('/user_tickets', methods=['GET'])
 def userTickets():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     query = request.args.get('query')
     if query:
         tickets = semanticSearch(query)
@@ -806,6 +922,8 @@ def getComments():
 
 @app.route('/user_tickets/<ticket_ID>', methods=['GET', 'POST'])
 def ticketComments(ticket_ID):
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     tickets = ticketRetrieval()
     if tickets is None:
         return "Error: tickets could not be retrieved."
@@ -819,20 +937,21 @@ def ticketComments(ticket_ID):
     comms = getComments()
     if comms is not None:
         commList = [(id, comment) for id, comment in comms.items() if comment['ticket_id'] == ticket_ID]
-    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=False)
+    return render_template('customer_support/ticket_comments.html', username=current_user, data=ticket, comments=commList, is_staff=staffStatus)
 
 
 @app.route('/user_tickets/add_comment/<ticket_ID>', methods=['POST'])
 def set_comment(ticket_ID):
     comment = request.form.get('commentText')
-    comment_date = datetime.datetime.now().strftime("%Y-%m-%d")
-    comment_by = current_user
+    comment_date = datetime.now().strftime("%Y-%m-%d")
+    comment_by = session['username']
     comment_data = {
         "comment": comment,
         "ticket_id": ticket_ID,
         "date": comment_date,
         "comment_by": comment_by
     }
+    print()
     comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
     if comment_req == 200: 
         flash('Comment has been added 🚀', 'success')
@@ -897,11 +1016,66 @@ def forbidden(e):
 
 @app.route('/supportStaffOverview', methods=['GET'])
 def staffSupportOverview():
-    if staffStatus:
-        return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus)
-    else: 
-        return abort(403)
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
+
+    if not staffStatus:
+        abort(403)
+
+    all_tickets = pyredb.child("tickets").get().val() or {}
+
+    staff_data_dict = {}
+
+    for ticket_id, ticket in all_tickets.items():
+        staff_id = ticket['staff_id']
+        points = staff_points(ticket)
+        if staff_id not in staff_data_dict:
+            staff_data_dict[staff_id] = {
+                'id': staff_id,
+                'points': 0,
+                'queries_resolved': 0
+            }
+
+        staff_data_dict[staff_id]['points'] += points
+        if ticket['status'] == 'resolved':
+            staff_data_dict[staff_id]['queries_resolved'] += 1
+
+    sorted_staff_data = sorted(staff_data_dict.values(), key=lambda x: x['points'], reverse=True)
+
+    user_data = pyredb.child("staff_leaderboard").child(current_user).get().val() or {}
+
+    for idx, staff_info in enumerate(sorted_staff_data, start=1):
+        staff_info['rank'] = idx
+        pyredb.child("staff_leaderboard").child(staff_info['id']).set(staff_info)
+
+    return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus, staff_data=sorted_staff_data, points=user_data.get('points', 0), rank=user_data.get('rank', 'N/A'), queries_resolved=user_data.get('queries_resolved', 0))
+
+
+
+
+def staff_points(ticket):
+    points = 0
+
+    if ticket['status'] != 'resolved':
+        return 0
     
+    points += 10
+    opened_at = datetime.strptime(ticket['opened_at'], "%Y-%m-%d %H:%M:%S")
+    closed_at = datetime.strptime(ticket['closed_at'], "%Y-%m-%d %H:%M:%S")
+    time_taken = closed_at - opened_at
+
+    if time_taken.total_seconds() <= 12 * 3600:  
+        points += 10
+    elif time_taken.total_seconds() <= 24 * 3600: 
+        points += 5
+    else:
+        points += 2
+
+    if ticket['subject_sentiment'] < 0:
+        points += 5
+
+    return points
+
 
 def convert_to_scale(score, old_min=-1, old_max=1, new_min=1, new_max=5):
     return ((score - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
@@ -915,6 +1089,8 @@ def staffRetrieval():
 
 @app.route('/ticketDashboard', methods=['GET'])
 def staffTicketDashboard():
+    current_user = session['username']
+    staffStatus = session['status'] == "Staff"
     if not staffStatus:
         abort(403)
 
@@ -941,14 +1117,12 @@ def staffTicketDashboard():
     # Calculate the average scaled score
     average_scaled_score = round(total_scaled_score / total_tickets_with_sentiment if total_tickets_with_sentiment else 0, 2)
 
-
-
     total_resolution_time = 0
     resolved_tickets_count = 0
     for ticket in all_tickets.values():
         if ticket.get('status') == 'resolved':
-            opened_at = datetime.datetime.strptime(ticket['opened_at'], '%Y-%m-%d %H:%M:%S')
-            closed_at = datetime.datetime.strptime(ticket['closed_at'], '%Y-%m-%d %H:%M:%S')
+            opened_at = datetime.strptime(ticket['opened_at'], '%Y-%m-%d %H:%M:%S')
+            closed_at = datetime.strptime(ticket['closed_at'], '%Y-%m-%d %H:%M:%S')
             total_resolution_time += (closed_at - opened_at).total_seconds() // 3600
             resolved_tickets_count += 1
 
@@ -956,10 +1130,12 @@ def staffTicketDashboard():
 
     return render_template('customer_support_staff/ticketManagement.html', username=current_user, backlog=backlog_count, sentiments=average_scaled_score, avg_resolution_time=avg_resolution_time, tickets=ticketRetrieval(), staff_members=staff_members, is_staff=staffStatus)
 
+
+
 # report generation routes
 @app.route('/Report_generation/Individual_report')
 def Individual_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
@@ -967,25 +1143,26 @@ def Individual_report():
     list_data = get_individual_points_over_past_months(name, current_year, month)
     activities = get_individual_activities(name, current_year,month)
 
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=False)
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '69', number_of_activities = activities, is_staff=staffStatus)
 
-import datetime
+
 @app.route('/Report_generation/Community_report')
 def Community_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
     leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
     list_data = get_last_five_months_of_specified_year(town,current_year,month)
     top_g = get_individual_with_most_points_in_community(town,current_year,month)
-    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = '69', is_staff=False)
+    count_activities = count_events_com(town)
+    return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = count_activities, is_staff=staffStatus)
 
 
 @app.route('/save_data/com', methods=['POST'])
 def save_data_com():
     data = request.json
-    report = get_com()
+    report = get_com(name)
     check = check_existing(report,data)
 
     logging.info(f"Received data: {data}")
@@ -1006,7 +1183,7 @@ def save_data_com():
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
-        report_c.save_to_firebase()
+        report_c.save_to_firebase(name)
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
@@ -1017,7 +1194,7 @@ def save_data_com():
 def save_data_indi():
 
     data = request.json
-    report = get_indi()
+    report = get_indi(name)
     check = check_existing(report,data)
 
     logging.info(f"Received data: {data}")
@@ -1039,7 +1216,7 @@ def save_data_indi():
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
-        report_i.save_to_firebase()
+        report_i.save_to_firebase(name)
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
@@ -1049,7 +1226,7 @@ def save_data_trans():
 
 
     data = request.json
-    report = get_trans()
+    report = get_trans(name)
     check = check_existing(report,data)
 
     logging.info(f"Received data: {data}")
@@ -1069,14 +1246,14 @@ def save_data_trans():
         # Add other attributes as needed
 
         # Save the report to Firebase using the class method
-        report_trans.save_to_firebase()
+        report_trans.save_to_firebase(name)
 
         # Return a response to indicate success (you can customize this based on your needs)
         return jsonify({"message": "Data saved successfully!"})
 
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
 def Transactions_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
@@ -1086,11 +1263,11 @@ def Transactions_report():
     total_count = count_transactions_past_6_months_for_buyer(current_year, month, name)
     total_received =sum_product_costs_past_6_months_for_seller(current_year, month, name)
     total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, name)
-    return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=False)
+    return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=staffStatus)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
 def Saved_report():
-    reports = get_all_reports()
+    reports = get_all_reports(name)
 
 
     details = retrieve_report_name(reports)
@@ -1099,7 +1276,7 @@ def Saved_report():
 
 @app.route('/Report_generation/<string:report_type>/<string:Report_id>', methods=['GET'])
 def view_report(report_type,Report_id):
-    report = get_all_reports()
+    report = get_all_reports(name)
     data = retrieve_ByID(report,Report_id)
     if report_type == "Community":
         leaderboard = data['leaderboard']
@@ -1111,7 +1288,7 @@ def view_report(report_type,Report_id):
         most_contributed = data['most_contributed']
 
 
-        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed,is_staff=False)
+        return render_template('/Report_generation/Community_report.html', leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,number_of_activities = number_of_activities,most_contributed=most_contributed,is_staff=staffStatus)
     elif report_type == "Individual":
         leaderboard = data['leaderboard']
         current_month = data['current_month']
@@ -1122,9 +1299,9 @@ def view_report(report_type,Report_id):
         activities = data['activities']
 
 
-        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=False)
+        return render_template('/Report_generation/Individual_report.html',leaderboard = leaderboard, current_month = current_month,current_year = current_year, listMonths = listMonths,line_data=line_data,neighbours_helped=neighbours_helped,number_of_activities=activities,is_staff=staffStatus)
 
-    elif report_type == "Transaction":
+    elif report_type == "Transactions":
         current_month = data['current_month']
         current_year = data['current_year']
         list_month = data['listMonths']
@@ -1132,35 +1309,35 @@ def view_report(report_type,Report_id):
         total_received = data['Total_received']
         total_number = data['NoTransactionData']
 
-        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=False)
+        return render_template('/Report_generation/Transactions_report.html',current_month=current_month,current_year=current_year,listMonths=list_month,Total_spent=total_spent,Total_received=total_received,Total_number=total_number,is_staff=staffStatus)
 
 @app.route('/delete/data', methods=['POST'])
 def delete_report():
     report_id = str(request.json)
-    report = get_all_reports()
+    report = get_all_reports(name)
     details = retrieve_ByID(report, report_id)
     report_type = details['report_type']
 
 
     if report_type == "Community":
-        delete_Com_from_firebase(report_id)
+        delete_Com_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 
 
     elif report_type == "Individual":
-        delete_Indi_from_firebase(report_id)
+        delete_Indi_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 
 
     elif report_type == "Transaction":
-        delete_Trans_from_firebase(report_id)
+        delete_Trans_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 @app.route('/event_lists', methods=['GET'])
 def event_list():
     events = retreive_data_event()
     names = retreive_event_name(events)
 
-    return render_template('/Report_generation/event_list.html', username=current_user,events = names, is_staff=True)
+    return render_template('/Report_generation/event_list.html', username=current_user,events = names, is_staff=staffStatus)
 
 @app.route('/Report_generation/Event_details.html/<report>', methods=['GET'])
 def Event_details(report):
@@ -1168,7 +1345,7 @@ def Event_details(report):
     details = retrieve_event_from_name(events, report)
 
 
-    return render_template('/Report_generation/Event_details.html', username=current_user,details = details,is_staff=True)
+    return render_template('/Report_generation/Event_details.html', username=current_user,details = details,is_staff=staffStatus)
 
 
 
@@ -1178,7 +1355,7 @@ def update(event_name):
     event_details = retrieve_event_from_name(events, event_name)
     update_user_form = CreateUserForm(request.form)
     if staffStatus == 'staff':
-        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, is_staff=True)
+        return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,event=event_details, is_staff=staffStatus)
     else:
         return render_template('/Report_generation/update.html', username=current_user, form=update_user_form,
                                event=event_details, staffStatus=False)
@@ -1212,14 +1389,14 @@ def update_event():
 
 @app.route('/Report_generation/general_report', methods=['GET'])
 def general_report():
-    now = datetime.datetime.now()
+    now = datetime.now()
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
     count_trans = count_transactions_past_6_months(current_year, month)
     count_event = count_events()
     sign_up = count_signups_per_year_month(current_year,month)
-    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = count_event, Total_users = sign_up, Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=True)
+    return render_template('/Report_generation/general_report.html', username=current_user,current_month = month, Total_community = count_event, Total_users = sign_up, Total_numberT = count_trans,current_year=current_year,listMonths = ListMonths, is_staff=staffStatus)
 
     
 

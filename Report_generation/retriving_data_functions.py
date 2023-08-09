@@ -287,9 +287,20 @@ def get_individual_activities(individual_name, year, month):
 
     return activities
 
+
 def get_individual_with_most_points_in_community(community, year, month):
     individuals_data = db.reference("/IndividualPoints").get()
-    community_individuals = [individual for individual, data in individuals_data.items() if data.get("community") == community]
+
+    if not individuals_data:
+        print("No data found for individuals.")
+        return None
+
+    community_individuals = [individual for individual, data in individuals_data.items() if
+                             data.get("community") == community]
+
+    if not community_individuals:
+
+        return "No one in the community has points yet. Be the first."
 
     max_points = 0
     top_individual = None
@@ -297,6 +308,7 @@ def get_individual_with_most_points_in_community(community, year, month):
     for individual in community_individuals:
         if year in individuals_data[individual] and month in individuals_data[individual][year]:
             points = individuals_data[individual][year][month]["points"]
+            print(f"Individual: {individual}, Points: {points}")
             if points > max_points:
                 max_points = points
                 top_individual = individual
@@ -433,6 +445,20 @@ def count_events(path = '/Events'):
         return len(data)
     else:
         return 0
+
+def count_events_com(community,path='/Events', ):
+    data = db.reference(path).get()
+
+    if community:
+        filtered_data = [event for event in data if event.get("community") == community]
+        return len(filtered_data)
+    else:
+        if isinstance(data, dict):
+            return len(data)
+        elif isinstance(data, list):
+            return len(data)
+        else:
+            return 0
 def count_signups_per_year_month(year, month):
     users_data = db.reference("/Users/Consumer").get()
 

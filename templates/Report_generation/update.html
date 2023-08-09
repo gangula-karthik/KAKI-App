@@ -8,7 +8,7 @@
 {% from "_formHelper.html" import render_field %}
 
 
-<h1 class="display-4">Update Event: {{ event.event_name }}</h1>
+<h1 class="display-4">Update Event: {{ event.event_name }} for {{ event.community }}</h1>
 
 <form id="eventForm" >
 
@@ -69,6 +69,7 @@
         date_posted: date_posted,
 <!--        event_location: event_location,-->
         event_description: event_description,
+        community: '{{ event.community }}',
       };
 
       // Do something with the form data (you can update this part as needed)
