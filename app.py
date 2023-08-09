@@ -925,33 +925,30 @@ def staffSupportOverview():
 
     all_tickets = pyredb.child("tickets").get().val() or {}
 
-    all_staff_points = pyredb.child("staff_leaderboard").get().val() or {}
-    sorted_staff = sorted(all_staff_points.items(), key=lambda x: x[1], reverse=True)
+    staff_data_dict = {}
 
-    staff_data = []
-    for staff_id, _ in sorted_staff:
-        staff_tickets = {k: v for k, v in all_tickets.items() if v['staff_id'] == staff_id and v['status'] == 'resolved'}
-        points = sum([staff_points(ticket) for ticket in staff_tickets.values()])
-        queries_resolved = len(staff_tickets)
-        rank = next((idx + 1 for idx, (s_id, _) in enumerate(sorted_staff) if s_id == staff_id), None)
-        
-        staff_info = {
-            'id': staff_id,
-            'points': points,
-            'queries_resolved': queries_resolved,
-            'rank': rank
-        }
+    for ticket_id, ticket in all_tickets.items():
+        staff_id = ticket['staff_id']
+        points = staff_points(ticket)
+        if staff_id not in staff_data_dict:
+            staff_data_dict[staff_id] = {
+                'id': staff_id,
+                'points': 0,
+                'queries_resolved': 0
+            }
 
-        staff_data.append(staff_info)
-        if staff_id not in all_staff_points:
-            pyredb.child("staff_leaderboard").child(staff_id).set(staff_info)
-        else:
-            pyredb.child("staff_leaderboard").child(staff_id).update(staff_info)
+        staff_data_dict[staff_id]['points'] += points
+        if ticket['status'] == 'resolved':
+            staff_data_dict[staff_id]['queries_resolved'] += 1
 
-    return render_template('customer_support_staff/staffOverview.html', 
-                            username=current_user, 
-                            is_staff=staffStatus, 
-                            staff_data=staff_data)
+    sorted_staff_data = sorted(staff_data_dict.values(), key=lambda x: x['points'], reverse=True)
+
+    for idx, staff_info in enumerate(sorted_staff_data, start=1):
+        staff_info['rank'] = idx
+        pyredb.child("staff_leaderboard").child(staff_info['id']).set(staff_info)
+
+    return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus, staff_data=sorted_staff_data)
+
 
 
 
