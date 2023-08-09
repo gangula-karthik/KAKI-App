@@ -1458,7 +1458,7 @@ def delete_report():
         return jsonify({"status": "success"})
 
 
-    elif report_type == "Transaction":
+    elif report_type == "Transactions":
         delete_Trans_from_firebase(report_id,name)
         return jsonify({"status": "success"})
 @app.route('/event_lists', methods=['GET'])
