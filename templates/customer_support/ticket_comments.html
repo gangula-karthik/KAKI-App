@@ -37,21 +37,56 @@
     .comment-card-header {
         border-bottom: 1px solid #333;
     }
+
+    .carousel-image {
+        max-width: 650px;
+        /* You can adjust this value */
+        max-height: 650px;
+        /* You can adjust this value */
+        margin: auto;
+        display: block;
+    }
 </style>
 
 <a class="btn btn-primary my-2 my-sm-0" href="{{ url_for('userTickets') }}"><i class="fa-solid fa-arrow-left"></i>
     back</a>
 
-<div class="card  mt-4 mx-auto text-bg-dark mb-3">
+<div class="card mt-4 mx-auto text-bg-dark mb-3">
     <div class="card-header">
-        <img src="path_to_profile_pic.jpg" alt="profile pic" class="rounded-circle" style="width: 30px; height: 30px;">
         <small class="text-info">{{ data.user_id }}</small>
     </div>
     <div class="card-body">
         <h5 class="card-title">{{ data.subject }}</h5>
         <p class="card-text">{{ data.descriptions }}</p>
+
+        <!-- Carousel for displaying images -->
+        {% if data.images and data.images|length > 0 %}
+        <div id="imageCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+
+                <!-- Loop through the images and add them to the carousel -->
+                {% for image in data.images %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <img src="{{ image }}" class="d-block mx-auto carousel-image" alt="Image {{ loop.index }}">
+                </div>
+                {% endfor %}
+
+            </div>
+            <!-- Controls for the carousel (Optional, but useful when there are multiple images) -->
+            <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+
 
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#uploadCollapse" aria-expanded="false"
     aria-controls="uploadCollapse">
@@ -64,8 +99,8 @@
         <h4 class="mb-3">Add a comment</h4>
         <div class="mb-3">
             <label for="commentText" class="form-label">Comment</label>
-            <textarea class="form-control" id="commentText" name="commentText" rows="3"
-                placeholder="Your comment" required></textarea>
+            <textarea class="form-control" id="commentText" name="commentText" rows="3" placeholder="Your comment"
+                required></textarea>
         </div>
         <button type="submit" class="btn btn-outline-light">Submit</button>
     </form>
