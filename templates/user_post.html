@@ -138,11 +138,14 @@
                     Edit</button>
             </div>
             <div class="d-flex align-items-center">
-                <!-- Assuming you have routes and methods to handle likes, dislikes, and comments -->
-                <button class="btn btn-outline-primary like-button me-2" data-id="{{ post_id }}"><i
-                        class="fa-solid fa-thumbs-up"></i> Like</button>
-                <button class="btn btn-outline-primary dislike-button me-2" data-id="{{ post_id }}"><i
-                        class="fa-solid fa-thumbs-down"></i> Dislike</button>
+                <form method="POST" action="/like_post/{{ post_id }}">
+                    <button  class="btn btn-outline-primary"  type="submit">Like</button>
+                </form>
+
+                <form method="POST" action="/dislike_post/{{ post_id }}">
+                    <button class="btn btn-outline-primary" type="submit">Dislike</button>
+                </form>
+
                 <a class="btn btn-outline-primary" href="/comments/{{ post_id }}"><i class="fa-solid fa-comments"></i>
                     Comment</a>
             </div>

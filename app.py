@@ -601,9 +601,9 @@ def dislike_post(post_id):
 
     if current_user not in post_data['disliked_by']:
         post_ref.update({"dislikes": post_data['dislikes'] + 1})
-        post_ref.child('disliked_by').push(current_user)
+        post_ref.child('dislikes').push(current_user)
         if current_user in post_data['liked_by']:
-            post_ref.child('liked_by').remove(current_user)
+            post_ref.child('likes').remove(current_user)
             post_ref.update({"likes": post_data['likes'] - 1})
 
     return redirect(url_for('home'))
@@ -623,18 +623,6 @@ def delete_post(post_id):
     return redirect(url_for('home'))
 
 
-
-
-
-
-
-@app.route('/myposts', methods=['GET'])
-def mypost():
-    return render_template('homefeed.html', username=current_user)
-
-@app.route('/bookmarks', methods=['GET'])
-def bookmarks():
-    return render_template('homefeed.html', username=current_user)
 
 @app.route('/chat', methods=['GET'])
 def chat():
