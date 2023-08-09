@@ -116,38 +116,40 @@ def index():
         password = request.form['user_pwd']
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
-
+            print(user)
             # Get the Firebase token ID
             token_id = user['idToken']
             local_id = user['localId']
-
+            print(token_id)
             # Save the token ID in the session
             session['user_token'] = token_id
 
-            firebase_user = auth.get_user(local_id)
+            firebase_user = auth.get_user(user['localId'])
             email_verified = firebase_user.email_verified
             if not email_verified:
                 # Update user's custom claims to indicate pending email verification
-                auth.set_custom_user_claims(local_id, {'emailVerified': False})
+                auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
 
                 # Send the email verification
                 pyreauth.send_email_verification(user['idToken'])
                 print("Verification email sent. Waiting for email verification...")
                 # Wait until the email is verified
                 while True:
-                    firebase_user = auth.get_user(local_id)
+                    firebase_user = auth.get_user(user['localId'])
                     email_verified = firebase_user.email_verified
                     if email_verified:
                         # Update user's custom claims to indicate email verification completed
-                        auth.set_custom_user_claims(local_id, {'emailVerified': True})
+                        auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
+                        # Reset the emailVerified status using Firebase Admin SDK
+                        auth.update_user(local_id, email_verified=False)
+                        session.pop('pwd', None)  
                         print("Email verified.")
                         break
                     else:
                         print("Email not verified. Waiting...")
-                        time.sleep(3)
+                        time.sleep(3)  # Add a 3-second delay before checking again
             else:
                 print("Email already verified.")
-            
             # Fetch username and status from the Realtime Database
             try:
                 username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
@@ -259,6 +261,8 @@ def create_account():
 
                 session['pwd'] = pwd0
 
+                print(user)
+
                 # Get the Firebase token ID (use user.uid instead of user['idToken'])
                 token_id = user.uid
                 # Save the token ID in the session
@@ -297,7 +301,7 @@ def add_user_credentials():
         # Retrieve the email from the session
         email = session.get('user_email', None)
         # Retrieve the token ID from the session
-        token_id = session.get('user_token', None)  
+        token_id = session.get('user_token', None)
 
         password = session.get('pwd', None)
 
@@ -306,6 +310,7 @@ def add_user_credentials():
 
         if token_id is None:
             return "User token ID not found. Please log in first."
+
         # Get the current month and year
         current_month = datetime.now().strftime('%B')
         current_year = datetime.now().year
@@ -323,10 +328,14 @@ def add_user_credentials():
         }
         # Use the token ID as the key in the database
         pyredb.child("Users").child("Consumer").child(token_id).set(data)
+        
         try:
             user = pyreauth.sign_in_with_email_and_password(email, password)
+            print(user)
             # Get the Firebase token ID
             token_id = user['idToken']
+            local_id = user['localId']
+            print(token_id)
             # Save the token ID in the session
             session['user_token'] = token_id
 
@@ -346,7 +355,9 @@ def add_user_credentials():
                     if email_verified:
                         # Update user's custom claims to indicate email verification completed
                         auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
-                        session.pop('pwd',None)  
+                        # Reset the emailVerified status using Firebase Admin SDK
+                        auth.update_user(local_id, email_verified=False)
+                        session.pop('pwd', None)  
                         print("Email verified.")
                         break
                     else:
@@ -356,7 +367,8 @@ def add_user_credentials():
                 print("Email already verified.")
         except Exception as e:
             print(f"Authentication failed: {e}")
-        return redirect('/staff/users')
+        return redirect('/home')
+
         
 
 @app.route('/update_user_cred', methods=['POST'])
