@@ -52,15 +52,11 @@
                     <img src="path_to_your_photo.jpg" class="img-fluid rounded-circle" alt="Your photo">
                 </div>
                 <div class="col-md-8">
-                    <h5 class="card-title">John Doe</h5>
-                    <p class="card-text">Points: 1000</p>
-                    <p class="card-text">Rank: 1</p>
-                    <p class="card-text">Total Queries Resolved: 500</p>
-                    <p class="card-text">Average Sentiment: Positive</p>
+                    <h5 class="card-title">{{ username }}</h5>
+                    <p class="card-text">Points: {{ points }}</p>
+                    <p class="card-text">Rank: {{ rank }}</p>
+                    <p class="card-text">Total Queries Resolved: {{ queries_resolved }}</p>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end">
-                <a href="path_to_your_report" class="btn btn-primary">View Report</a>
             </div>
         </div>
     </div>

@@ -943,11 +943,13 @@ def staffSupportOverview():
 
     sorted_staff_data = sorted(staff_data_dict.values(), key=lambda x: x['points'], reverse=True)
 
+    user_data = pyredb.child("staff_leaderboard").child(current_user).get().val() or {}
+
     for idx, staff_info in enumerate(sorted_staff_data, start=1):
         staff_info['rank'] = idx
         pyredb.child("staff_leaderboard").child(staff_info['id']).set(staff_info)
 
-    return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus, staff_data=sorted_staff_data)
+    return render_template('customer_support_staff/staffOverview.html', username=current_user, is_staff=staffStatus, staff_data=sorted_staff_data, points=user_data.get('points', 0), rank=user_data.get('rank', 'N/A'), queries_resolved=user_data.get('queries_resolved', 0))
 
 
 
