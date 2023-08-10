@@ -91,7 +91,7 @@
                 <div class="mb-3">
                     <label for="post-images" class="form-label">Upload Images</label>
                     <input type="file" class="form-control" id="post-images" name="post-images" multiple
-                        accept="image/*">
+                        accept="image/*" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -106,7 +106,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between">
             <div>
-                <small class="text-info">{{ username }}</small>
+                <small class="text-info">{{ post_data['post_author'] }}</small>
             </div>
             <p class="card-text"><small class="text-white-50">{{ post_data['post_date'] }}</small></p>
         </div>
@@ -208,7 +208,7 @@
                     <div class="mb-3">
                         <label for="update-post-images" class="form-label">Post Image</label>
                         <input type="file" class="form-control" id="update-post-images" name="update-post-images"
-                            multiple accept="image/*">
+                            multiple accept="image/*" required>
                     </div>
 
                     <div class="modal-footer">

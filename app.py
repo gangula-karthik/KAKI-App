@@ -591,18 +591,13 @@ def upload_post():
     files = request.files.getlist('post-images')
     post_images_urls = []
 
-    # Initialize Firebase storage
     storage = pyrebase.initialize_app(config).storage()
 
     for file in files:
         if file:
             filename = secure_filename(file.filename)
             storage_path = f"social_media_posts/{filename}"
-            
-            # Upload the file to Firebase storage
             storage.child(storage_path).put(file)
-
-            # Get the download URL
             image_url = storage.child(storage_path).get_url(None)
             post_images_urls.append(image_url)
 
@@ -676,13 +671,15 @@ def update_post(post_id):
     title = request.form.get('title')
     content = request.form.get('content')
     files = request.files.getlist('update-post-images')
+
+    print(files)
     
     updates = {
         'post_name': title,
         'post_content': content
     }
 
-    post_images_urls = upload_files_to_storage(files)
+    post_images_urls = upload_files_to_storage("social_media_posts", files)
     if post_images_urls:
         updates['post_images'] = post_images_urls  
 
@@ -690,10 +687,6 @@ def update_post(post_id):
     flash('Post updated successfully!', 'success')
 
     return redirect(url_for('home'))
-
-
-
-
 
 
 
