@@ -1,3 +1,21 @@
+## Testing User View
+You may create your own account using your gmail to test this out.
+
+## Sample Credentials for Testing Admin View
+Note: These are sample credentials for testing purposes only. Do not use these in production or for any real transactions. Always keep real credentials private and secure.
+
+### Kaki website 
+```
+Email: kaki.w3bapp@gmail.com
+Password: test123
+```
+
+### Gmail for verification link
+```
+Email: kaki.w3bapp@gmail.com
+Password: Trashminator
+```
+
 ## Prerequisites
 Before you proceed, ensure you obtain the following:
 ```
@@ -29,12 +47,6 @@ RECAPTHA_SECRET_KEY (Note: There might be a typo, it's usually spelled "RECAPTCH
 4. Once registered, you'll find the "SECRET KEY". This is your RECAPTHA_SECRET_KEY.
 5. Note it down for the setup.
 
-## Testing User View
-You may create your own account using your gmail to test this out.
-
-## Sample Credentials for Testing Admin View
-Note: These are sample credentials for testing purposes only. Do not use these in production or for any real transactions. Always keep real credentials private and secure.
-
 
 ## Setup
 Clone this repository:
@@ -57,15 +69,3 @@ RECAPTHA_SECRET_KEY=YOUR_RECAPTCHA_SECRET_KEY
 ```
 
 Save the .env file at the root of the project and follow any additional setup instructions...
-
-### Kaki website 
-```
-Email: kaki.w3bapp@gmail.com
-Password: test123
-```
-
-### Gmail for verification link
-```
-Email: kaki.w3bapp@gmail.com
-Password: Trashminator
-```
