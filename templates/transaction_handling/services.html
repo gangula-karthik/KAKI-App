@@ -200,12 +200,16 @@
         <p class="card-text text-muted-on-dark"><strong>Seller:</strong> {{ service[1].seller }}</p>
       </div>
       <div class="card-footer w-100">
+        {% if username == service[1].seller or istaff == True %}
         <button class="btn btn-primary w-100" data-toggle="modal" data-target="#exampleModalEdit"
           data-service-id="{{ service[0] }}" style="margin-bottom: 7px; background-color: #6c757d; border-color: #6c757d;">Edit</button>
+        {% endif %}
         <a data-bs-toggle="modal" data-bs-target="#buyPopup" class="btn btn-primary w-100" >Buy Now</a>
+        {% if username == service[1].seller or istaff == True %}
         <form action="{{ url_for('delete_service', service_id=service[0]) }}" method="post">
           <button type="submit" class="btn btn-danger w-100 mt-2" style="background-color: #dc3545; border-color: #dc3545;">Delete</button>
         </form>
+        {% endif %}
       </div>
     </div>
     {% endfor %}

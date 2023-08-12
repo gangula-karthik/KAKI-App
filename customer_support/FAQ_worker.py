@@ -1,4 +1,3 @@
-from celery import Celery
 from langchain import PromptTemplate, LLMChain
 import asyncio
 import firebase_admin

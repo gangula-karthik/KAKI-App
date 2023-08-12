@@ -100,22 +100,7 @@ class Indi_Report:
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
-    # Method to load Indi_Report from Firebase using report_id
-    # @classmethod
-    # def load_from_firebase(cls, target_report_id,name):
-    #     ref = db.reference(f'/Users//Saved_report/{name}/Individual')
-    #     report_data = ref.get()
-    #     for report_id, data in report_data.items():
-    #         if data.get('Report_id') == target_report_id:
-    #             return data
-    #
-    #     return None
-    #
-    # # Method to update specific attribute of the report in Firebase
-    # def update_to_firebase(self, attribute_name, new_value,name):
-    #     ref = db.reference(f'/Users//Saved_report/{name}/Individual')
-    #     report_ref = ref.child(self.__report_id__)
-    #     report_ref.update({attribute_name: new_value})
+
 
     def delete_from_firebase(self,name):
         if self.__report_id__:
@@ -226,22 +211,6 @@ class Com_Report:
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
-    # Method to load Com_Report from Firebase using report_id
-    # @classmethod
-    # def load_from_firebase(cls, target_report_id):
-    #     ref = db.reference(f'/Users//Saved_report/{name}/Community')
-    #     report_data = ref.get()
-    #     for report_id, data in report_data.items():
-    #         if data.get('Report_id') == target_report_id:
-    #             return data
-    #
-    #     return None
-
-    # Method to update specific attribute of the report in Firebase
-    # def update_to_firebase(self, attribute_name, new_value):
-    #     ref = db.reference(f'/Users//Saved_report/{name}/Community')
-    #     report_ref = ref.child(self.__report_id__)
-    #     report_ref.update({attribute_name: new_value})
 
 
     def delete_from_firebase(self,name):
@@ -336,22 +305,6 @@ class Trans_Report:
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
-    # Method to load Trans_Report from Firebase using report_id
-    # @classmethod
-    # def load_from_firebase(cls, target_report_id):
-    #     ref = db.reference(f'/Users//Saved_report/{name}/Transactions')
-    #     report_data = ref.get()
-    #     for report_id, data in report_data.items():
-    #         if data.get('Report_id') == target_report_id:
-    #             return data
-    #
-    #     return None
-    #
-    # # Method to update specific attribute of the report in Firebase
-    # def update_to_firebase(self, attribute_name, new_value):
-    #     ref = db.reference("f'/Users//Saved_report/{name}/Transactions'")
-    #     report_ref = ref.child(self.__report_id__)
-    #     report_ref.update({attribute_name: new_value})
 
     def delete_from_firebase(self,name):
         if self.__report_id__:
@@ -364,15 +317,3 @@ class Trans_Report:
                     return True
 
         return False
-
-
-
-
-
-
-# cred = credentials.Certificate('../Account_management/credentials.json')
-# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
-
-
-
-

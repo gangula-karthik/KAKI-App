@@ -167,3 +167,14 @@ cython_debug/
 
 # ignore the test files
 customer_support/experiments
+
+
+# account management files
+Account_management/2_Factor_Auth.py
+Account_management/authentication.py
+Account_management/Hash_Algo.py
+Account_management/create_user.py
+Account_management/account_details.html
+Account_management/firebase_db.py
+Account_management/pyrebase_auth.py
+templates/account_management/dashboard.html
