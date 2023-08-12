@@ -128,34 +128,7 @@ def test_add_and_read_from_firebase():
     if data:
         print("Data read from Firebase:", data)
 
-# if __name__ == "__main__":
-#     test_add_and_read_from_firebase()
-#
-#
-# def create_sample_products():
-#     products_ref = db.reference('products')
-#     products_ref.set({
-#         'product1': {'price': 50},
-#         'product2': {'price': 30},
-#         'product3': {'price': 25}
-#     })
-#
-# def calculate_total_price():
-#     try:
-#         data_ref = db.reference('products')
-#         all_products = data_ref.get()
-#
-#         total_price = 0
-#         if all_products:
-#             for product_id, product_data in all_products.items():
-#                 price = product_data.get('price', 0)
-#                 total_price += price
-#
-#         return total_price
-#
-#     except Exception as e:
-#         print("Error reading data from Firebase:", e)
-#         return None
+
 
 
 
@@ -172,23 +145,23 @@ def test_crud_operations():
         "condition": "New"
     }
 
-    # Test document_id
+    
     document_id = "test_product"
 
-    # Test Create
+    
     success_create = Product.create_data_in_firebase(document_id, product_data)
     if success_create:
         print("Data creation test successful!")
     else:
         print("Data creation test failed.")
 
-    # Test Read
+   
     print("\nReading data from Firebase:")
     data = Product.read_data_from_firebase(document_id)
     if data:
         print("Data read from Firebase:", data)
 
-    # Test Update
+    
     updated_data = {
         "price": 79.99,
         "rating": 4.5,
@@ -198,7 +171,6 @@ def test_crud_operations():
     success_update = Product.update_data_in_firebase(document_id, updated_data)
     if success_update:
         print("\nData update test successful!")
-        # Read the data again to check if it was updated
         updated_data_read = Product.read_data_from_firebase(document_id)
         if updated_data_read:
             print("Updated data read from Firebase:", updated_data_read)
@@ -209,7 +181,7 @@ def test_crud_operations():
     success_delete = Product.delete_data_from_firebase(document_id)
     if success_delete:
         print("\nData deletion test successful!")
-        # Try to read the deleted data to check if it still exists
+       
         deleted_data_read = Product.read_data_from_firebase(document_id)
         if deleted_data_read is None:
             print(f"Document '{document_id}' successfully deleted from the database.")
@@ -224,10 +196,10 @@ if __name__ == "__main__":
 
 def main():
     try:
-        # Add sample products to the database
+        
         create_sample_products()
 
-        # Calculate the total price
+        
         total_price = calculate_total_price()
         print("Total sum of all prices:", total_price)
     except Exception as e:

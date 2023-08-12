@@ -1,39 +1,33 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from flask import Flask, request, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session ,redirect, abort
+from flask import Flask, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session , Flask, jsonify, request, redirect, abort
 import colorlog
-from colorama import Fore
 from concurrent.futures import Future
 from datetime import datetime
 import pyrebase
 import calendar
 import sys
-sys.path.append("Report_generation")
 from Report_generation.Forms import CreateUserForm
 from customer_support.ticket import *
-from customer_support.imageUploader import FirebaseStorageClient
+from customer_support.experiments.imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 import threading
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from Report_generation.report_class import Com_Report, Indi_Report, Trans_Report
 from Report_generation.Admin_classes import *
 from Report_generation.report_functions import get_all_reports, retrieve_report_name, retrieve_ByID
 from Report_generation.report_functions import *
 from Report_generation.retriving_data_functions import *
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
-from firebase_admin import auth
+from firebase_admin import credentials, db, auth
 import requests
 import time
 from flask_socketio import SocketIO, send
 from collections import OrderedDict
 from customer_support.comments import Comment
-from flask import Flask, jsonify, request
 import asyncio
 import os
-from dotenv import load_dotenv, find_dotenv
 from flask_executor import Executor
 from customer_support.FAQ_worker import generate_faqs
 from customer_support.kakiGPT import generate_answers
@@ -45,14 +39,26 @@ translator = Translator()
 cred = credentials.Certificate("Account_management/credentials.json")
 firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
+
+try: 
+    load_dotenv(find_dotenv())
+    PYREBASE_API_KEY = os.environ["PYREBASE_API_TOKEN"]
+    PYREBASE_APP_ID = os.environ["PYREBASE_APP_ID"]
+    RECAPTHA_SECRET_KEY = os.environ["RECAPTHA_SECRET_KEY"]
+except Exception as e:
+    print("Error loading environment variables:", str(e))
+    sys.exit(1)
+else: 
+    print("Environment variables loaded successfully.")
+
 config = {
-    "apiKey": "AIzaSyBTdJ-q5cuHwkH7iZ9Np2fyFJEeCujN0Jg",
+    "apiKey": PYREBASE_API_KEY,
     "authDomain": "kaki-db097.firebaseapp.com",
     "projectId": "kaki-db097",
     "databaseURL": "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/",
     "storageBucket": "kaki-db097.appspot.com",
     "messagingSenderId": "521940680838",
-    "appId": "1:521940680838:web:96e15f16f11bb306c91107",
+    "appId": PYREBASE_APP_ID,
     "measurementId": "G-QMBGXFXJET"
 }
 
@@ -87,6 +93,15 @@ handler.setFormatter(colorlog.ColoredFormatter(
 ))
 
 
+# routes for error handling
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('403.html'), 403
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('404.html'), 404
+
 #Account management Routes
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
@@ -98,7 +113,7 @@ def index():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
-        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"
+        secret_key = RECAPTHA_SECRET_KEY
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
         data = {
@@ -188,8 +203,6 @@ def index():
                 return redirect('/supportStaffOverview')
             else:
                 return redirect('/home')
-
-            # return redirect('/dashboard')
         except Exception as auth_exception:
             print("Authentication failed:", str(auth_exception))
             unsuccessful = 'Please check your credentials'
@@ -228,12 +241,14 @@ def logout():
     return redirect('/')
 
 
+
+
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
-        secret_key = "6LcVAHgnAAAAADAjOy6d57YNiSnviQnkqJxuv9KG"  
+        secret_key = RECAPTHA_SECRET_KEY  
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
         data = {
@@ -623,9 +638,7 @@ def react_to_post(action, post_id):
         abort(403)
     post_data = pyredb.child(f"social_media_posts/{post_id}").get().val()
 
-    # Check if user has already liked the post
     has_liked = current_user in post_data.get('liked_by', {})
-    # Check if user has already disliked the post
     has_disliked = current_user in post_data.get('disliked_by', {})
 
     if action == 'like':
@@ -671,8 +684,6 @@ def update_post(post_id):
     title = request.form.get('title')
     content = request.form.get('content')
     files = request.files.getlist('update-post-images')
-
-    print(files)
     
     updates = {
         'post_name': title,
@@ -736,7 +747,6 @@ def delete_post(post_id):
     current_user = session['username']
     if not current_user:
         abort(403)
-
     try:
         post_ref = pyredb.child("social_media_posts").child(post_id)
         post_ref.remove()
@@ -746,22 +756,7 @@ def delete_post(post_id):
     return redirect(url_for('home'))
 
 
-
-@app.route('/chat', methods=['GET'])
-def chat():
-    return render_template('customer_support/user_chat.html', username=current_user)
-
-@app.route('/noticeboard', methods=['GET'])
-def noticeboard():
-    return render_template('notices.html', username=current_user)
-
-@app.route('/friend_request', methods=['GET'])
-def friendRequest():
-    return render_template('friend_request.html', username=current_user)
-
-
 # customer support routes
-
 future = None
 
 @app.route('/support_overview', methods=['GET'])
@@ -858,10 +853,10 @@ def staffChat(ticket_id):
     if not ticket_data:
         return abort(403) 
 
-    if staffStatus:  # if not the right staff
+    if staffStatus: 
         if ticket_data['staff_id'] != current_user:
             return abort(403) 
-    else:  # If not a user
+    else: 
         if ticket_data['user_id'] != current_user:
             return abort(403) 
 
@@ -874,9 +869,6 @@ def staffChat(ticket_id):
         msg_data['content'] = translated_text
 
     return render_template('customer_support/user_chat.html', tickets=user_tickets, messages=ticket_messages, ticket_id=ticket_id, username=current_user, is_staff=staffStatus, langs=langs)
-
-
-
 
 
 @app.route('/send_message/<ticket_id>/<username>', methods=['POST'])
@@ -952,31 +944,6 @@ def new_ticket():
     return redirect(url_for('customerOverview'))
 
 
-# @app.route('/new_ticket', methods=['POST'])
-# def new_ticket():
-#     current_user = session['username']
-#     subject = request.form.get('subject')
-#     description = request.form.get('description')
-#     topic = request.form.get('topic')
-#     file = request.files.get('file')
-
-#     ticket = Ticket(current_user, subject, description, topic)
-
-#     if file:
-#         # get the file name, this doesn't include the path
-#         filename = secure_filename(file.filename)
-        
-#         # upload the file to firebase storage
-#         firebase_storage_client = FirebaseStorageClient(config, "ticket_images")
-#         firebase_storage_client.upload(file, filename) # passing file object directly
-#         url = firebase_storage_client.get_url(filename)
-        
-#         ticket.addImages(url)
-
-#     flash('Ticket has been submitted 🚀')
-    
-#     messages = get_flashed_messages()
-#     return redirect(url_for('customerOverview'))
 
 @app.route('/update_ticket/<ticket_id>', methods=['POST'])
 def update_ticket(ticket_id):
@@ -996,19 +963,11 @@ def update_ticket(ticket_id):
     updateTopic(ticket_id, topic)
 
     if files:
-        # Upload each file to Firebase Storage and get the new URLs
         image_urls = upload_files_to_storage("ticket_images", files)
-        
-        # Iterate through each URL
         res = []
         for url in image_urls:
             res.append(url)
-        
-        # Update the /images route in Pyrebase Realtime Database with the new list
         pyredb.child(f"tickets/{ticket_id}/images").set(res)
-
-        print(res)
-
     flash('Ticket has been updated 🚀')
     messages = get_flashed_messages() 
     return redirect(url_for('myTickets'))
@@ -1124,7 +1083,6 @@ def set_comment(ticket_ID):
         "date": comment_date,
         "comment_by": comment_by
     }
-    print()
     comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
     if comment_req == 200: 
         flash('Comment has been added 🚀', 'success')
@@ -1181,10 +1139,6 @@ def kakiGPT():
 
 
 # customer support staff routes
-
-@app.errorhandler(403)
-def forbidden(e):
-    return render_template('403.html'), 403
 
 
 @app.route('/supportStaffOverview', methods=['GET'])
@@ -1373,7 +1327,6 @@ def save_data_com():
     if check == True:
              return jsonify({'message': 'Report already saved'})
     else:
-        # Create a Com_Report instance and set the attributes from the received data
         report_c = Com_Report()
         report_c.set_leaderboard(data['leaderboard'])
         report_c.set_current_month(data['current_month'])
@@ -1382,7 +1335,7 @@ def save_data_com():
         report_c.set_line_data(data['line_data'])
         report_c.set_most_contributed(data['most_contributed'])
         report_c.set_activities(data['number_of_activities'])
-        # Add other attributes as needed
+
 
         # Save the report to Firebase using the class method
         report_c.save_to_firebase(name)
@@ -1406,7 +1359,6 @@ def save_data_indi():
     if check == True:
              return jsonify({'message': 'Report already saved'})
     else:
-        # Create a Com_Report instance and set the attributes from the received data
         report_i = Indi_Report()
         report_i.set_leaderboard(data['leaderboard'])
         report_i.set_current_month(data['current_month'])
@@ -1416,12 +1368,10 @@ def save_data_indi():
         report_i.set_neighbours_helped(data['neighbours_helped'])
         report_i.set_activities(data['number_of_activities'])
 
-        # Add other attributes as needed
-
         # Save the report to Firebase using the class method
         report_i.save_to_firebase(name)
 
-        # Return a response to indicate success (you can customize this based on your needs)
+        # Return a response to indicate success 
         return jsonify({"message": "Data saved successfully!"})
 
 @app.route('/save_data/trans', methods=['POST'])
@@ -1439,7 +1389,6 @@ def save_data_trans():
     if check == True:
              return jsonify({'message': 'Report already saved'})
     else:
-        # Create a Com_Report instance and set the attributes from the received data
         report_trans = Trans_Report()
         report_trans.set_current_month(data['current_month'])
         report_trans.set_current_year(data['current_year'])
@@ -1447,12 +1396,11 @@ def save_data_trans():
         report_trans.set_Total_spent(data['Total_spent'])
         report_trans.set_Total_received(data['Total_received'])
         report_trans.set_no_transaction_data(data['Total_number'])
-        # Add other attributes as needed
 
         # Save the report to Firebase using the class method
         report_trans.save_to_firebase(name)
 
-        # Return a response to indicate success (you can customize this based on your needs)
+        # Return a response to indicate success
         return jsonify({"message": "Data saved successfully!"})
 
 @app.route('/Report_generation/Transactions_report', methods=['GET'])
@@ -1462,9 +1410,6 @@ def Transactions_report():
     month = now.strftime("%B")
     current_year = now.year
     ListMonths = get_last_six_months()
-    # total_count = total_count_transactions()
-    # total_cost = sum_cost_in_route()
-    # total_received = sum_retrieve_in_route()
     total_count = count_transactions_past_6_months_for_buyer(current_year, month, name)
     total_received = sum_product_costs_past_6_months_for_seller(current_year, month, name)
     total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, name)
@@ -1478,8 +1423,6 @@ def Saved_report():
     reports = get_all_reports(name)
     print(reports)
     details = retrieve_report_name(reports)
-    print("==================================================")
-    print(details)
     return render_template('/Report_generation/saved_reports.html', username=current_user, reports = details, is_staff=staffStatus)
 
 
@@ -1490,8 +1433,6 @@ def view_report(report_type,Report_id):
     staffStatus = session['status'] == "Staff"
     report = get_all_reports(name)
     data = retrieve_ByID(report,Report_id)
-    print(data)
-    print('=========================================================================')
 
 
     if report_type == "Community":
@@ -1557,6 +1498,7 @@ def delete_report():
     elif report_type == "Transactions":
         delete_Trans_from_firebase(report_id,name)
         return jsonify({"status": "success"})
+        
 @app.route('/event_lists', methods=['GET'])
 def event_list():
     current_user = session['username']
@@ -1574,7 +1516,6 @@ def Event_details(report):
     current_user = session['username']
     events = retreive_data_event()
     details = retrieve_event_from_name(events, report)
-
 
     return render_template('/Report_generation/Event_details.html', username=current_user,details = details,is_staff=staffStatus)
 
@@ -1607,10 +1548,8 @@ def update_event():
             if key in original and original[key] != value:
                 original[key] = value
 
-        # Get a reference to the "Events" location in the database
         ref = db.reference("Events")
 
-        # Update the existing data with the new data
         ref.child(event_name).update(original)
 
         return jsonify({'message': 'Updated'})

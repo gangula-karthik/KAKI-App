@@ -2,9 +2,6 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-# cred = credentials.Certificate('../Account_management/credentials.json')
-# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
-
 class events_report():
     def __init__(self):
         self.__event_name__ = None
@@ -80,14 +77,14 @@ class events_report():
         }
 
         # Save the report data to Firebase Realtime Database
-        ref = db.reference("Events")  # Replace "/events_reports" with the path where you want to store the data
+        ref = db.reference("Events")  
         new_report_ref = ref.push()
         new_report_ref.set(report_data)
 
     @classmethod
     def load_from_firebase(cls, UID):
         # Load report data from Firebase Realtime Database using the report_id
-        ref = db.reference("Events")  # Replace "/events_reports" with the path where your data is stored
+        ref = db.reference("Events") 
         report_ref = ref.child(UID).get()
 
         if report_ref:
