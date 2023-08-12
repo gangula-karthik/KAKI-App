@@ -1,7 +1,6 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, render_template, flash, get_flashed_messages, redirect, url_for, jsonify , session , Flask, jsonify, request, redirect, abort
-import colorlog
 from concurrent.futures import Future
 from datetime import datetime
 import pyrebase
@@ -9,7 +8,6 @@ import calendar
 import sys
 from Report_generation.Forms import CreateUserForm
 from customer_support.ticket import *
-from customer_support.experiments.imageUploader import FirebaseStorageClient
 from werkzeug.utils import secure_filename
 import os
 import threading
@@ -78,19 +76,6 @@ firebase = pyrebase.initialize_app(config)
 pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
-
-
-handler = colorlog.StreamHandler()
-handler.setFormatter(colorlog.ColoredFormatter(
-    '%(log_color)s%(levelname)-8s%(reset)s %(message)s',
-    log_colors={
-        'DEBUG':    'cyan',
-        'INFO':     'green',
-        'WARNING':  'yellow',
-        'ERROR':    'red',
-        'CRITICAL': 'red',
-    }
-))
 
 
 # routes for error handling

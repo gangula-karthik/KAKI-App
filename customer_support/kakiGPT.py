@@ -1,4 +1,3 @@
-from celery import Celery
 from langchain import PromptTemplate, LLMChain
 from firebase_admin import credentials
 from firebase_admin import db
