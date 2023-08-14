@@ -1,7 +1,6 @@
 <p align="center">
-  <img src="https://github.com/gangula-karthik/KAKI-App/assets/56480632/7981ae0d-9dca-49c0-ada1-ff8104198d9b" alt="LOGO1">
+  <img width="579" alt="Screenshot 2023-08-14 at 8 54 47 PM" src="https://github.com/gangula-karthik/KAKI-App/assets/56480632/4886c3cf-e10f-4aed-9f65-89bd9da6e702">
 </p>
-
 
 <p align="center">
   <strong>KAKI</strong><br>
