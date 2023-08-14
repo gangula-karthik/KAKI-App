@@ -8,7 +8,7 @@
 </p>
 
 ## Testing User View
-You may create your own account using your gmail to test this out.
+You may create your own account using your gmail to test this out. (you will receive a verification link to your email)
 
 ## Sample Credentials for Testing Admin View
 Note: These are sample credentials for testing purposes only. Do not use these in production or for any real transactions. Always keep real credentials private and secure.
