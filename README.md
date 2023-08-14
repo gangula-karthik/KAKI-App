@@ -1,4 +1,9 @@
 <p align="center">
+  <img src="https://github.com/gangula-karthik/KAKI-App/assets/56480632/7981ae0d-9dca-49c0-ada1-ff8104198d9b" alt="LOGO1">
+</p>
+
+
+<p align="center">
   <strong>KAKI</strong><br>
   HARNESSING THE POWER OF COMMUNITY BUILDING & SUSTAINABILITY
 </p>
