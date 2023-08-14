@@ -42,7 +42,7 @@ try:
     load_dotenv(find_dotenv())
     PYREBASE_API_KEY = os.environ["PYREBASE_API_TOKEN"]
     PYREBASE_APP_ID = os.environ["PYREBASE_APP_ID"]
-    RECAPTHA_SECRET_KEY = os.environ["RECAPTHA_SECRET_KEY"]
+    RECAPTCHA_SECRET_KEY = os.environ["RECAPTCHA_SECRET_KEY"]
 except Exception as e:
     print("Error loading environment variables:", str(e))
     sys.exit(1)
@@ -98,7 +98,7 @@ def index():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
-        secret_key = RECAPTHA_SECRET_KEY
+        secret_key = RECAPTCHA_SECRET_KEY
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
         data = {
@@ -233,7 +233,7 @@ def create_account():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
-        secret_key = RECAPTHA_SECRET_KEY  
+        secret_key = RECAPTCHA_SECRET_KEY  
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
         data = {

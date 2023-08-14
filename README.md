@@ -1,3 +1,8 @@
+<p align="center">
+  <strong>KAKI</strong><br>
+  HARNESSING THE POWER OF COMMUNITY BUILDING & SUSTAINABILITY
+</p>
+
 ## Testing User View
 You may create your own account using your gmail to test this out.
 
@@ -22,7 +27,7 @@ Before you proceed, ensure you obtain the following:
 HUGGINGFACEHUB_API_TOKEN
 PYREBASE_API_TOKEN
 PYREBASE_APP_ID
-RECAPTHA_SECRET_KEY (Note: There might be a typo, it's usually spelled "RECAPTCHA_SECRET_KEY")
+RECAPTCHA_SECRET_KEY 
 ```
 
 ### Obtaining HUGGINGFACEHUB_API_TOKEN:
@@ -40,7 +45,7 @@ RECAPTHA_SECRET_KEY (Note: There might be a typo, it's usually spelled "RECAPTCH
 5. You'll find a code snippet that includes your "apiKey" (PYREBASE_API_TOKEN) and "appId" (PYREBASE_APP_ID).
 6. Copy these values for the setup process.
    
-### Obtaining RECAPTHA_SECRET_KEY:
+### Obtaining RECAPTCHA_SECRET_KEY :
 1. Go to the reCAPTCHA website.
 2. Sign in using your Google account.
 3. Click on the title of your website or register a new site.
@@ -65,7 +70,19 @@ In your .env file, fill in the details:
 HUGGINGFACEHUB_API_TOKEN=YOUR_HUGGINGFACE_TOKEN
 PYREBASE_API_TOKEN=YOUR_PYREBASE_TOKEN
 PYREBASE_APP_ID=YOUR_PYREBASE_APP_ID
-RECAPTHA_SECRET_KEY=YOUR_RECAPTCHA_SECRET_KEY
+RECAPTCHA_SECRET_KEY =YOUR_RECAPTCHA_SECRET_KEY 
 ```
 
 Save the .env file at the root of the project and follow any additional setup instructions...
+
+
+## Contributions
+#### Karthik
+- Homepage: Designed and implemented the main landing page, ensuring responsive design and user-friendly interface.
+- Customer Support: Developed the customer support module, integrated live chat functionality, and ensured timely response mechanisms.
+#### Jay
+- Account Management: Oversaw the creation and management of user accounts. Implemented features like password reset, profile editing, and two-factor authentication for enhanced security.
+#### Jun Ming
+- Report Generation: Engineered the report generation system, allowing users to obtain detailed insights and analytics. Ensured data accuracy and provided multiple export formats.
+#### Pin Shien
+- Transaction Handling: Spearheaded the transaction module, ensuring secure and swift financial transactions. Integrated with multiple payment gateways and implemented fraud detection mechanisms.
