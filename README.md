@@ -1,10 +1,14 @@
 <p align="center">
+  <img width="579" alt="Screenshot 2023-08-14 at 8 54 47 PM" src="https://github.com/gangula-karthik/KAKI-App/assets/56480632/4886c3cf-e10f-4aed-9f65-89bd9da6e702">
+</p>
+
+<p align="center">
   <strong>KAKI</strong><br>
   HARNESSING THE POWER OF COMMUNITY BUILDING & SUSTAINABILITY
 </p>
 
 ## Testing User View
-You may create your own account using your gmail to test this out.
+You may create your own account using your gmail to test this out. (you will receive a verification link to your email)
 
 ## Sample Credentials for Testing Admin View
 Note: These are sample credentials for testing purposes only. Do not use these in production or for any real transactions. Always keep real credentials private and secure.
