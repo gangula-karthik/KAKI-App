@@ -37,6 +37,7 @@ logging.info("Firebase initialized.")
 
 memory = ConversationBufferMemory(memory_key="chat_history")
 
+# flowGPT for prompt templates
 
 # See https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads for some other options
 repo_id = "tiiuae/falcon-7b-instruct"
