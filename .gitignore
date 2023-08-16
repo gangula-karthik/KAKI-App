@@ -178,3 +178,4 @@ Account_management/account_details.html
 Account_management/firebase_db.py
 Account_management/pyrebase_auth.py
 templates/account_management/dashboard.html
+Account_management/credentials.json
