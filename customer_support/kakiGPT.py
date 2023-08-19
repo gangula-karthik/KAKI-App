@@ -40,8 +40,8 @@ memory = ConversationBufferMemory(memory_key="chat_history")
 # flowGPT for prompt templates
 
 # See https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads for some other options
-repo_id = "tiiuae/falcon-7b-instruct"
-falcon_llm = HuggingFaceHub(
+repo_id = "meta-llama/Llama-2-13b-hf"
+llama_llm = HuggingFaceHub(
     repo_id=repo_id, model_kwargs={"temperature": 0.6, "max_new_tokens": 2000}, huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN
 )
 
@@ -56,7 +56,7 @@ Answer:
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
 
 
-llm_chain = LLMChain(prompt=prompt_template, llm=falcon_llm)
+llm_chain = LLMChain(prompt=prompt_template, llm=llama_llm)
 
 
 def generate_answers(prompt):
