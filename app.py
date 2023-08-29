@@ -64,7 +64,7 @@ config = {
 app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
 current_user = None
 staffStatus = None
 
@@ -1837,4 +1837,4 @@ def delete_service(service_id):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=8080)
+    app.run(debug=True, port=8080)
