@@ -32,7 +32,6 @@ config = {
 }
 
 
-
 firebase = pyrebase.initialize_app(config)
 pyredb = firebase.database()
 pyreauth = firebase.auth()
