@@ -56,7 +56,7 @@ Answer:
 prompt_template = PromptTemplate(template=template, input_variables=["question", "formatted_template"])
 
 
-llm_chain = LLMChain(prompt=prompt_template, llm=llama_llm)
+llm_chain = LLMChain(prompt=prompt_template, llm=falcon_llm)
 
 
 def generate_answers(prompt):
