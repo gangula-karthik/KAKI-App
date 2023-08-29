@@ -31,7 +31,6 @@ config = {
     "storageBucket": "kaki-db097.appspot.com",
 }
 
-cred = credentials.Certificate('Account_management/credentials.json')
 
 
 firebase = pyrebase.initialize_app(config)
