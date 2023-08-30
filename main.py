@@ -86,7 +86,6 @@ def forbidden(e):
 def not_found(e):
     return render_template('404.html'), 404
 
-#Account management Routes
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
@@ -94,104 +93,166 @@ def index():
     global staffStatus
     global name
     global town
+    
     if request.method == 'POST':
-        # Validate reCAPTCHA response
+        
+        # Step 1: Validate reCAPTCHA
         recaptcha_response = request.form['g-recaptcha-response']
         secret_key = RECAPTCHA_SECRET_KEY
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
-
-        data = {
-            'secret': secret_key,
-            'response': recaptcha_response
-        }
-
+        data = {'secret': secret_key, 'response': recaptcha_response}
         response = requests.post(captcha_url, data=data)
         result = response.json()
-
+        
         if not result['success']:
-            unsuccessful = 'Please complete the reCAPTCHA verification.'
-            return render_template('account_management/login.html', umessage=unsuccessful)
-
-        # Rest of your login logic (similar to your existing code)
-        email = request.form['user_email']
-        password = request.form['user_pwd']
+            return render_template('account_management/login.html', umessage='Please complete the reCAPTCHA verification.')
+        
+        # Step 2: Authenticate User
         try:
+            email = request.form['user_email']
+            password = request.form['user_pwd']
             user = pyreauth.sign_in_with_email_and_password(email, password)
-            print(user)
-            # Get the Firebase token ID
-            token_id = user['idToken']
-            local_id = user['localId']
-            print(token_id)
-            # Save the token ID in the session
-            session['user_token'] = token_id
-
-            firebase_user = auth.get_user(user['localId'])
-            email_verified = firebase_user.email_verified
-            if not email_verified:
-                # Update user's custom claims to indicate pending email verification
-                auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
-
-                # Send the email verification
-                pyreauth.send_email_verification(user['idToken'])
-                print("Verification email sent. Waiting for email verification...")
-                # Wait until the email is verified
-                while True:
-                    firebase_user = auth.get_user(user['localId'])
-                    email_verified = firebase_user.email_verified
-                    if email_verified:
-                        # Update user's custom claims to indicate email verification completed
-                        auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
-                        # Reset the emailVerified status using Firebase Admin SDK
-                        auth.update_user(local_id, email_verified=False)
-                        session.pop('pwd', None)  
-                        print("Email verified.")
-                        break
-                    else:
-                        print("Email not verified. Waiting...")
-                        time.sleep(3)  # Add a 3-second delay before checking again
-            else:
-                print("Email already verified.")
-            # Fetch username and status from the Realtime Database
-            try:
-                username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
-                status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
-                town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
-                name = pyredb.child("Users").child("Consumer").child(local_id).child("name").get().val()
-                if username:
-                    session["username"] = username
-                    current_user = session["username"]
-                    print("Username:", session["username"])
-                else:
-                    print("Username not found in the database.")
-
-                if status:
-                    session["status"] = status
-                    staffStatus = session["status"] == "Staff"
-                    print("Status:", session["status"])
-                else:
-                    print("Status not found in the database.")
-
-                if status:
-                    session["town"] = status
-                    staffStatus = session["town"] == "Staff"
-                    print("Status:", session["town"])
-                else:
-                    print("Status not found in the database.")
-
-                session["town"] = town
-                session["name"] = name
-            except Exception as db_exception:
-                print("Error fetching data from the Realtime Database:", str(db_exception))
-
-            if staffStatus:    
-                return redirect('/supportStaffOverview')
-            else:
-                return redirect('/home')
+            session['user_token'] = user['idToken']
         except Exception as auth_exception:
             print("Authentication failed:", str(auth_exception))
-            unsuccessful = 'Please check your credentials'
-            return render_template('account_management/login.html', umessage=unsuccessful)
+            return render_template('account_management/login.html', umessage='Please check your credentials.')
+        
+        # Step 3: Fetch User Info
+        local_id = user['localId']
+        try:
+            username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
+            status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
+            town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
+            name = pyredb.child("Users").child("Consumer").child(local_id).child("name").get().val()
+            
+            if username:
+                session["username"] = username
+                current_user = session["username"]
+            if status:
+                session["status"] = status
+                staffStatus = session["status"] == "Staff"
+            if town:
+                session["town"] = town
+            if name:
+                session["name"] = name
+        except Exception as db_exception:
+            print("Error fetching data from the Realtime Database:", str(db_exception))
+            return render_template('account_management/login.html', umessage='Error fetching data.')
+        
+        if staffStatus:
+            return redirect('/supportStaffOverview')
+        else:
+            return redirect('/home')
+        
     return render_template('account_management/login.html')
+
+
+# #Account management Routes
+# @app.route('/')
+# @app.route('/index', methods=['GET', 'POST'])
+# def index():
+#     global current_user
+#     global staffStatus
+#     global name
+#     global town
+#     if request.method == 'POST':
+#         # Validate reCAPTCHA response
+#         recaptcha_response = request.form['g-recaptcha-response']
+#         secret_key = RECAPTCHA_SECRET_KEY
+#         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
+
+#         data = {
+#             'secret': secret_key,
+#             'response': recaptcha_response
+#         }
+
+#         response = requests.post(captcha_url, data=data)
+#         result = response.json()
+
+#         if not result['success']:
+#             unsuccessful = 'Please complete the reCAPTCHA verification.'
+#             return render_template('account_management/login.html', umessage=unsuccessful)
+
+#         # Rest of your login logic (similar to your existing code)
+#         email = request.form['user_email']
+#         password = request.form['user_pwd']
+#         try:
+#             user = pyreauth.sign_in_with_email_and_password(email, password)
+#             print(user)
+#             # Get the Firebase token ID
+#             token_id = user['idToken']
+#             local_id = user['localId']
+#             print(token_id)
+#             # Save the token ID in the session
+#             session['user_token'] = token_id
+
+#             firebase_user = auth.get_user(user['localId'])
+#             email_verified = firebase_user.email_verified
+#             if not email_verified:
+#                 # Update user's custom claims to indicate pending email verification
+#                 auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
+
+#                 # Send the email verification
+#                 pyreauth.send_email_verification(user['idToken'])
+#                 print("Verification email sent. Waiting for email verification...")
+#                 # Wait until the email is verified
+#                 while True:
+#                     firebase_user = auth.get_user(user['localId'])
+#                     email_verified = firebase_user.email_verified
+#                     if email_verified:
+#                         # Update user's custom claims to indicate email verification completed
+#                         auth.set_custom_user_claims(user['localId'], {'emailVerified': False})
+#                         # Reset the emailVerified status using Firebase Admin SDK
+#                         auth.update_user(local_id, email_verified=False)
+#                         session.pop('pwd', None)  
+#                         print("Email verified.")
+#                         break
+#                     else:
+#                         print("Email not verified. Waiting...")
+#                         time.sleep(3)  # Add a 3-second delay before checking again
+#             else:
+#                 print("Email already verified.")
+#             # Fetch username and status from the Realtime Database
+#             try:
+#                 username = pyredb.child("Users").child("Consumer").child(local_id).child("username").get().val()
+#                 status = pyredb.child("Users").child("Consumer").child(local_id).child("status").get().val()
+#                 town = pyredb.child("Users").child("Consumer").child(local_id).child("town").get().val()
+#                 name = pyredb.child("Users").child("Consumer").child(local_id).child("name").get().val()
+#                 if username:
+#                     session["username"] = username
+#                     current_user = session["username"]
+#                     print("Username:", session["username"])
+#                 else:
+#                     print("Username not found in the database.")
+
+#                 if status:
+#                     session["status"] = status
+#                     staffStatus = session["status"] == "Staff"
+#                     print("Status:", session["status"])
+#                 else:
+#                     print("Status not found in the database.")
+
+#                 if status:
+#                     session["town"] = status
+#                     staffStatus = session["town"] == "Staff"
+#                     print("Status:", session["town"])
+#                 else:
+#                     print("Status not found in the database.")
+
+#                 session["town"] = town
+#                 session["name"] = name
+#             except Exception as db_exception:
+#                 print("Error fetching data from the Realtime Database:", str(db_exception))
+
+#             if staffStatus:    
+#                 return redirect('/supportStaffOverview')
+#             else:
+#                 return redirect('/home')
+#         except Exception as auth_exception:
+#             print("Authentication failed:", str(auth_exception))
+#             unsuccessful = 'Please check your credentials'
+#             return render_template('account_management/login.html', umessage=unsuccessful)
+#     return render_template('account_management/login.html')
 
 @app.route('/dashboard')
 def dashboard():
