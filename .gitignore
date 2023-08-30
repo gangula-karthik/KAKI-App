@@ -162,7 +162,6 @@ cython_debug/
 
 # ignore the firebase service account key
 **/serviceAccountKey.json
-**/credentials.json
 .DS_Store
 
 # ignore the test files
