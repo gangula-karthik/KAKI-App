@@ -42,7 +42,7 @@ hpack==3.0.0
 hstspreload==2023.1.1
 httpcore==0.9.1
 httplib2==0.22.0
-httpx==0.23.0
+httpx==0.13.3
 huggingface-hub==0.16.4
 hyperframe==5.2.0
 idna==2.10
@@ -79,7 +79,7 @@ python-jwt==4.0.0
 python-socketio==5.8.0
 PyYAML==6.0.1
 regex==2023.8.8
-requests==2.31.0
+requests==2.29.0
 requests-toolbelt==0.10.1
 rfc3986==1.5.0
 rsa==4.9
