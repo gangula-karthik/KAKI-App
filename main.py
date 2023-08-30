@@ -104,8 +104,8 @@ def index():
         response = requests.post(captcha_url, data=data)
         result = response.json()
         
-        if not result['success']:
-            return render_template('account_management/login.html', umessage='Please complete the reCAPTCHA verification.')
+        # if not result['success']:
+            # return render_template('account_management/login.html', umessage='Please complete the reCAPTCHA verification.')
         
         # Step 2: Authenticate User
         try:
