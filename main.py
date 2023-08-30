@@ -34,8 +34,8 @@ from googletrans import LANGUAGES, Translator
 translator = Translator()
 
 
-# cred = credentials.Certificate("Account_management/credentials.json")
-# firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
+cred = credentials.Certificate("Account_management/credentials.json")
+firebase_admin.initialize_app(cred, {'databaseURL': "https://kaki-db097-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 
 
 try: 
@@ -64,7 +64,6 @@ config = {
 app = Flask(__name__)
 executor = Executor(app)
 app.secret_key = 'karthik123'
-# socketio = SocketIO(app)
 current_user = None
 staffStatus = None
 
@@ -202,9 +201,7 @@ def dashboard():
 
         # Use the token ID to get the user's UID from Firebase authentication
         user = pyreauth.get_account_info(token_id)
-
         uid = user['users'][0]['localId']
-        
         print(f'user: {user}')
 
         # Use the UID as the key in the database to get the user data
@@ -215,6 +212,7 @@ def dashboard():
         return render_template('account_management/update_usercred.html', user_data=user_data, is_staff=staffStatus, username=current_user)
     else:
         return redirect('/')
+    
 
 @app.route('/logout')
 def logout():
