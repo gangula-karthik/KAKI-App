@@ -97,6 +97,7 @@ def index():
     if request.method == 'POST':
         # Validate reCAPTCHA response
         recaptcha_response = request.form['g-recaptcha-response']
+        logging.info(f"reCAPTCHA response: {recaptcha_response}")
         secret_key = RECAPTCHA_SECRET_KEY
         captcha_url = "https://www.google.com/recaptcha/api/siteverify"
 
