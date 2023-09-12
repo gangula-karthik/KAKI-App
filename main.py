@@ -85,7 +85,7 @@ def FriendsChat():
     username = "karthik-tester"
     # username = session['username']
     data = pyredb.child(f"friend_messages/{username}").get().val()
-    messages = list(data.values())
+    messages = list(data.values()) if data else []
     print(messages)
     return render_template('customer_support/chat.html', chat_data=messages, username=username)
 
@@ -93,14 +93,13 @@ def FriendsChat():
 def handle_message(message):
     username = "karthik-tester"
     res = {
-        "message": message,
+        "message": message["message"],
         "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         "sender": username,
         "receiver": "kaki"
     }
     pyredb.child(f"friend_messages/{username}").push(res)
     socketio.emit('message', message)
-
 
 # routes for error handling
 @app.errorhandler(403)
