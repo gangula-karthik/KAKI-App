@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+{% extends "template.html" %}
+
+{% block content %}
+
+<body class="text-white">
+    <div class="container mx-auto p-4 h-screen">
+        <div class="flex h-full">
+            <div class="w-1/4 p-4">
+                <h1 class="text-lg font-semibold mb-4">Neighbors</h1>
+                <ul id="contacts" class="divide-y divide-gray-700">
+                    <li class="py-2">Neighbor 1</li>
+                    <li class="py-2">Neighbor 2</li>
+                </ul>
+            </div>
+
+            <div class="w-3/4 p-4">
+                <h1 class="text-lg font-semibold mb-4">Chat</h1>
+                <div class="h-5/6 overflow-y-auto mb-4">
+                    <ul id="messages"></ul>
+                </div>
+                <div class="flex">
+                    <input id="message_input" class="w-4/5 p-2 rounded-l-lg bg-gray-800" autocomplete="off">
+                    <button onclick="sendMessage()" class="w-1/5 bg-blue-500 text-white p-2 rounded-r-lg">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('message', function (data) {
+            var ul = document.getElementById('messages');
+            var li = document.createElement('li');
+            li.className = "mb-2 p-2 rounded bg-blue-500 text-white";
+            li.appendChild(document.createTextNode(data));
+            ul.appendChild(li);
+        });
+
+        function sendMessage() {
+            var message = document.getElementById('message_input').value;
+            socket.emit('send_message', message);
+        }
+    </script>
+</body>
+
+</html>
+
+{% endblock %}

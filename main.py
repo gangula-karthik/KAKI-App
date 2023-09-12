@@ -62,6 +62,7 @@ config = {
 
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 current_user = None
@@ -75,6 +76,17 @@ firebase = pyrebase.initialize_app(config)
 pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
+
+
+# messaging
+
+@app.route('/chat', methods=['GET', 'POST'])
+def FriendsChat():
+    return render_template('customer_support/chat.html')
+
+@socketio.on('send_message')
+def handle_message(message):
+    socketio.emit('message', message)
 
 
 # routes for error handling
@@ -1800,40 +1812,6 @@ def delete_service(service_id):
     return redirect(url_for('show_all_services'))
 
 
-# @app.route('/update_service/<product_id>', methods=['POST'])
-# def update_product(product_id):
-#     # Retrieve form data
-#
-#
-#     # change all these
-#     product_name = request.form.get('updatedProductName')
-#     product_description = request.form.get('updatedProductDescription')
-#     product_price = request.form.get('updatedProductPrice')
-#     product_condition = request.form.get('updatedProductCondition')
-#
-#     # Construct the data dictionarys
-#     data = {
-#         "product_name": product_name,
-#         "product_description": product_description,
-#         "product_price": product_price,
-#         "product_condition": product_condition,
-#         "seller": current_user  # Assuming current_user is a global or session variable
-#     }
-#
-#     print(data)
-#
-#     # Update the product in Firebase
-#     pyredb.child(f"products/{product_id}").update(data)
-#
-#     return redirect(url_for('service'))
-#
-#
-# @app.route('/delete_service/<string:product_id>', methods=['POST'])
-# def delete_product(product_id):
-#     pyredb.child('products').child(product_id).remove()
-#     flash('Product has been deleted')
-#     return redirect(url_for('service'))
-
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    socketio.run(app, debug=True, port=8080)
