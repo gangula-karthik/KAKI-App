@@ -26,7 +26,31 @@
             <div class="w-3/4 p-4">
                 <h1 class="text-lg font-semibold mb-4">Chat</h1>
                 <div class="h-5/6 overflow-y-auto mb-4">
-                    <ul id="messages"></ul>
+                    <div id="messages">
+                        {% for chat in chat_data %}
+                        {% if chat.sender == username %}
+                        <div class="chat chat-start">
+                            <div class="chat-header">
+                                {{ chat.sender }}
+                            </div>
+                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-footer opacity-50">
+                                sent at {{ chat.timestamp }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="chat chat-end">
+                            <div class="chat-header">
+                                {{ chat.sender }}
+                            </div>
+                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-footer opacity-50">
+                                sent at {{ chat.timestamp }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="flex">
                     <input id="message_input" class="w-4/5 p-2 rounded-l-lg bg-gray-800" autocomplete="off">
