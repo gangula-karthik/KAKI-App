@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KAKI - Welcome to your neighbourhood</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='navbar.css')}}"/>
+  <link rel="stylesheet" href="{{url_for('static', filename='navbar.css')}}" />
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100;200;300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
@@ -27,7 +27,11 @@
     <div class="menu-content">
       <ul class="menu-items">
         <li class="item">
-            <span><a href="/home">Home Feed</a></span>
+          <span><a href="/home">Home Feed</a></span>
+        </li>
+
+        <li class="item">
+          <span><a href="/chat">Kaki Chat</a></span>
         </li>
 
         <li class="item">
@@ -73,7 +77,9 @@
               <a href="/user_chat">Chat</a>
             </li>
             <li class="item">
-              <a href="/kakigpt">KAKI GPT <span class="badge rounded-pill d-inline-flex  text-info-emphasis bg-info-subtle border border-info-subtle rounded-2">Beta v1.0</span></a>
+              <a href="/kakigpt">KAKI GPT <span
+                  class="badge rounded-pill d-inline-flex  text-info-emphasis bg-info-subtle border border-info-subtle rounded-2">Beta
+                  v1.0</span></a>
             </li>
           </ul>
         </li>

@@ -1,0 +1,44 @@
+<head>
+    <title>Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+{% extends "template.html" %}
+
+{% block content %}
+
+<style>
+    #usernameInput {
+        padding: 10px 20px;
+        border-top: 1px solid #333;
+    }
+</style>
+
+<h1 class="text-3xl mb-4">Friend Requests</h1>
+
+<div class="grid grid-cols-2 gap-8">
+
+    <div>
+        <h2 class="text-2xl mb-4">Friend Requests Received</h2>
+        <div id="requestReceivedList">
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-2xl mb-4">Friend Request Status</h2>
+        <div id="requestSentList">
+        </div>
+    </div>
+
+</div>
+
+
+<div class="mt-8">
+    <input type="text" id="usernameInput" placeholder="Enter username to send request"
+        class="border p-2 form-control me-2">
+    <button onclick="sendRequest()" class="bg-blue-500 text-white p-2 ml-2 btn btn-primary">Send Request</button>
+</div>
+
+{% endblock %}

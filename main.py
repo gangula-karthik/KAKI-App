@@ -82,8 +82,7 @@ pyrestorage = firebase.storage()
 
 @app.route('/chat', methods=['GET', 'POST'])
 def FriendsChat():
-    username = "karthik-tester"
-    # username = session['username']
+    username = session['username']
     data = pyredb.child(f"friend_messages/{username}").get().val()
     messages = list(data.values()) if data else []
     print(messages)
@@ -91,7 +90,7 @@ def FriendsChat():
 
 @socketio.on('send_message')
 def handle_message(message):
-    username = "karthik-tester"
+    username = session['username']
     res = {
         "message": message["message"],
         "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -100,6 +99,11 @@ def handle_message(message):
     }
     pyredb.child(f"friend_messages/{username}").push(res)
     socketio.emit('message', message)
+
+
+@app.route('/friend_requests', methods=['GET'])
+def friend_requests():
+    return render_template('friendRequest.html')
 
 # routes for error handling
 @app.errorhandler(403)
