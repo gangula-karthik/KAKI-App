@@ -77,18 +77,20 @@
             var messagesDiv = document.getElementById('messages');
             var chatDiv = document.createElement('div');
 
+            var chatBubble = document.createElement('div');
+
             if (data.sender === username) {
                 chatDiv.className = "chat chat-end";
+                chatBubble.className = "chat-bubble chat-bubble-success";
             } else {
                 chatDiv.className = "chat chat-start";
+                chatBubble.className = "chat-bubble";
             }
 
             var chatHeader = document.createElement('div');
             chatHeader.className = "chat-header";
             chatHeader.textContent = data.sender;
 
-            var chatBubble = document.createElement('div');
-            chatBubble.className = "chat-bubble chat-bubble-success";
             chatBubble.textContent = data.message;
 
             var chatFooter = document.createElement('div');

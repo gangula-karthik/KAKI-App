@@ -21,7 +21,7 @@ import firebase_admin
 from firebase_admin import credentials, db, auth
 import requests
 import time
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, join_room
 from collections import OrderedDict
 from customer_support.comments import Comment
 import asyncio
@@ -110,11 +110,11 @@ def handle_message(message):
         "receiver": receiver
     }
 
-    # Save the message under both the sender and receiver to make it easier to retrieve later
     pyredb.child(f"friend_messages/{username}/{receiver}").push(res)
     pyredb.child(f"friend_messages/{receiver}/{username}").push(res)
 
     socketio.emit('message', message)
+
 
 
 
