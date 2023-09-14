@@ -1,9 +1,7 @@
 {% extends "template.html" %}
 
-
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-
 
 <style>
 
@@ -14,74 +12,50 @@
 }
 </style>
 
-<div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
-        aria-describedby="button-addon2">
-    <button class="btn btn-primary" type="button" id="button-addon2">send</button>
+<h1>JIO CENTER ☎️</h1>
+
+<form action="/friend_requests" method="POST">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="recipient_username" placeholder="Recipient's username" aria-label="Recipient's username"
+            aria-describedby="button-addon2">
+        <button class="btn btn-primary" type="submit" id="button-addon2">Send Request</button>
+    </div>
+</form>
+
+<!-- Friend Requests Received -->
+<div class="grid-container">
+    <h3>Invites Sent</h3>
+    {% for request in received_requests %}
+    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">From: {{ request.sender_name }} ({{ request.sender_username }})</h5>
+            <p class="card-text">Email: {{ request.sender_email }} | Town: {{ request.sender_town }}</p>
+            <div class="card-body">
+                <button type="button" class="btn btn-success">Accept</button>
+                <button type="button" class="btn btn-danger">Reject</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 
+<!-- Friend Requests Sent (Pending Invites) -->
 <div class="grid-container">
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
+    <h3>Pending Invites</h3>
+    {% for invite in sent_invites %}
+    <div class="card m-3 text-bg-dark border-warning" style="width: 18rem;">
         <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <h5 class="card-title">To: {{ invite["recipient_info"]["name"] }} ({{ invite["recipient"] }})</h5>
+            <p class="card-text">Email: {{ invite["recipient_info"]["email"] }} | Town: {{ invite["recipient_info"]["town"] }}</p>
             <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
+                <span class="badge bg-secondary">Pending</span>
+                <button type="button" class="btn btn-dark">Cancel</button>
             </div>
         </div>
     </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
+
 
 <script>
 window.onload = function() {
@@ -94,6 +68,5 @@ window.onload = function() {
     });
 };
 </script>
-
 
 {% endblock %}

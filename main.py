@@ -101,9 +101,52 @@ def handle_message(message):
     socketio.emit('message', message)
 
 
-@app.route('/friend_requests', methods=['GET'])
+def find_user_by_username(username):
+    all_users = pyredb.child("Users").child("Consumer").get().val()
+    for user_id, user_info in all_users.items():
+        if user_info.get("username") == username:
+            return user_id, user_info
+    return None, None
+
+
+@app.route('/friend_requests', methods=['GET', 'POST'])
 def friend_requests():
-    return render_template('friendRequest.html')
+    if request.method == 'POST':
+        recipient_username = request.form.get('recipient_username')
+        current_user_username = session['username']
+        
+        recipient_user_id, recipient_info = find_user_by_username(recipient_username)
+
+        if recipient_user_id is None:
+            return "Recipient not found", 404
+        
+        friend_request = {
+            "sender": current_user_username,
+            "recipient": recipient_username,
+            "recipient_info": recipient_info 
+        }
+
+        print(friend_request)
+        pyredb.child("pending_requests").push(friend_request)
+
+        return "Friend request sent"
+
+    elif request.method == 'GET':
+        all_pending_requests = pyredb.child("pending_requests").get().val()
+
+        received_requests = []
+        sent_invites = []
+
+        current_user_username = session['username']
+
+        if all_pending_requests:
+            for req in all_pending_requests.values():
+                if req['recipient'] == current_user_username:
+                    received_requests.append(req)
+                elif req['sender'] == current_user_username:
+                    sent_invites.append(req)
+
+        return render_template('friend_request.html', received_requests=received_requests, sent_invites=sent_invites)
 
 # routes for error handling
 @app.errorhandler(403)
