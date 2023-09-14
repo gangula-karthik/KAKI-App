@@ -18,9 +18,12 @@
             <div class="w-1/4 p-4">
                 <h1 class="text-lg font-semibold mb-4">Neighbors</h1>
                 <ul id="contacts" class="divide-y divide-gray-700">
-                    <li class="py-2">Neighbor 1</li>
-                    <li class="py-2">Neighbor 2</li>
-                </ul>
+                    {% for friend in my_friends %}
+                        <li class="py-2">
+                            <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>                
             </div>
 
             <div class="w-3/4 p-4">
@@ -33,7 +36,7 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-bubble-success">{{ chat.message }}</div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
@@ -43,7 +46,7 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-bubble chat-bubble-success">{{ chat.message }}</div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>

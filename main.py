@@ -79,26 +79,41 @@ pyrestorage = firebase.storage()
 
 
 # messaging
-
 @app.route('/chat', methods=['GET', 'POST'])
-def FriendsChat():
+@app.route('/chat/<friend_username>', methods=['GET', 'POST'])
+def FriendsChat(friend_username=None):
     username = session['username']
-    data = pyredb.child(f"friend_messages/{username}").get().val()
+    my_friends = pyredb.child(f"friends/{username}").get().val()
+    my_friends = list(my_friends.values()) if my_friends else []
+
+    if friend_username:
+        data = pyredb.child(f"friend_messages/{username}/{friend_username}").get().val()
+    else:
+        data = None
+
     messages = list(data.values()) if data else []
-    print(messages)
-    return render_template('customer_support/chat.html', chat_data=messages, username=username)
+
+    return render_template('chat.html', chat_data=messages, username=username, my_friends=my_friends)
+
 
 @socketio.on('send_message')
 def handle_message(message):
     username = session['username']
+    receiver = message.get('receiver', 'Not Found :(')
+
     res = {
         "message": message["message"],
         "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         "sender": username,
-        "receiver": "kaki"
+        "receiver": receiver
     }
-    pyredb.child(f"friend_messages/{username}").push(res)
+
+    # Save the message under both the sender and receiver to make it easier to retrieve later
+    pyredb.child(f"friend_messages/{username}/{receiver}").push(res)
+    pyredb.child(f"friend_messages/{receiver}/{username}").push(res)
+
     socketio.emit('message', message)
+
 
 
 def find_user_by_username(username):
@@ -162,6 +177,7 @@ def handle_invite():
         if response == 'accept':
             friend_username = pyredb.child("pending_requests").child(invite_id).child("sender").get().val()
             pyredb.child("friends").child(current_user_username).push(friend_username)
+            pyredb.child("friends").child(friend_username).push(current_user_username)
             pyredb.child("pending_requests").child(invite_id).remove()
 
         elif response == 'reject':
