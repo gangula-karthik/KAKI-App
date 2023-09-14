@@ -36,7 +36,7 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble-success">{{ chat.message }}</div>
+                            <div class="chat-bubble chat-bubble-success">{{ chat.message }}</div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
@@ -46,7 +46,7 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble chat-bubble-success">{{ chat.message }}</div>
+                            <div class="chat-bubble">{{ chat.message }}</div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
@@ -88,7 +88,7 @@
             chatHeader.textContent = data.sender;
 
             var chatBubble = document.createElement('div');
-            chatBubble.className = "chat-bubble";
+            chatBubble.className = "chat-bubble chat-bubble-success";
             chatBubble.textContent = data.message;
 
             var chatFooter = document.createElement('div');
