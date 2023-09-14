@@ -141,13 +141,38 @@ def friend_requests():
         current_user_username = session['username']
 
         if all_pending_requests:
-            for req in all_pending_requests.values():
+            for invite_id, req in all_pending_requests.items():
+                req['id'] = invite_id 
                 if req['recipient'] == current_user_username:
                     received_requests.append(req)
                 elif req['sender'] == current_user_username:
                     sent_invites.append(req)
 
         return render_template('friend_request.html', received_requests=received_requests, sent_invites=sent_invites, username=current_user_username)
+    
+
+@app.route('/handle_invite', methods=['POST'])
+def handle_invite():
+    invite_id = request.form.get('invite_id')
+    action_type = request.form.get('action_type')
+    response = request.form.get('response')
+    current_user_username = session['username']
+
+    if action_type == 'received':
+        if response == 'accept':
+            friend_username = pyredb.child("pending_requests").child(invite_id).child("sender").get().val()
+            pyredb.child("friends").child(current_user_username).push(friend_username)
+            pyredb.child("pending_requests").child(invite_id).remove()
+
+        elif response == 'reject':
+            pyredb.child("pending_requests").child(invite_id).remove()
+            print("Friend request rejected.")
+
+    elif action_type == 'sent':
+        if response == 'cancel':
+            pyredb.child("pending_requests").child(invite_id).remove()
+
+    return redirect(url_for('friend_requests'))
 
 # routes for error handling
 @app.errorhandler(403)
