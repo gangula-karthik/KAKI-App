@@ -116,17 +116,18 @@ def friend_requests():
         current_user_username = session['username']
         
         recipient_user_id, recipient_info = find_user_by_username(recipient_username)
+        sender_user_id, sender_info = find_user_by_username(current_user_username)
 
         if recipient_user_id is None:
             return "Recipient not found", 404
         
         friend_request = {
             "sender": current_user_username,
+            "sender_info": sender_info,
             "recipient": recipient_username,
             "recipient_info": recipient_info 
         }
 
-        print(friend_request)
         pyredb.child("pending_requests").push(friend_request)
 
         return "Friend request sent"
@@ -146,7 +147,7 @@ def friend_requests():
                 elif req['sender'] == current_user_username:
                     sent_invites.append(req)
 
-        return render_template('friend_request.html', received_requests=received_requests, sent_invites=sent_invites)
+        return render_template('friend_request.html', received_requests=received_requests, sent_invites=sent_invites, username=current_user_username)
 
 # routes for error handling
 @app.errorhandler(403)

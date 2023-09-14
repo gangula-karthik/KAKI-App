@@ -24,12 +24,17 @@
 
 <!-- Friend Requests Received -->
 <div class="grid-container">
-    <h3>Invites Sent</h3>
+    <h3>Invites Received</h3>
     {% for request in received_requests %}
     <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
         <div class="card-body">
-            <h5 class="card-title">From: {{ request.sender_name }} ({{ request.sender_username }})</h5>
-            <p class="card-text">Email: {{ request.sender_email }} | Town: {{ request.sender_town }}</p>
+            {% if request['recipient_info']['username'] == username %}
+                <h5 class="card-title">From: {{ request['sender_info']['name'] }} ({{ request['sender_info']['username'] }})</h5>
+                <p class="card-text">Email: {{ request['sender_info']['email'] }} | Town: {{ request['sender_info']['town'] }}</p>
+            {% else %}
+                <h5 class="card-title">To: {{ request['recipient_info']['name'] }} ({{ request['recipient_info']['username'] }})</h5>
+                <p class="card-text">Email: {{ request['recipient_info']['email'] }} | Town: {{ request['recipient_info']['town'] }}</p>
+            {% endif %}
             <div class="card-body">
                 <button type="button" class="btn btn-success">Accept</button>
                 <button type="button" class="btn btn-danger">Reject</button>
@@ -45,8 +50,13 @@
     {% for invite in sent_invites %}
     <div class="card m-3 text-bg-dark border-warning" style="width: 18rem;">
         <div class="card-body">
-            <h5 class="card-title">To: {{ invite["recipient_info"]["name"] }} ({{ invite["recipient"] }})</h5>
-            <p class="card-text">Email: {{ invite["recipient_info"]["email"] }} | Town: {{ invite["recipient_info"]["town"] }}</p>
+            {% if invite['sender_info']['username'] == username %}
+                <h5 class="card-title">To: {{ invite['recipient_info']['name'] }} ({{ invite['recipient_info']['username'] }})</h5>
+                <p class="card-text">Email: {{ invite['recipient_info']['email'] }} | Town: {{ invite['recipient_info']['town'] }}</p>
+            {% else %}
+                <h5 class="card-title">From: {{ invite['sender_info']['name'] }} ({{ invite['sender_info']['username'] }})</h5>
+                <p class="card-text">Email: {{ invite['sender_info']['email'] }} | Town: {{ invite['sender_info']['town'] }}</p>
+            {% endif %}
             <div class="card-body">
                 <span class="badge bg-secondary">Pending</span>
                 <button type="button" class="btn btn-dark">Cancel</button>
