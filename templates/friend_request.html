@@ -1,99 +1,102 @@
 {% extends "template.html" %}
 
-
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
-
 <style>
-
-.grid-container {
-  display: inline-grid;
-  grid-template-columns: auto auto auto;
-  padding: 10px;
-}
+    .grid-container {
+        display: inline-grid;
+        grid-template-columns: auto auto auto;
+        padding: 10px;
+    }
 </style>
 
-<div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
-        aria-describedby="button-addon2">
-    <button class="btn btn-primary" type="button" id="button-addon2">send</button>
+<h1>JIO FRIEND 📇</h1>
+
+<form action="/friend_requests" method="POST">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="recipient_username" placeholder="Recipient's username"
+            aria-label="Recipient's username" aria-describedby="button-addon2">
+        <button class="btn btn-primary" type="submit" id="button-addon2">Send Request</button>
+    </div>
+</form>
+
+<!-- Friend Requests Received -->
+<div class="grid-container">
+    <h3>Invites Received</h3>
+    {% for request in received_requests %}
+    <form action="/handle_invite" method="POST">
+        <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
+            <div class="card-body">
+                {% if request['recipient_info']['username'] == username %}
+                <h5 class="card-title">From: {{ request['sender_info']['name'] }} ({{ request['sender_info']['username']
+                    }})
+                </h5>
+                <p class="card-text">Email: {{ request['sender_info']['email'] }} | Town: {{
+                    request['sender_info']['town']
+                    }}</p>
+                {% else %}
+                <h5 class="card-title">To: {{ request['recipient_info']['name'] }} ({{
+                    request['recipient_info']['username']
+                    }})</h5>
+                <p class="card-text">Email: {{ request['recipient_info']['email'] }} | Town: {{
+                    request['recipient_info']['town'] }}</p>
+                {% endif %}
+                <div class="card-body">
+                    <input type="hidden" name="invite_id" value="{{ request['id'] }}">
+                    <input type="hidden" name="action_type" value="received">
+                    <button type="submit" name="response" value="accept" class="btn btn-success">Accept</button>
+                    <button type="submit" name="response" value="reject" class="btn btn-danger">Reject</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endfor %}
 </div>
 
+<!-- Friend Requests Sent (Pending Invites) -->
 <div class="grid-container">
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <h3>Pending Invites</h3>
+    {% for invite in sent_invites %}
+    <form action="/handle_invite" method="POST">
+        <div class="card m-3 text-bg-dark border-warning" style="width: 18rem;">
             <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
+                {% if invite['sender_info']['username'] == username %}
+                <h5 class="card-title">To: {{ invite['recipient_info']['name'] }} ({{
+                    invite['recipient_info']['username']
+                    }})</h5>
+                <p class="card-text">Email: {{ invite['recipient_info']['email'] }} | Town: {{
+                    invite['recipient_info']['town'] }}</p>
+                {% else %}
+                <h5 class="card-title">From: {{ invite['sender_info']['name'] }} ({{ invite['sender_info']['username']
+                    }})
+                </h5>
+                <p class="card-text">Email: {{ invite['sender_info']['email'] }} | Town: {{
+                    invite['sender_info']['town'] }}
+                </p>
+                {% endif %}
+                <div class="card-body">
+                    <input type="hidden" name="invite_id" value="{{ invite['id'] }}">
+                    <input type="hidden" name="action_type" value="sent">
+                    <button type="submit" name="response" value="cancel" class="btn btn-dark">Cancel</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
-    <div class="card m-3 text-bg-dark border-info" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <div class="card-body">
-                <button type="button" class="btn btn-success">Accept</button>
-                <button type="button" class="btn btn-danger">Reject</button>
-            </div>
-        </div>
-    </div>
+    </form>
+    {% endfor %}
 </div>
+
 
 <script>
-window.onload = function() {
-    anime({
-        targets: '.card',
-        scale: [0.1, 1],
-        opacity: [0, 1],
-        delay: anime.stagger(200),
-        easing: 'easeOutElastic(1, .5)'
-    });
-};
+    window.onload = function () {
+        anime({
+            targets: '.card',
+            scale: [0.1, 1],
+            opacity: [0, 1],
+            delay: anime.stagger(200),
+            easing: 'easeOutElastic(1, .5)'
+        });
+    };
 </script>
-
 
 {% endblock %}

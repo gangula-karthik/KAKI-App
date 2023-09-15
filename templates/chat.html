@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.3/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+
+{% extends "template.html" %}
+
+{% block content %}
+
+<body class="text-white">
+    <div class="container mx-auto p-4 h-screen">
+        <div class="flex h-full">
+            <div class="w-1/4 p-4">
+                <h1 class="text-lg font-semibold mb-4">Neighbors</h1>
+                <ul id="contacts" class="divide-y divide-gray-700">
+                    {% for friend in my_friends %}
+                        <li class="py-2">
+                            <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>                
+            </div>
+
+            <div class="w-3/4 p-4">
+                <h1 class="text-lg font-semibold mb-4">Chat</h1>
+                <div class="h-5/6 overflow-y-auto mb-4">
+                    <div id="messages">
+                        {% for chat in chat_data %}
+                        {% if chat.sender == username %}
+                        <div class="chat chat-end">
+                            <div class="chat-header">
+                                {{ chat.sender }}
+                            </div>
+                            <div class="chat-bubble chat-bubble-success">{{ chat.message }}</div>
+                            <div class="chat-footer opacity-50">
+                                sent at {{ chat.timestamp }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="chat chat-start">
+                            <div class="chat-header">
+                                {{ chat.sender }}
+                            </div>
+                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-footer opacity-50">
+                                sent at {{ chat.timestamp }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flex">
+                    <input id="message_input" class="w-4/5 p-2 rounded-l-lg bg-gray-800" autocomplete="off" required>
+                    <button onclick="sendMessage()" class="w-1/5 bg-blue-500 text-white p-2 rounded-r-lg">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('message_input').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+        var username = "{{ username }}";
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('message', function (data) {
+            var messagesDiv = document.getElementById('messages');
+            var chatDiv = document.createElement('div');
+
+            var chatBubble = document.createElement('div');
+
+            if (data.sender === username) {
+                chatDiv.className = "chat chat-end";
+                chatBubble.className = "chat-bubble chat-bubble-success";
+            } else {
+                chatDiv.className = "chat chat-start";
+                chatBubble.className = "chat-bubble";
+            }
+
+            var chatHeader = document.createElement('div');
+            chatHeader.className = "chat-header";
+            chatHeader.textContent = data.sender;
+
+            chatBubble.textContent = data.message;
+
+            var chatFooter = document.createElement('div');
+            chatFooter.className = "chat-footer opacity-50";
+            chatFooter.textContent = "sent at " + data.timestamp;
+
+            chatDiv.appendChild(chatHeader);
+            chatDiv.appendChild(chatBubble);
+            chatDiv.appendChild(chatFooter);
+
+            messagesDiv.appendChild(chatDiv);
+        });
+
+        function sendMessage() {
+            var message_text = document.getElementById('message_input').value;
+            if (message_text.trim() !== '') {
+                socket.emit('send_message', { message: message_text, sender: username, timestamp: new Date().toLocaleString() });
+                document.getElementById('message_input').value = "";
+            }
+            else {
+                socket.emit('send_message', { message: message_text, sender: username, timestamp: new Date().toLocaleString() });
+                document.getElementById('message_input').value = "";
+            }
+        }
+
+    </script>
+</body>
+
+</html>
+
+{% endblock %}

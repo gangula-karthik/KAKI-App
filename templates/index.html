@@ -15,7 +15,7 @@
         <div class="welcome-text">Welcome to KAKI 🍀</div>
         <div class="slogan-text">Let's use technology to bring back the Kampong spirit !</div>
         <br>
-        <a href="#" class="signup-button" id="signup-button">Join Us 🎉</a>
+        <a href="javascript:void(0);" class="signup-button" id="signup-button">Join Us 🎉</a>
     </div>
 
     <script>
@@ -25,6 +25,11 @@
                 spread: 70,
                 origin: { y: 0.6 }
             });
+            
+            // Delay for 2 seconds (2000 milliseconds) before redirecting to the login page
+            setTimeout(function() {
+                window.location.href = "/auth";
+            }, 200);
         });
     </script>
 </body>

@@ -21,7 +21,7 @@ import firebase_admin
 from firebase_admin import credentials, db, auth
 import requests
 import time
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, join_room
 from collections import OrderedDict
 from customer_support.comments import Comment
 import asyncio
@@ -62,6 +62,7 @@ config = {
 
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 executor = Executor(app)
 app.secret_key = 'karthik123'
 current_user = None
@@ -76,6 +77,120 @@ pyredb = firebase.database()
 pyreauth = firebase.auth()
 pyrestorage = firebase.storage()
 
+
+# messaging
+@app.route('/chat', methods=['GET', 'POST'])
+@app.route('/chat/<friend_username>', methods=['GET', 'POST'])
+def FriendsChat(friend_username=None):
+    username = session['username']
+    session['current_friend_username'] = friend_username
+    my_friends = pyredb.child(f"friends/{username}").get().val()
+    my_friends = list(my_friends.values()) if my_friends else []
+
+    if friend_username:
+        data = pyredb.child(f"friend_messages/{username}/{friend_username}").get().val()
+    else:
+        data = None
+
+    messages = list(data.values()) if data else []
+
+    return render_template('chat.html', chat_data=messages, username=username, my_friends=my_friends)
+
+
+@socketio.on('send_message')
+def handle_message(message):
+    username = session['username']
+    receiver = session.get('current_friend_username', 'Not Found :(')
+    print(receiver)
+
+    res = {
+        "message": message["message"],
+        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        "sender": username,
+        "receiver": receiver
+    }
+
+    pyredb.child(f"friend_messages/{username}/{receiver}").push(res)
+    pyredb.child(f"friend_messages/{receiver}/{username}").push(res)
+
+    socketio.emit('message', message)
+
+
+
+
+def find_user_by_username(username):
+    all_users = pyredb.child("Users").child("Consumer").get().val()
+    for user_id, user_info in all_users.items():
+        if user_info.get("username") == username:
+            return user_id, user_info
+    return None, None
+
+
+@app.route('/friend_requests', methods=['GET', 'POST'])
+def friend_requests():
+    if request.method == 'POST':
+        recipient_username = request.form.get('recipient_username')
+        current_user_username = session['username']
+        
+        recipient_user_id, recipient_info = find_user_by_username(recipient_username)
+        sender_user_id, sender_info = find_user_by_username(current_user_username)
+
+        if recipient_user_id is None:
+            return "Recipient not found", 404
+        
+        friend_request = {
+            "sender": current_user_username,
+            "sender_info": sender_info,
+            "recipient": recipient_username,
+            "recipient_info": recipient_info 
+        }
+
+        pyredb.child("pending_requests").push(friend_request)
+
+        return "Friend request sent"
+
+    elif request.method == 'GET':
+        all_pending_requests = pyredb.child("pending_requests").get().val()
+
+        received_requests = []
+        sent_invites = []
+
+        current_user_username = session['username']
+
+        if all_pending_requests:
+            for invite_id, req in all_pending_requests.items():
+                req['id'] = invite_id 
+                if req['recipient'] == current_user_username:
+                    received_requests.append(req)
+                elif req['sender'] == current_user_username:
+                    sent_invites.append(req)
+
+        return render_template('friend_request.html', received_requests=received_requests, sent_invites=sent_invites, username=current_user_username)
+    
+
+@app.route('/handle_invite', methods=['POST'])
+def handle_invite():
+    invite_id = request.form.get('invite_id')
+    action_type = request.form.get('action_type')
+    response = request.form.get('response')
+    current_user_username = session['username']
+
+    if action_type == 'received':
+        if response == 'accept':
+            friend_username = pyredb.child("pending_requests").child(invite_id).child("sender").get().val()
+            pyredb.child("friends").child(current_user_username).push(friend_username)
+            pyredb.child("friends").child(friend_username).push(current_user_username)
+            pyredb.child("pending_requests").child(invite_id).remove()
+
+        elif response == 'reject':
+            pyredb.child("pending_requests").child(invite_id).remove()
+            print("Friend request rejected.")
+
+    elif action_type == 'sent':
+        if response == 'cancel':
+            pyredb.child("pending_requests").child(invite_id).remove()
+
+    return redirect(url_for('friend_requests'))
 
 # routes for error handling
 @app.errorhandler(403)
@@ -1800,40 +1915,6 @@ def delete_service(service_id):
     return redirect(url_for('show_all_services'))
 
 
-# @app.route('/update_service/<product_id>', methods=['POST'])
-# def update_product(product_id):
-#     # Retrieve form data
-#
-#
-#     # change all these
-#     product_name = request.form.get('updatedProductName')
-#     product_description = request.form.get('updatedProductDescription')
-#     product_price = request.form.get('updatedProductPrice')
-#     product_condition = request.form.get('updatedProductCondition')
-#
-#     # Construct the data dictionarys
-#     data = {
-#         "product_name": product_name,
-#         "product_description": product_description,
-#         "product_price": product_price,
-#         "product_condition": product_condition,
-#         "seller": current_user  # Assuming current_user is a global or session variable
-#     }
-#
-#     print(data)
-#
-#     # Update the product in Firebase
-#     pyredb.child(f"products/{product_id}").update(data)
-#
-#     return redirect(url_for('service'))
-#
-#
-# @app.route('/delete_service/<string:product_id>', methods=['POST'])
-# def delete_product(product_id):
-#     pyredb.child('products').child(product_id).remove()
-#     flash('Product has been deleted')
-#     return redirect(url_for('service'))
-
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    socketio.run(app, debug=True, port=8080)
