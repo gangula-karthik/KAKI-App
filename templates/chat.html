@@ -15,11 +15,13 @@
 <body class="text-white">
     <div class="container mx-auto p-4 h-screen">
         <div class="flex h-full">
-            <div class="w-1/4 p-4">
+            <!-- Side Panel -->
+            <div class="w-1/4 p-4 border-r border-gray-700">
                 <h1 class="text-lg font-semibold mb-4">Neighbors</h1>
                 <ul id="contacts" class="divide-y divide-gray-700">
                     {% for friend in my_friends %}
-                    <li class="py-2">
+                    <li class="py-2 flex items-center hover:bg-neutral-800 rounded-lg p-2">
+                        <img src="https://i.stack.imgur.com/z2WFo.gif" alt="avatar" class="rounded-full mr-2 w-9 h-9">
                         <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
                     </li>
                     {% endfor %}
@@ -68,9 +70,13 @@
 
                     </div>
                 </div>
-                <div class="flex">
-                    <input id="message_input" class="w-4/5 p-2 rounded-l-lg bg-gray-800" autocomplete="off" required>
-                    <button onclick="sendMessage()" class="w-1/5 bg-blue-500 text-white p-2 rounded-r-lg">Send</button>
+                <!-- Input Field and GIF Button -->
+                <div
+                    class="flex items-center rounded-lg shadow-lg p-2 bg-gradient-to-r from-green-700 via-blue-600 to-green-500">
+                    <input id="message_input"
+                        class="flex-grow px-4 py-2 text-white bg-gray-800 rounded-lg placeholder-gray-400 focus:outline-none focus:ring focus:ring-green-200 transition-all duration-200"
+                        type="text" placeholder="Type your message..." required>
+                    </input>
                 </div>
             </div>
         </div>
