@@ -19,11 +19,11 @@
                 <h1 class="text-lg font-semibold mb-4">Neighbors</h1>
                 <ul id="contacts" class="divide-y divide-gray-700">
                     {% for friend in my_friends %}
-                        <li class="py-2">
-                            <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
-                        </li>
+                    <li class="py-2">
+                        <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
+                    </li>
                     {% endfor %}
-                </ul>                
+                </ul>
             </div>
 
             <div class="w-3/4 p-4">
@@ -36,7 +36,13 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble chat-bubble-success">{{ chat.message }}</div>
+                            <div class="chat-bubble chat-bubble-success">
+                                {% if chat.message.endswith('.gif') %}
+                                <img src="{{ chat.message }}" alt="GIF">
+                                {% else %}
+                                {{ chat.message }}
+                                {% endif %}
+                            </div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
@@ -46,13 +52,20 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-bubble">
+                                {% if chat.message.endswith('.gif') %}
+                                <img src="{{ chat.message }}" alt="GIF">
+                                {% else %}
+                                {{ chat.message }}
+                                {% endif %}
+                            </div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
                         </div>
                         {% endif %}
                         {% endfor %}
+
                     </div>
                 </div>
                 <div class="flex">
@@ -91,11 +104,18 @@
             chatHeader.className = "chat-header";
             chatHeader.textContent = data.sender;
 
-            chatBubble.textContent = data.message;
-
             var chatFooter = document.createElement('div');
             chatFooter.className = "chat-footer opacity-50";
             chatFooter.textContent = "sent at " + data.timestamp;
+
+            if (data.message.endsWith('.gif')) {
+                var imgElement = document.createElement('img');
+                imgElement.src = data.message;
+                imgElement.alt = "GIF";
+                chatBubble.appendChild(imgElement);
+            } else {
+                chatBubble.textContent = data.message;
+            }
 
             chatDiv.appendChild(chatHeader);
             chatDiv.appendChild(chatBubble);
