@@ -81,7 +81,7 @@
             <div class="chat-message chat-user text-info-emphasis bg-info-subtle border border-info-subtle rounded-2">User:
                 {{ chat.message }}</div>
             {% else %}
-            <div class="chat-message">Bot: {{ chat.message }}</div>
+            <div class="chat-message" style="white-space: pre-line;">Bot: {{ chat.message }}</div>
             {% endif %}
             {% endfor %}
         </div>

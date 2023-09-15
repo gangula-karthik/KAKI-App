@@ -29,7 +29,12 @@
             </div>
 
             <div class="w-3/4 p-4">
-                <h1 class="text-lg font-semibold mb-4">Chat</h1>
+                {% if chat_data == [] %}
+                <h1 class="text-lg font-semibold mb-4">No chat selected</h1>
+                {% else %}
+                <h1 class="text-lg font-semibold mb-4">Chat with {{ friend_username }}</h1>
+                {% endif %}
+
                 <div class="h-5/6 overflow-y-auto mb-4">
                     <div id="messages">
                         {% for chat in chat_data %}
@@ -93,6 +98,9 @@
         var socket = io.connect('http://' + document.domain + ':' + location.port);
 
         socket.on('message', function (data) {
+            if (data.message == "") {
+                return;
+            }
             var messagesDiv = document.getElementById('messages');
             var chatDiv = document.createElement('div');
 
