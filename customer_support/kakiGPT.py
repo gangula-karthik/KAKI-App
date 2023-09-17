@@ -47,7 +47,9 @@ falcon_llm = HuggingFaceHub(
 
 template = """
 Question: {question}
-Context: Take a deep breath and answer the question by thinking step by step. Provide a concise and accurate response using your extensive knowledge as a customer support representative of KAKI. If additional and relevant context is required, such as helpdesk ticket information, consider using the comments and description for a better answer.
+
+Context: Take a deep breath and answer the question by thinking step by step. Provide a concise and accurate response using your extensive knowledge as a customer support representative of KAKI. If additional and relevant context is required, such as helpdesk ticket information, consider using the comments and description for a better answer.Format the answer in bullet points or paragraph and add a newline character at the end of each bullet point or paragraph.
+
 {formatted_template}
 
 Answer:

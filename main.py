@@ -146,8 +146,8 @@ def friend_requests():
         }
 
         pyredb.child("pending_requests").push(friend_request)
+        return redirect(url_for('friend_requests'))
 
-        return "Friend request sent"
 
     elif request.method == 'GET':
         all_pending_requests = pyredb.child("pending_requests").get().val()
