@@ -47,7 +47,9 @@ falcon_llm = HuggingFaceHub(
 
 template = """
 Question: {question}
-Context: Provide a concise and accurate response using your extensive knowledge as a customer support representative of KAKI. If additional context is available, such as helpdesk ticket information, consider it for a better answer.
+
+Context: Take a deep breath and answer the question by thinking step by step. Provide a concise and accurate response using your extensive knowledge as a customer support representative of KAKI. If additional and relevant context is required, such as helpdesk ticket information, consider using the comments and description for a better answer.Format the answer in bullet points or paragraph and add a newline character at the end of each bullet point or paragraph.
+
 {formatted_template}
 
 Answer:
@@ -70,7 +72,7 @@ def generate_answers(prompt):
         description = pyredb.child(f'tickets/{ticket}/descriptions').get().val()
         comments = pyredb.child(f'comments/').get().val()
         comments_text = '\n'.join(comments) if comments else ''
-        all_tickets_data += f"\nTicket ID: {ticket}\nSubject: {subject}\nDescription: {description}\nComments: {comments_text}\n"
+        all_tickets_data += f"\nSubject: {subject}\nDescription: {description}\nComments: {comments_text}\n"
 
     
     

@@ -15,19 +15,26 @@
 <body class="text-white">
     <div class="container mx-auto p-4 h-screen">
         <div class="flex h-full">
-            <div class="w-1/4 p-4">
+            <!-- Side Panel -->
+            <div class="w-1/4 p-4 border-r border-gray-700">
                 <h1 class="text-lg font-semibold mb-4">Neighbors</h1>
                 <ul id="contacts" class="divide-y divide-gray-700">
                     {% for friend in my_friends %}
-                        <li class="py-2">
-                            <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
-                        </li>
+                    <li class="py-2 flex items-center hover:bg-neutral-800 rounded-lg p-2">
+                        <img src="https://i.stack.imgur.com/z2WFo.gif" alt="avatar" class="rounded-full mr-2 w-9 h-9">
+                        <a href="{{ url_for('FriendsChat', friend_username=friend) }}">{{ friend }}</a>
+                    </li>
                     {% endfor %}
-                </ul>                
+                </ul>
             </div>
 
             <div class="w-3/4 p-4">
-                <h1 class="text-lg font-semibold mb-4">Chat</h1>
+                {% if chat_data == [] %}
+                <h1 class="text-lg font-semibold mb-4">No chat selected</h1>
+                {% else %}
+                <h1 class="text-lg font-semibold mb-4">Chat with {{ friend_username }}</h1>
+                {% endif %}
+
                 <div class="h-5/6 overflow-y-auto mb-4">
                     <div id="messages">
                         {% for chat in chat_data %}
@@ -36,7 +43,13 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble chat-bubble-success">{{ chat.message }}</div>
+                            <div class="chat-bubble chat-bubble-success">
+                                {% if chat.message.endswith('.gif') %}
+                                <img src="{{ chat.message }}" alt="GIF">
+                                {% else %}
+                                {{ chat.message }}
+                                {% endif %}
+                            </div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
@@ -46,18 +59,29 @@
                             <div class="chat-header">
                                 {{ chat.sender }}
                             </div>
-                            <div class="chat-bubble">{{ chat.message }}</div>
+                            <div class="chat-bubble">
+                                {% if chat.message.endswith('.gif') %}
+                                <img src="{{ chat.message }}" alt="GIF">
+                                {% else %}
+                                {{ chat.message }}
+                                {% endif %}
+                            </div>
                             <div class="chat-footer opacity-50">
                                 sent at {{ chat.timestamp }}
                             </div>
                         </div>
                         {% endif %}
                         {% endfor %}
+
                     </div>
                 </div>
-                <div class="flex">
-                    <input id="message_input" class="w-4/5 p-2 rounded-l-lg bg-gray-800" autocomplete="off" required>
-                    <button onclick="sendMessage()" class="w-1/5 bg-blue-500 text-white p-2 rounded-r-lg">Send</button>
+                <!-- Input Field and GIF Button -->
+                <div
+                    class="flex items-center rounded-lg shadow-lg p-2 bg-gradient-to-r from-green-700 via-blue-600 to-green-500">
+                    <input id="message_input"
+                        class="flex-grow px-4 py-2 text-white bg-gray-800 rounded-lg placeholder-gray-400 focus:outline-none focus:ring focus:ring-green-200 transition-all duration-200"
+                        type="text" placeholder="Type your message..." required>
+                    </input>
                 </div>
             </div>
         </div>
@@ -74,6 +98,9 @@
         var socket = io.connect('http://' + document.domain + ':' + location.port);
 
         socket.on('message', function (data) {
+            if (data.message == "") {
+                return;
+            }
             var messagesDiv = document.getElementById('messages');
             var chatDiv = document.createElement('div');
 
@@ -91,11 +118,18 @@
             chatHeader.className = "chat-header";
             chatHeader.textContent = data.sender;
 
-            chatBubble.textContent = data.message;
-
             var chatFooter = document.createElement('div');
             chatFooter.className = "chat-footer opacity-50";
             chatFooter.textContent = "sent at " + data.timestamp;
+
+            if (data.message.endsWith('.gif')) {
+                var imgElement = document.createElement('img');
+                imgElement.src = data.message;
+                imgElement.alt = "GIF";
+                chatBubble.appendChild(imgElement);
+            } else {
+                chatBubble.textContent = data.message;
+            }
 
             chatDiv.appendChild(chatHeader);
             chatDiv.appendChild(chatBubble);

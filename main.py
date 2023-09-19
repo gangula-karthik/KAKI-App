@@ -94,7 +94,7 @@ def FriendsChat(friend_username=None):
 
     messages = list(data.values()) if data else []
 
-    return render_template('chat.html', chat_data=messages, username=username, my_friends=my_friends)
+    return render_template('chat.html', chat_data=messages, username=username, my_friends=my_friends, friend_username=friend_username)
 
 
 @socketio.on('send_message')
@@ -146,8 +146,8 @@ def friend_requests():
         }
 
         pyredb.child("pending_requests").push(friend_request)
+        return redirect(url_for('friend_requests'))
 
-        return "Friend request sent"
 
     elif request.method == 'GET':
         all_pending_requests = pyredb.child("pending_requests").get().val()
