@@ -102,6 +102,7 @@
             $('#chat-form').submit(function (e) {
                 e.preventDefault();  // Prevent the form from submitting normally
 
+
                 let userMessage = $('#user-input').val();
                 $('#chat-content').append(`<div>User: ${userMessage}</div>`);
 
@@ -116,8 +117,8 @@
                     // Revert back to the original "Send" button
                     $('#send-btn').removeClass('d-none');
                     $('#loading-btn').addClass('d-none');
+                    location.reload();
                 });
-
                 $('#user-input').val('');  // Clear the input field
             });
         });
