@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  `Demo Link: https://youtu.be/GGYOT-R8A7s`
+  Demo Link: https://youtu.be/GGYOT-R8A7s
 </p>
 
 ## Testing User View
