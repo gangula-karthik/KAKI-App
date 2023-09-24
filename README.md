@@ -7,6 +7,10 @@
   HARNESSING THE POWER OF COMMUNITY BUILDING & SUSTAINABILITY
 </p>
 
+<p align="center">
+  Demo Link: https://youtu.be/GGYOT-R8A7s
+</p>
+
 ## Testing User View
 You may create your own account using your gmail to test this out. (you will receive a verification link to your email)
 
