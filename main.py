@@ -1180,7 +1180,8 @@ def set_comment(ticket_ID):
         "comment": comment,
         "ticket_id": ticket_ID,
         "date": comment_date,
-        "comment_by": comment_by
+        "comment_by": comment_by,
+        "staff_role": session['status'] == "Staff"
     }
     comment_req = Comment().add_comment(ticket_ID, comment, comment_date, comment_by)
     if comment_req == 200: 

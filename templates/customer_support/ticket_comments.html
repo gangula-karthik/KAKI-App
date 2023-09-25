@@ -122,7 +122,7 @@
                 <h5 class="text-light d-inline-block">
                     @{{ comment[1]['comment_by'] }}
                 </h5>
-                {% if is_staff == True %}
+                {% if comment[1]['staff_role'] %}
                 <span class="badge bg-primary d-inline-block ml-2">Staff 🤓</span>
                 {% endif %}
 
