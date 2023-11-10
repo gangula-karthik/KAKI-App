@@ -300,18 +300,25 @@ def count_events(path = '/Events'):
     else:
         return 0
 
-def count_events_com(community,path='/Events', ):
+def count_events_com(community,mon,path='/IndividualPoints'):
+
     data = db.reference(path).get()
+    count = 0
+    mon = str(mon)
     if community:
         print(data)
-        filtered_data = [event[1] for event in data.items() if event[1]['community'] == community]
-        return len(filtered_data)
+        filtered_data = data
+        total_activities = sum(month_data['activities'] for individual_data in data.values() for month_data in
+                               individual_data.get('2023', {}).values() if 'activities' in month_data)
+
+        return total_activities
+
+        # for i in filtered_data:
+        #     int(i)
+        #     count +=i
+        #     return count
+
     else:
-        if isinstance(data, dict):
-            return len(data)
-        elif isinstance(data, list):
-            return len(data)
-        else:
             return 0
 def count_signups_per_year_month(year, month):
     users_data = db.reference("/Users/Consumer").get()
@@ -341,3 +348,4 @@ def count_signups_per_year_month(year, month):
         year_month_counts.insert(0, signups_count) 
 
     return year_month_counts
+

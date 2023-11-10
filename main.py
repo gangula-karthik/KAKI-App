@@ -1401,6 +1401,7 @@ def Individual_report():
 def Community_report():
     name = session['name']
     town = session['town']
+    print(town)
     current_user = session['username']
     staffStatus = session['status'] == "Staff"
     now = datetime.now()
@@ -1410,7 +1411,8 @@ def Community_report():
     leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
     list_data = get_last_five_months_of_specified_year(town,current_year,month)
     top_g = get_individual_with_most_points_in_community(town,current_year,month)
-    count_activities = count_events_com(town)
+    count_activities = count_events_com(town,month)
+    print(count_activities)
     return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = count_activities, is_staff=staffStatus)
 
 
@@ -1513,6 +1515,7 @@ def Transactions_report():
     total_count = count_transactions_past_6_months_for_buyer(current_year, month, name)
     total_received = sum_product_costs_past_6_months_for_seller(current_year, month, name)
     total_spent= sum_product_costs_past_6_months_for_buyer(current_year, month, name)
+    staffStatus = session['status'] == "Staff"
     return render_template('/Report_generation/Transactions_report.html', username=current_user,current_month = month, Total_spent = total_spent, Total_received = total_received, Total_number = total_count,current_year=current_year,listMonths = ListMonths,is_staff=staffStatus)
 
 @app.route('/Report_generation/saved_reports',methods=['GET'])
