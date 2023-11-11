@@ -112,7 +112,7 @@ def get_top_individuals_by_points(year, month, limit=5):
     return top_individuals
 
 def get_individual_points_over_past_months(individual_name, year, current_month):
-    individual_data = get_individual_data_from_firebase(individual_name)  
+    individual_data = get_individual_data_from_firebase(individual_name)
 
     months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
               "November", "December"]
@@ -144,31 +144,10 @@ def get_individual_activities(individual_name, year, month):
 
 
 def get_individual_with_most_points_in_community(community, year, month):
-    individuals_data = db.reference("/IndividualPoints").get()
+    top_individual = get_top_individuals_by_points(year,month,1)
+    top_individual_name = top_individual[0][0]
 
-    if not individuals_data:
-        print("No data found for individuals.")
-        return None
-
-    community_individuals = [individual for individual, data in individuals_data.items() if
-                             data.get("community") == community]
-
-    if not community_individuals:
-
-        return "No one in the community has points yet. Be the first."
-
-    max_points = 0
-    top_individual = None
-
-    for individual in community_individuals:
-        if year in individuals_data[individual] and month in individuals_data[individual][year]:
-            points = individuals_data[individual][year][month]["points"]
-            print(f"Individual: {individual}, Points: {points}")
-            if points > max_points:
-                max_points = points
-                top_individual = individual
-
-    return top_individual
+    return top_individual_name
 
 
 def count_transactions_past_6_months_for_buyer(year, month, buyer_name):
@@ -300,26 +279,24 @@ def count_events(path = '/Events'):
     else:
         return 0
 
-def count_events_com(community,mon,path='/IndividualPoints'):
+def count_events_com(community,mon,year,path='/IndividualPoints'):
 
     data = db.reference(path).get()
-    count = 0
+    count = []
     mon = str(mon)
     if community:
         print(data)
-        filtered_data = data
-        total_activities = sum(month_data['activities'] for individual_data in data.values() for month_data in
-                               individual_data.get('2023', {}).values() if 'activities' in month_data)
+        for name in data:
+            for months in data[name][year]:
+                if months == mon:
+                    count.append(data[name][year][months]['activities'])
+
+        total_activities = sum(count)
 
         return total_activities
 
-        # for i in filtered_data:
-        #     int(i)
-        #     count +=i
-        #     return count
-
     else:
-            return 0
+            return 69
 def count_signups_per_year_month(year, month):
     users_data = db.reference("/Users/Consumer").get()
 

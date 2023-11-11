@@ -1390,11 +1390,12 @@ def Individual_report():
     month = str(now.strftime("%B"))
     current_year = str(now.year)
     ListMonths = get_last_six_months()
+    print(name)
     leaderboard_data = get_top_individuals_by_points(current_year,month)
     list_data = get_individual_points_over_past_months(name, current_year, month)
     activities = get_individual_activities(name, current_year,month)
 
-    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '0', number_of_activities = activities, is_staff=staffStatus)
+    return render_template('/Report_generation/Individual_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths,neighbours_helped = '6', number_of_activities = activities, is_staff=staffStatus)
 
 
 @app.route('/Report_generation/Community_report')
@@ -1411,7 +1412,7 @@ def Community_report():
     leaderboard_data = get_top_communities_for_specific_month_and_year(month,current_year,5)
     list_data = get_last_five_months_of_specified_year(town,current_year,month)
     top_g = get_individual_with_most_points_in_community(town,current_year,month)
-    count_activities = count_events_com(town,month)
+    count_activities = count_events_com(town,month,current_year)
     print(count_activities)
     return render_template('/Report_generation/Community_report.html', leaderboard=leaderboard_data, username=current_user, current_month = month, line_data = list_data, current_year=current_year,listMonths = ListMonths, most_contributed = top_g, number_of_activities = count_activities, is_staff=staffStatus)
 
